@@ -5,15 +5,8 @@ import {
   ChevronRightIcon,
   CheckIcon,
   InfoIcon,
-  PlusIcon,
-  UploadIcon,
   BriefcaseIcon,
-  UsersIcon,
-  ClockIcon,
-  TrendingUpIcon,
-  ShieldIcon,
-  FileIcon,
-  TrashIcon
+  TrendingUpIcon
 } from '../common/Icons';
 
 interface PostJobWizardProps {

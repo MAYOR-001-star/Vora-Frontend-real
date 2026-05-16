@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import {
   UserIcon,
   BellIcon,
@@ -12,14 +12,7 @@ import {
   TrendingUpIcon,
   ClockIcon,
   ChevronRightIcon,
-  InfoIcon,
-  MoreVerticalIcon,
-  WalletIcon,
-  GearIcon,
-  SearchIcon,
-  CalendarIcon,
-  CloseIcon,
-  ArrowRightIcon
+  WalletIcon
 } from '../common/Icons';
 import PostJobWizard from './PostJobWizard';
 
@@ -73,7 +66,6 @@ const SectionHeader: React.FC<{ title: string; linkText?: string; onLinkClick?: 
 );
 
 const EmployerDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [isPostJobOpen, setIsPostJobOpen] = React.useState(false);
 
   // Mock data based on provided HTML

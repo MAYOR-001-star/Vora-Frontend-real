@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRightIcon } from '../common/Icons';
+
 
 import type { StatCardProps } from '../../types';
 

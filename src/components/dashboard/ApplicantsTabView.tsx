@@ -3,7 +3,6 @@ import {
   UsersIcon, 
   CheckIcon, 
   AlertTriangleIcon, 
-  ChevronRightIcon, 
   ChevronDownIcon,
   PlayIcon
 } from '../common/Icons';

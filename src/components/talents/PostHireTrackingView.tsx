@@ -3,8 +3,7 @@ import {
   AlertTriangleIcon, 
   CheckIcon, 
   TrendingUpIcon, 
-  ClockIcon,
-  ChevronRightIcon
+  ClockIcon
 } from '../common/Icons';
 
 const PostHireTrackingView: React.FC = () => {

@@ -21,10 +21,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const userStr = localStorage.getItem('vora_user');
   const user = userStr ? JSON.parse(userStr) : { firstName: 'Tobi', lastName: '', role: 'talent' };
   
-  const initials = user.firstName && user.lastName 
-    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-    : user.firstName ? user.firstName.substring(0, 2).toUpperCase() : 'TO';
-
   const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
   const roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
 

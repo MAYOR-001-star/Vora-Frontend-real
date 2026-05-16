@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { SAMPLE_TALENTS, SAMPLE_JOB_DETAILS } from '../constants/mockData';
+import { SAMPLE_JOB_DETAILS } from '../constants/mockData';
 import { JOB_DETAILS_TABS } from '../constants/tabs';
 import {
   ChevronLeftIcon,
-  MoreVerticalIcon,
   ChevronRightIcon,
-  EditIcon,
-  SearchIcon,
-  ChevronDownIcon
+  EditIcon
 } from '../components/common/Icons';
 import EditRoleModal from '../components/dashboard/EditRoleModal';
 import ApplicantDetailsModal from '../components/dashboard/ApplicantDetailsModal';
@@ -65,30 +62,12 @@ const JobDetails: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Details');
-  const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [isApplicantModalOpen, setIsApplicantModalOpen] = useState(false);
 
   const tabs = JOB_DETAILS_TABS;
   const data = SAMPLE_JOB_DETAILS;
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'pending review': return 'bg-gray-400';
-      case 'under review': return 'bg-yellow-400';
-      case 'hired': return 'bg-green-500';
-      case 'rejected': return 'bg-red-500';
-      default: return 'bg-gray-200';
-    }
-  };
-
-  const handleOpenModal = (e: React.MouseEvent, applicant: any) => {
-    e.stopPropagation();
-    setSelectedApplicant(applicant);
-    setIsApplicantModalOpen(true);
-    setOpenMenuIdx(null);
-  };
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">

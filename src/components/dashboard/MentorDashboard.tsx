@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import {
-  BellIcon,
   PlusIcon,
   PlayIcon,
   ChevronRightIcon,
@@ -11,9 +10,7 @@ import {
   TrendingUpIcon,
   UserIcon,
   ClockIcon,
-  FileIcon,
   ChevronDownIcon,
-  CheckIcon,
   DownloadIcon,
   InfoIcon,
   MoreVerticalIcon
@@ -61,7 +58,6 @@ const SectionHeader: React.FC<{ title: string; icon: React.ElementType; linkText
 );
 
 const MentorDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [isCiOpen, setIsCiOpen] = useState(false);
 
   // Mock data based on provided HTML

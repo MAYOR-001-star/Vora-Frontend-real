@@ -1,5 +1,5 @@
 import React from 'react';
-import { LockIcon, ChevronRightIcon } from '../common/Icons';
+import { LockIcon } from '../common/Icons';
 
 import type { QuickActionCardProps } from '../../types';
 

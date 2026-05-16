@@ -45,7 +45,7 @@ const TalentOnboarding: React.FC = () => {
   // Step 2 state — Profile
   const [professionalTitle, setProfessionalTitle] = useState('');
   const [areasOfInterest, setAreasOfInterest] = useState<string[]>([]);
-  const [otherInterest, setOtherInterest] = useState('');
+  const otherInterest = ''; // Set to empty string if not used
   const [experienceLevel, setExperienceLevel] = useState('');
   const [country, setCountry] = useState('');
 
@@ -58,7 +58,7 @@ const TalentOnboarding: React.FC = () => {
   const [relocationDestinations, setRelocationDestinations] = useState('');
   const [workArrangement, setWorkArrangement] = useState('');
   const [integrityChecked, setIntegrityChecked] = useState(false);
-  const [isCountryLoading, setIsCountryLoading] = useState(false);
+  const isCountryLoading = false;
 
   // Study permit sub-panel
   const [studyPermitType, setStudyPermitType] = useState('');

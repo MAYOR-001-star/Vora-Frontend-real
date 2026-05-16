@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import { 
   CloseIcon, 
   UploadIcon, 
-  EditIcon, 
-  FileIcon, 
-  ChevronLeftIcon,
-  SearchIcon,
-  ClockIcon,
-  CheckIcon
+  FileIcon
 } from '../common/Icons';
 
 interface PostJobModalProps {
