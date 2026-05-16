@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import MultiSelect from '../../components/common/MultiSelect';
@@ -28,6 +29,7 @@ const TOTAL_STEPS = 5;
 
 const EmployerOnboarding: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [step, setStep] = useState(1);
 
   // Step 1: Organization Info
@@ -139,13 +141,11 @@ const EmployerOnboarding: React.FC = () => {
     } else if (step === 4 && isStep4Valid) {
       setStep(5);
     } else if (step === 5 && isStep5Valid) {
-      const userData = {
+      login({
         firstName: orgInfo.organizationName,
         lastName: '',
         role: 'employer'
-      };
-      localStorage.setItem('vora_user', JSON.stringify(userData));
-      localStorage.setItem('vora_role', 'employer');
+      });
       navigate('/onboard/welcome', { state: { firstName: orgInfo.organizationName, role: 'employer' } });
     }
   };

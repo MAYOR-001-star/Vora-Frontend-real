@@ -15,6 +15,7 @@ import {
   InfoIcon,
   MoreVerticalIcon
 } from '../common/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 // --- Sub-components for Mentor Dashboard ---
 
@@ -84,13 +85,25 @@ const MentorDashboard: React.FC = () => {
     { text: 'Taiwo Adeyemi sent a new mentorship request — critical priority', time: '8 hours ago', icon: InfoIcon, color: 'bg-amber-50 text-amber-600' }
   ];
 
+  const { user } = useAuth();
+  if (!user) return null;
+
+  const displayName = user.title ? `${user.title} ${user.firstName}` : user.firstName;
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-[28px] font-black text-gray-900 font-['Nunito_Sans'] tracking-tight">
-            Good afternoon, Dr. Eric 👋
+            {getGreeting()}, {displayName} 👋
           </h1>
           <p className="text-[14px] font-bold text-gray-400">
             Tuesday, 10 March 2026 · You have 1 live session in 42 minutes
@@ -151,10 +164,10 @@ const MentorDashboard: React.FC = () => {
         <StatCard label="Course Enrollments" value="1,284" trend="↑ 12% this month" trendType="up" />
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-8 items-start">
-        {/* Left Column */}
-        <div className="space-y-8">
+      {/* Main Masonry Grid */}
+      <div className="columns-1 lg:columns-2 gap-8 space-y-8 items-start">
+        {/* Column 1 */}
+        <div className="break-inside-avoid space-y-8">
           {/* Upcoming Sessions List */}
           <div className="bg-white border border-gray-100 rounded-[24px] p-8 shadow-sm">
             <SectionHeader title="Upcoming Sessions" icon={CalendarIcon} linkText="View all" onLinkClick={() => {}} />
@@ -230,48 +243,6 @@ const MentorDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Earnings Snapshot */}
-          <div className="bg-white border border-gray-100 rounded-[24px] p-8 shadow-sm">
-            <SectionHeader title="Earnings Snapshot" icon={TrendingUpIcon} linkText="Full report" onLinkClick={() => {}} />
-            
-            <div className="flex items-start justify-between mb-8">
-              <div>
-                <p className="text-[36px] font-black text-gray-900 leading-tight">$3,940</p>
-                <p className="text-[13px] font-bold text-gray-400 mt-1">March 2026 · 10 days in</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Pending payout</p>
-                <p className="text-[24px] font-black text-green-600">$3,152</p>
-                <p className="text-[10px] font-bold text-gray-400">after 20% platform fee</p>
-              </div>
-            </div>
-
-            {/* Simple Bar Chart Mockup */}
-            <div className="flex items-end gap-3 h-20 mb-8 px-2">
-              {[40, 65, 30, 85, 70, 100, 60].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                  <div 
-                    className={`w-full rounded-t-lg transition-all duration-1000 ${i === 5 ? 'bg-[#0047CC]' : 'bg-blue-100'}`}
-                    style={{ height: `${h}%` }}
-                  />
-                  <span className="text-[9px] font-black text-gray-300 uppercase">{i === 6 ? 'TOD' : `${i + 5} MAR`}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex flex-wrap gap-4 pt-4 border-t border-gray-50">
-              <button className="px-6 py-3 border border-gray-100 rounded-full text-[14px] font-bold text-gray-700 hover:bg-gray-50 transition-all cursor-pointer">
-                View Breakdown
-              </button>
-              <button className="flex items-center gap-2 px-6 py-3 bg-[#0047CC] text-white rounded-full text-[14px] font-bold hover:bg-[#003d99] transition-all shadow-lg shadow-blue-500/20 cursor-pointer">
-                <DownloadIcon size={14} /> Withdraw $3,152
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-8">
           {/* Pending Requests */}
           <div className="bg-white border border-gray-100 rounded-[24px] p-8 shadow-sm">
             <SectionHeader title="Pending Requests" icon={BriefcaseIcon} linkText="See all" onLinkClick={() => {}} />
@@ -310,6 +281,48 @@ const MentorDashboard: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Column 2 */}
+        <div className="break-inside-avoid space-y-8">
+          {/* Earnings Snapshot */}
+          <div className="bg-white border border-gray-100 rounded-[24px] p-8 shadow-sm">
+            <SectionHeader title="Earnings Snapshot" icon={TrendingUpIcon} linkText="Full report" onLinkClick={() => {}} />
+            
+            <div className="flex items-start justify-between mb-8">
+              <div>
+                <p className="text-[36px] font-black text-gray-900 leading-tight">$3,940</p>
+                <p className="text-[13px] font-bold text-gray-400 mt-1">March 2026 · 10 days in</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Pending payout</p>
+                <p className="text-[24px] font-black text-green-600">$3,152</p>
+                <p className="text-[10px] font-bold text-gray-400">after 20% platform fee</p>
+              </div>
+            </div>
+
+            {/* Simple Bar Chart Mockup */}
+            <div className="flex items-end gap-3 h-20 mb-8 px-2">
+              {[40, 65, 30, 85, 70, 100, 60].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                  <div 
+                    className={`w-full rounded-t-lg transition-all duration-1000 ${i === 5 ? 'bg-[#0047CC]' : 'bg-blue-100'}`}
+                    style={{ height: `${h}%` }}
+                  />
+                  <span className="text-[9px] font-black text-gray-300 uppercase">{i === 6 ? 'TOD' : `${i + 5} MAR`}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-4 pt-4 border-t border-gray-50">
+              <button className="px-6 py-3 border border-gray-100 rounded-full text-[14px] font-bold text-gray-700 hover:bg-gray-50 transition-all cursor-pointer">
+                View Breakdown
+              </button>
+              <button className="flex items-center gap-2 px-6 py-3 bg-[#0047CC] text-white rounded-full text-[14px] font-bold hover:bg-[#003d99] transition-all shadow-lg shadow-blue-500/20 cursor-pointer">
+                <DownloadIcon size={14} /> Withdraw $3,152
+              </button>
             </div>
           </div>
 
@@ -386,26 +399,26 @@ const MentorDashboard: React.FC = () => {
           {/* Quick Actions */}
           <div className="bg-white border border-gray-100 rounded-[24px] p-8 shadow-sm">
             <SectionHeader title="Quick Actions" icon={MoreVerticalIcon} />
-            <div className="grid grid-cols-2 gap-3">
-              <button className="p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-[#0047CC] hover:bg-blue-50 transition-all group cursor-pointer shadow-sm">
+            <div className="columns-2 gap-3 space-y-3">
+              <button className="w-full break-inside-avoid p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-[#0047CC] hover:bg-blue-50 transition-all group cursor-pointer shadow-sm">
                 <div className="p-3 bg-blue-50 rounded-xl text-[#0047CC] group-hover:scale-110 transition-transform">
                   <CalendarIcon size={20} />
                 </div>
                 <span className="text-[12px] font-black text-gray-900">Schedule</span>
               </button>
-              <button className="p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-green-600 hover:bg-green-50 transition-all group cursor-pointer shadow-sm">
+              <button className="w-full break-inside-avoid p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-green-600 hover:bg-green-50 transition-all group cursor-pointer shadow-sm">
                 <div className="p-3 bg-green-50 rounded-xl text-green-600 group-hover:scale-110 transition-transform">
                   <PlusIcon size={20} />
                 </div>
                 <span className="text-[12px] font-black text-gray-900">Course</span>
               </button>
-              <button className="p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-emerald-600 hover:bg-emerald-50 transition-all group cursor-pointer shadow-sm">
+              <button className="w-full break-inside-avoid p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-emerald-600 hover:bg-emerald-50 transition-all group cursor-pointer shadow-sm">
                 <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600 group-hover:scale-110 transition-transform">
                   <TrendingUpIcon size={20} />
                 </div>
                 <span className="text-[12px] font-black text-gray-900">Withdraw</span>
               </button>
-              <button className="p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-amber-600 hover:bg-amber-50 transition-all group cursor-pointer shadow-sm">
+              <button className="w-full break-inside-avoid p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-amber-600 hover:bg-amber-50 transition-all group cursor-pointer shadow-sm">
                 <div className="p-3 bg-amber-50 rounded-xl text-amber-600 group-hover:scale-110 transition-transform">
                   <UserIcon size={20} />
                 </div>

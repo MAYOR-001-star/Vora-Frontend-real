@@ -128,38 +128,36 @@ const EmployerDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard 
-          label="Active Jobs" value="12" delta="3 this month" deltaType="up" 
-          icon={BriefcaseIcon} colorClass="bg-[#0047CC]" bgColor="bg-blue-50" iconColor="text-[#0047CC]" 
-        />
-        <KPICard 
-          label="Total Applicants" value="247" delta="34 new this week" deltaType="up" 
-          icon={UsersIcon} colorClass="bg-green-500" bgColor="bg-green-50" iconColor="text-green-600" 
-        />
-        <KPICard 
-          label="Alignment Sessions" value="5" delta="2 awaiting confirmation" deltaType="warn" 
-          icon={ClockIcon} colorClass="bg-purple-500" bgColor="bg-purple-50" iconColor="text-purple-600" 
-        />
-        <KPICard 
-          label="Wallet Balance" value="$3,240" delta="$750 true-up due" deltaType="warn" 
-          icon={WalletIcon} colorClass="bg-amber-500" bgColor="bg-amber-50" iconColor="text-amber-600" 
-        />
-      </div>
+      {/* Main Masonry Grid */}
+      <div className="columns-1 lg:columns-2 xl:columns-2 gap-6 space-y-6">
+        {/* KPI Grid - Full Width equivalent in masonry */}
+        <div className="break-inside-avoid space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <KPICard 
+              label="Active Jobs" value="12" delta="3 this month" deltaType="up" 
+              icon={BriefcaseIcon} colorClass="bg-[#0047CC]" bgColor="bg-blue-50" iconColor="text-[#0047CC]" 
+            />
+            <KPICard 
+              label="Total Applicants" value="247" delta="34 new this week" deltaType="up" 
+              icon={UsersIcon} colorClass="bg-green-500" bgColor="bg-green-50" iconColor="text-green-600" 
+            />
+            <KPICard 
+              label="Alignment Sessions" value="5" delta="2 awaiting confirmation" deltaType="warn" 
+              icon={ClockIcon} colorClass="bg-purple-500" bgColor="bg-purple-50" iconColor="text-purple-600" 
+            />
+            <KPICard 
+              label="Wallet Balance" value="$3,240" delta="$750 true-up due" deltaType="warn" 
+              icon={WalletIcon} colorClass="bg-amber-500" bgColor="bg-amber-50" iconColor="text-amber-600" 
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <QuickActionBtn label="Post a Job" sub="Create a new listing" icon={PlusIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" onClick={() => setIsPostJobOpen(true)} />
+            <QuickActionBtn label="Confirm Hire" sub="Send offer & lock escrow" icon={CheckIcon} bgColor="bg-green-50" iconColor="text-green-600" />
+            <QuickActionBtn label="Bulk Hire" sub="Confirm multiple hires" icon={UsersIcon} bgColor="bg-purple-50" iconColor="text-purple-600" />
+            <QuickActionBtn label="Top Up Wallet" sub="Add funds for escrow" icon={TrendingUpIcon} bgColor="bg-amber-50" iconColor="text-amber-600" />
+          </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <QuickActionBtn label="Post a Job" sub="Create a new listing" icon={PlusIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" onClick={() => setIsPostJobOpen(true)} />
-        <QuickActionBtn label="Confirm Hire" sub="Send offer & lock escrow" icon={CheckIcon} bgColor="bg-green-50" iconColor="text-green-600" />
-        <QuickActionBtn label="Bulk Hire" sub="Confirm multiple hires" icon={UsersIcon} bgColor="bg-purple-50" iconColor="text-purple-600" />
-        <QuickActionBtn label="Top Up Wallet" sub="Add funds for escrow" icon={TrendingUpIcon} bgColor="bg-amber-50" iconColor="text-amber-600" />
-      </div>
-
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-6 items-start">
-        {/* Left Column */}
-        <div className="space-y-6">
           {/* Active Jobs Card */}
           <div className="bg-white border border-gray-100 rounded-[18px] shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
@@ -187,33 +185,35 @@ const EmployerDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Recent Activity Card */}
+          {/* Alignment Sessions */}
           <div className="bg-white border border-gray-100 rounded-[18px] shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-              <h3 className="text-[16px] font-black text-gray-900">Recent Activity</h3>
+              <h3 className="text-[16px] font-black text-gray-900">Alignment Sessions</h3>
               <button className="text-[13px] font-bold text-[#0047CC] flex items-center gap-1 hover:underline bg-transparent border-none cursor-pointer">
-                All transactions <ChevronRightIcon size={12} />
+                Full View <ChevronRightIcon size={12} />
               </button>
             </div>
             <div className="divide-y divide-gray-50">
-              {recentActivity.map((act, i) => (
-                <div key={i} className="flex gap-4 p-5 hover:bg-gray-50 transition-all cursor-pointer group">
-                  <div className={`w-9 h-9 rounded-lg ${act.iconBg} flex items-center justify-center shrink-0`}>
-                    <act.icon size={16} className={act.iconColor} />
+              {alignmentSessions.map((session, i) => (
+                <div key={i} className="flex items-center gap-4 p-5 hover:bg-gray-50 transition-all cursor-pointer group">
+                  <div className={`w-10 h-10 rounded-full ${session.initialBg} text-white flex items-center justify-center font-black text-[12px] shrink-0`}>
+                    {session.initial}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-black text-gray-900 leading-tight truncate">{act.title}</p>
-                    <p className="text-[11px] font-bold text-gray-400 mt-1">{act.sub}</p>
+                    <p className="text-[14px] font-black text-gray-900 truncate group-hover:text-[#0047CC] transition-colors">{session.name}</p>
+                    <p className="text-[11px] font-bold text-gray-400 mt-0.5">{session.role} · {session.id}</p>
                   </div>
-                  <span className="text-[11px] font-bold text-gray-300 shrink-0">{act.time}</span>
+                  <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-black border ${session.statusClass}`}>
+                    {session.status}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className="space-y-6">
+        {/* Column 2 Items */}
+        <div className="break-inside-avoid space-y-6">
           {/* Post-Hire Tracking Widget */}
           <div className="bg-white border border-gray-100 rounded-[18px] p-6 shadow-sm">
             <div className="flex items-center justify-between mb-5">
@@ -311,55 +311,50 @@ const EmployerDashboard: React.FC = () => {
               View Payment Overview
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-6 items-start">
-        {/* Alignment Sessions */}
-        <div className="bg-white border border-gray-100 rounded-[18px] shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-            <h3 className="text-[16px] font-black text-gray-900">Alignment Sessions</h3>
-            <button className="text-[13px] font-bold text-[#0047CC] flex items-center gap-1 hover:underline bg-transparent border-none cursor-pointer">
-              Full View <ChevronRightIcon size={12} />
-            </button>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {alignmentSessions.map((session, i) => (
-              <div key={i} className="flex items-center gap-4 p-5 hover:bg-gray-50 transition-all cursor-pointer group">
-                <div className={`w-10 h-10 rounded-full ${session.initialBg} text-white flex items-center justify-center font-black text-[12px] shrink-0`}>
-                  {session.initial}
+          {/* Recent Activity Card */}
+          <div className="bg-white border border-gray-100 rounded-[18px] shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+              <h3 className="text-[16px] font-black text-gray-900">Recent Activity</h3>
+              <button className="text-[13px] font-bold text-[#0047CC] flex items-center gap-1 hover:underline bg-transparent border-none cursor-pointer">
+                All transactions <ChevronRightIcon size={12} />
+              </button>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {recentActivity.map((act, i) => (
+                <div key={i} className="flex gap-4 p-5 hover:bg-gray-50 transition-all cursor-pointer group">
+                  <div className={`w-9 h-9 rounded-lg ${act.iconBg} flex items-center justify-center shrink-0`}>
+                    <act.icon size={16} className={act.iconColor} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-black text-gray-900 leading-tight truncate">{act.title}</p>
+                    <p className="text-[11px] font-bold text-gray-400 mt-1">{act.sub}</p>
+                  </div>
+                  <span className="text-[11px] font-bold text-gray-300 shrink-0">{act.time}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-black text-gray-900 truncate group-hover:text-[#0047CC] transition-colors">{session.name}</p>
-                  <p className="text-[11px] font-bold text-gray-400 mt-0.5">{session.role} · {session.id}</p>
-                </div>
-                <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-black border ${session.statusClass}`}>
-                  {session.status}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Account & Settings Tiles */}
-        <div className="bg-white border border-gray-100 rounded-[18px] p-6 shadow-sm">
-          <SectionHeader title="Account & Settings" linkText="Manage" onLinkClick={() => {}} />
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { label: 'Profile', sub: 'Eric · Admin', icon: UserIcon },
-              { label: 'Team', sub: '3 members', icon: UsersIcon },
-              { label: 'Billing', sub: 'Enterprise', icon: TrendingUpIcon },
-              { label: 'Payments', sub: '4 saved', icon: CreditCardIcon },
-              { label: 'Alerts', sub: 'In-app', icon: BellIcon },
-              { label: 'Post Job', sub: 'New listing', icon: PlusIcon }
-            ].map((tile, i) => (
-              <div key={i} className="p-4 bg-gray-50/50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-xl transition-all cursor-pointer group">
-                <tile.icon size={16} className="text-[#0047CC] mb-3" />
-                <p className="text-[12px] font-black text-gray-900 leading-tight">{tile.label}</p>
-                <p className="text-[10px] font-bold text-gray-400 mt-0.5 truncate">{tile.sub}</p>
-              </div>
-            ))}
+          {/* Account & Settings Tiles */}
+          <div className="bg-white border border-gray-100 rounded-[18px] p-6 shadow-sm">
+            <SectionHeader title="Account & Settings" linkText="Manage" onLinkClick={() => {}} />
+            <div className="columns-2 gap-2 space-y-2">
+              {[
+                { label: 'Profile', sub: 'Eric · Admin', icon: UserIcon },
+                { label: 'Team', sub: '3 members', icon: UsersIcon },
+                { label: 'Billing', sub: 'Enterprise', icon: TrendingUpIcon },
+                { label: 'Payments', sub: '4 saved', icon: CreditCardIcon },
+                { label: 'Alerts', sub: 'In-app', icon: BellIcon },
+                { label: 'Post Job', sub: 'New listing', icon: PlusIcon }
+              ].map((tile, i) => (
+                <div key={i} className="break-inside-avoid p-4 bg-gray-50/50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-xl transition-all cursor-pointer group">
+                  <tile.icon size={16} className="text-[#0047CC] mb-3" />
+                  <p className="text-[12px] font-black text-gray-900 leading-tight">{tile.label}</p>
+                  <p className="text-[10px] font-bold text-gray-400 mt-0.5 truncate">{tile.sub}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

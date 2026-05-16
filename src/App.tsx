@@ -19,6 +19,7 @@ const Talents = lazy(() => import('./pages/Talents'))
 const JobDetails = lazy(() => import('./pages/JobDetails'))
 const Rejection = lazy(() => import('./pages/Rejection'))
 const TalentProfile = lazy(() => import('./pages/TalentProfile'))
+const FinalAlignmentSession = lazy(() => import('./pages/FinalAlignmentSession'))
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/jobs" element={<DashboardLayout><Jobs /></DashboardLayout>} />
           <Route path="/jobs/:id" element={<DashboardLayout><JobDetails /></DashboardLayout>} />
           <Route path="/jobs/:id/reject/:applicantId" element={<DashboardLayout><Rejection /></DashboardLayout>} />
+          <Route path="/jobs/:id/alignment/:candidateId" element={<DashboardLayout><FinalAlignmentSession /></DashboardLayout>} />
           <Route path="/talents" element={<DashboardLayout><Talents /></DashboardLayout>} />
           <Route path="/talents/:id" element={<DashboardLayout><TalentProfile /></DashboardLayout>} />
           <Route path="/payments" element={<DashboardLayout><div className="text-center py-20 text-gray-500 text-lg font-bold">Payments Page (Coming Soon)</div></DashboardLayout>} />

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   MenuIcon,
 } from '../components/common/Icons';
+import { useAuth } from '../context/AuthContext';
 
 import { 
   EMPLOYER_NAV_ITEMS,
@@ -18,10 +19,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const userStr = localStorage.getItem('vora_user');
-  const user = userStr ? JSON.parse(userStr) : { firstName: 'Tobi', lastName: '', role: 'talent' };
+  const { user } = useAuth();
   
-  const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
+  if (!user) return null; // Or a loading state
+
+  const fullName = user.title 
+    ? `${user.title} ${user.firstName} ${user.lastName}`.trim()
+    : (user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName);
   const roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
 
   const getNavItems = () => {

@@ -1,10 +1,11 @@
 import { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import MultiSelect from '../../components/common/MultiSelect';
 import { capitalizeFirstLetter } from '../../utils/stringUtils';
-import { validatePassword, validatePortfolioUrl } from '../../utils/validation';
+import { validatePortfolioUrl } from '../../utils/validation';
 import {
   TITLE_OPTIONS,
   PRIMARY_EXPERTISE_OPTIONS,
@@ -27,17 +28,15 @@ const TOTAL_STEPS = 5;
 
 const MentorProfile: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [step, setStep] = useState(1);
 
   // Step 1: Personal Information
   const [personalInfo, setPersonalInfo] = useState({
     title: '',
-    lastName: '',
-    firstName: '',
-    email: '',
     professionalTitle: '',
-    password: '',
-    confirmPassword: '',
+    firstName: '',
+    lastName: '',
   });
 
   // Step 2: Expertise and Focus Area
@@ -81,7 +80,7 @@ const MentorProfile: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     let { name, value } = e.target;
-    if (name === 'organization') {
+    if (name === 'organization' || name === 'firstName' || name === 'lastName') {
       value = capitalizeFirstLetter(value);
     }
     if (step === 1) {
@@ -147,17 +146,7 @@ const MentorProfile: React.FC = () => {
     setCertificates(prev => prev.filter(c => c.id !== id));
   };
 
-  const passwordError = useMemo(() => {
-    if (!touched.password) return '';
-    return validatePassword(personalInfo.password);
-  }, [personalInfo.password, touched.password]);
 
-  const confirmPasswordError = useMemo(() => {
-    if (!touched.confirmPassword) return '';
-    if (!personalInfo.confirmPassword) return 'Please confirm your password';
-    if (personalInfo.password !== personalInfo.confirmPassword) return 'Passwords do not match';
-    return '';
-  }, [personalInfo.password, personalInfo.confirmPassword, touched.confirmPassword]);
 
   const portfolioError = useMemo(() => {
     if (!touched.websitePortfolio) return '';
@@ -167,14 +156,8 @@ const MentorProfile: React.FC = () => {
   const isStep1Valid = useMemo(() => {
     return (
       personalInfo.title &&
-      personalInfo.lastName &&
       personalInfo.firstName &&
-      personalInfo.email &&
-      personalInfo.professionalTitle &&
-      personalInfo.password &&
-      personalInfo.confirmPassword &&
-      !validatePassword(personalInfo.password) &&
-      personalInfo.password === personalInfo.confirmPassword
+      personalInfo.lastName
     );
   }, [personalInfo]);
 
@@ -231,13 +214,12 @@ const MentorProfile: React.FC = () => {
     } else if (step === 4 && isStep4Valid) {
       setStep(5);
     } else if (step === 5 && courseInterest) {
-      const userData = {
+      login({
+        title: personalInfo.title,
         firstName: personalInfo.firstName,
         lastName: personalInfo.lastName,
         role: 'mentor'
-      };
-      localStorage.setItem('vora_user', JSON.stringify(userData));
-      localStorage.setItem('vora_role', 'mentor');
+      });
       navigate('/onboard/welcome', { state: { firstName: `${personalInfo.firstName} ${personalInfo.lastName}`, role: 'mentor' } });
     }
   };
@@ -289,14 +271,12 @@ const MentorProfile: React.FC = () => {
                 helperText={touched.title && !personalInfo.title ? 'Title is required' : ''}
               />
               <Input
-                label="Last name"
-                name="lastName"
-                value={personalInfo.lastName}
+                label="Professional title/Role (optional)"
+                name="professionalTitle"
+                value={personalInfo.professionalTitle}
                 onChange={handleChange}
-                onBlur={() => handleBlur('lastName')}
-                placeholder="Last name"
-                error={touched.lastName && !personalInfo.lastName}
-                helperText={touched.lastName && !personalInfo.lastName ? 'Last name is required' : ''}
+                onBlur={() => handleBlur('professionalTitle')}
+                placeholder="Professional title/Role"
               />
             </div>
 
@@ -312,59 +292,16 @@ const MentorProfile: React.FC = () => {
                 helperText={touched.firstName && !personalInfo.firstName ? 'First name is required' : ''}
               />
               <Input
-                label="Email address"
-                name="email"
-                type="email"
-                value={personalInfo.email}
+                label="Last name"
+                name="lastName"
+                value={personalInfo.lastName}
                 onChange={handleChange}
-                onBlur={() => handleBlur('email')}
-                placeholder="test@vora.com"
-                error={touched.email && !personalInfo.email}
-                helperText={touched.email && !personalInfo.email ? 'Email is required' : ''}
+                onBlur={() => handleBlur('lastName')}
+                placeholder="Last name"
+                error={touched.lastName && !personalInfo.lastName}
+                helperText={touched.lastName && !personalInfo.lastName ? 'Last name is required' : ''}
               />
             </div>
-
-            <Input
-              label="Professional title/Role"
-              name="professionalTitle"
-              value={personalInfo.professionalTitle}
-              onChange={handleChange}
-              onBlur={() => handleBlur('professionalTitle')}
-              placeholder="Professional title/Role"
-              error={touched.professionalTitle && !personalInfo.professionalTitle}
-              helperText={touched.professionalTitle && !personalInfo.professionalTitle ? 'Professional title is required' : ''}
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="space-y-1.5">
-                <Input
-                  label="Password"
-                  name="password"
-                  type="password"
-                  value={personalInfo.password}
-                  onChange={handleChange}
-                  onBlur={() => handleBlur('password')}
-                  placeholder="Password"
-                  showPasswordToggle
-                  error={!!passwordError}
-                />
-              </div>
-              <Input
-                label="Confirm password"
-                name="confirmPassword"
-                type="password"
-                value={personalInfo.confirmPassword}
-                onChange={handleChange}
-                onBlur={() => handleBlur('confirmPassword')}
-                placeholder="Confirm password"
-                showPasswordToggle
-                error={!!confirmPasswordError}
-                helperText={confirmPasswordError}
-              />
-            </div>
-            <p className={`text-[11px] sm:text-xs leading-normal -mt-2 ${personalInfo.password && validatePassword(personalInfo.password) ? 'text-red-500 font-medium' : 'text-[#6B7280]'}`}>
-              Password must contain at least one uppercase, lowercase, number and special character
-            </p>
 
             <div className="flex gap-4 pt-4">
               <button

@@ -107,7 +107,7 @@ const JobDetails: React.FC = () => {
             setIsApplicantModalOpen(true);
           }}
           onAlign={(a) => {
-            console.log('Aligning session for:', a.code);
+            navigate(`/jobs/${id}/alignment/${a.code}`);
           }}
           onReject={(a) => {
             navigate(`/jobs/${id}/reject/${a.code}`);
@@ -116,11 +116,9 @@ const JobDetails: React.FC = () => {
       ) : activeTab === 'Hired' ? (
         <HiredTabView />
       ) : (
-        /* Details Tab Content - High Fidelity 2-Column Layout */
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr,1fr] gap-6 items-start">
-          {/* Left Column */}
-          <div className="space-y-6">
-            {/* Role Details Card */}
+        <div className="columns-1 md:columns-2 gap-6 space-y-6 items-start">
+          {/* Role Details Card */}
+          <div className="break-inside-avoid">
             <DetailCard 
               title="Role details" 
               onEdit={() => setIsEditModalOpen(true)}
@@ -145,8 +143,10 @@ const JobDetails: React.FC = () => {
                 </div>
               </div>
             </DetailCard>
+          </div>
 
-            {/* Responsibilities & Skills Card */}
+          {/* Responsibilities & Skills Card */}
+          <div className="break-inside-avoid">
             <DetailCard title="Responsibilities & skills">
               <div className="space-y-6">
                 <InfoField 
@@ -179,9 +179,8 @@ const JobDetails: React.FC = () => {
             </DetailCard>
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-6">
-            {/* Experience & Background Card */}
+          {/* Experience & Background Card */}
+          <div className="break-inside-avoid">
             <DetailCard title="Experience & background">
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <InfoField label="Academy level" value={data.experience.academyLevel} />
@@ -191,8 +190,10 @@ const JobDetails: React.FC = () => {
                 </div>
               </div>
             </DetailCard>
+          </div>
 
-            {/* Compensation & Documentation Card */}
+          {/* Compensation & Documentation Card */}
+          <div className="break-inside-avoid">
             <DetailCard title="Compensation & documentation">
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6">
@@ -217,8 +218,10 @@ const JobDetails: React.FC = () => {
                 </div>
               </div>
             </DetailCard>
+          </div>
 
-            {/* Team Collaboration Card */}
+          {/* Team Collaboration Card */}
+          <div className="break-inside-avoid">
             <DetailCard title="Team collaboration & communication">
               <div className="space-y-6">
                 <div className="space-y-3">

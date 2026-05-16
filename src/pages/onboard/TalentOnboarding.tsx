@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import MultiSelect from '../../components/common/MultiSelect';
 import SearchableSelect from '../../components/common/SearchableSelect';
 import NationalityTagger from '../../components/common/NationalityTagger';
+import { capitalizeFirstLetter } from '../../utils/stringUtils';
 import { 
   ChevronLeftIcon, 
   ShieldIcon, 
@@ -23,7 +25,7 @@ import {
   RTW_GROUPS,
   RELOCATION_OPTIONS,
   WORK_ARRANGEMENT_OPTIONS,
-  STUDY_HOURS,
+  STUDY_HOURS
 } from '../../data/talentOnboardingData';
 
 // RTW category helpers
@@ -33,6 +35,7 @@ const RTW_PR = ['ilr_uk', 'green_card', 'pr_canada', 'pr_aus_nz', 'pr_eu', 'pr_o
 
 const TalentOnboarding: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -79,7 +82,10 @@ const TalentOnboarding: React.FC = () => {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name === 'firstName' || name === 'lastName') {
+      value = capitalizeFirstLetter(value);
+    }
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -135,13 +141,11 @@ const TalentOnboarding: React.FC = () => {
         setStep(2);
         window.scrollTo(0, 0);
       } else if (step === 2 && isStep2Valid) {
-        const userData = {
+        login({
           firstName: formData.firstName,
           lastName: formData.lastName,
           role: 'talent'
-        };
-        localStorage.setItem('vora_user', JSON.stringify(userData));
-        localStorage.setItem('vora_role', 'talent');
+        });
         navigate('/onboard/welcome', { state: { firstName: formData.firstName, role: 'talent' } });
       }
     }, 1200);
@@ -225,7 +229,7 @@ const TalentOnboarding: React.FC = () => {
               label="Professional title"
               name="professionalTitle"
               value={professionalTitle}
-              onChange={(e) => setProfessionalTitle(e.target.value)}
+              onChange={(e) => setProfessionalTitle(capitalizeFirstLetter(e.target.value))}
               onBlur={() => handleBlur('professionalTitle')}
               placeholder="e.g Product designer, Registered nurse, Radiologist"
               error={touched.professionalTitle && !professionalTitle}

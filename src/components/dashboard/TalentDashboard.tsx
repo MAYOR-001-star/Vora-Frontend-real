@@ -5,10 +5,11 @@ import QuickActionCard from './QuickActionCard';
 import JobCard from './JobCard';
 import { InfoIcon, CloseIcon } from '../common/Icons';
 import { TALENT_SAMPLE_JOBS } from '../../constants/mockData';
+import { useAuth } from '../../context/AuthContext';
 
 const TalentDashboard: React.FC = () => {
-  const userStr = localStorage.getItem('vora_user');
-  const user = userStr ? JSON.parse(userStr) : { firstName: 'Tobi' };
+  const { user } = useAuth();
+  if (!user) return null;
   const firstName = user.firstName || 'Tobi';
 
   return (
@@ -66,25 +67,31 @@ const TalentDashboard: React.FC = () => {
       {/* Quick Actions Section */}
       <section>
         <h2 className="text-lg font-bold text-gray-900 mb-6 font-['Nunito_Sans']">Quick actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <QuickActionCard 
-            variant="primary"
-            title="Upload CV & Build Profile"
-            description="Get your personalized Career Readiness Score and unlock platform features."
-            buttonText="Upload CV/resume"
-          />
-          <QuickActionCard 
-            isLocked
-            title="Access to Mentors"
-            description="Gain access to mentors and get insights into your field"
-            buttonText="Explore mentors"
-          />
-          <QuickActionCard 
-            isLocked
-            title="Access Jobs"
-            description="Provide your CV/resume and get your career readiness score"
-            buttonText="View available jobs"
-          />
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+          <div className="break-inside-avoid">
+            <QuickActionCard 
+              variant="primary"
+              title="Upload CV & Build Profile"
+              description="Get your personalized Career Readiness Score and unlock platform features."
+              buttonText="Upload CV/resume"
+            />
+          </div>
+          <div className="break-inside-avoid">
+            <QuickActionCard 
+              isLocked
+              title="Access to Mentors"
+              description="Gain access to mentors and get insights into your field"
+              buttonText="Explore mentors"
+            />
+          </div>
+          <div className="break-inside-avoid">
+            <QuickActionCard 
+              isLocked
+              title="Access Jobs"
+              description="Provide your CV/resume and get your career readiness score"
+              buttonText="View available jobs"
+            />
+          </div>
         </div>
       </section>
 
@@ -96,9 +103,11 @@ const TalentDashboard: React.FC = () => {
             <p className="text-sm text-gray-500 font-medium">Upload your CV to get jobs tailored specifically for you.</p>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="columns-1 md:columns-2 xl:columns-3 gap-6 space-y-6">
           {TALENT_SAMPLE_JOBS.map((job, idx) => (
-            <JobCard key={idx} {...job} />
+            <div key={idx} className="break-inside-avoid">
+              <JobCard {...job} />
+            </div>
           ))}
         </div>
       </section>
