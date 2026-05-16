@@ -1,5 +1,6 @@
 import React from 'react';
-import { CloseIcon, ChevronDownIcon } from '../common/Icons';
+import { CloseIcon } from '../common/Icons';
+import Select from '../common/Select';
 
 interface EditRoleModalProps {
   isOpen: boolean;
@@ -8,7 +9,43 @@ interface EditRoleModalProps {
 }
 
 const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, initialData }) => {
+  const [roleType, setRoleType] = React.useState(initialData?.type || '');
+  const [level, setLevel] = React.useState(initialData?.level || '');
+  const [timeZone, setTimeZone] = React.useState(initialData?.timeZone || '');
+  const [workFormat, setWorkFormat] = React.useState(initialData?.workFormat || '');
+  const [location, setLocation] = React.useState(initialData?.location || '');
+
   if (!isOpen) return null;
+
+  const roleTypeOptions = [
+    { label: 'Internship', value: 'internship' },
+    { label: 'Full-time', value: 'full-time' },
+    { label: 'Part-time', value: 'part-time' },
+  ];
+
+  const levelOptions = [
+    { label: 'Entry Level', value: 'entry' },
+    { label: 'Mid Level', value: 'mid' },
+    { label: 'Senior Level', value: 'senior' },
+  ];
+
+  const timeZoneOptions = [
+    { label: 'GMT + 1', value: 'gmt+1' },
+    { label: 'GMT + 0', value: 'gmt+0' },
+    { label: 'EST', value: 'est' },
+  ];
+
+  const workFormatOptions = [
+    { label: 'Onsite', value: 'onsite' },
+    { label: 'Remote', value: 'remote' },
+    { label: 'Hybrid', value: 'hybrid' },
+  ];
+
+  const locationOptions = [
+    { label: 'Lagos, Nigeria', value: 'lagos' },
+    { label: 'London, UK', value: 'london' },
+    { label: 'New York, USA', value: 'new-york' },
+  ];
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -46,32 +83,24 @@ const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, initialD
             </div>
 
             {/* Role Type */}
-            <div className="space-y-2">
-              <label className="text-[13px] font-bold text-gray-900">Role type</label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0047CC]/5 focus:border-[#0047CC]/20 transition-all text-[14px] font-medium appearance-none bg-white cursor-pointer text-gray-700">
-                  <option value="">Select options</option>
-                  <option value="internship">Internship</option>
-                  <option value="full-time">Full-time</option>
-                  <option value="part-time">Part-time</option>
-                </select>
-                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-            </div>
+            <Select 
+              label="Role type"
+              name="roleType"
+              value={roleType}
+              onChange={(e) => setRoleType(e.target.value)}
+              options={roleTypeOptions}
+              placeholder="Select options"
+            />
 
             {/* Employment Level */}
-            <div className="space-y-2">
-              <label className="text-[13px] font-bold text-gray-900">Employment level</label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0047CC]/5 focus:border-[#0047CC]/20 transition-all text-[14px] font-medium appearance-none bg-white cursor-pointer text-gray-700">
-                  <option value="">Select option</option>
-                  <option value="entry">Entry Level</option>
-                  <option value="mid">Mid Level</option>
-                  <option value="senior">Senior Level</option>
-                </select>
-                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-            </div>
+            <Select 
+              label="Employment level"
+              name="level"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              options={levelOptions}
+              placeholder="Select option"
+            />
 
             {/* Available Positions */}
             <div className="space-y-2">
@@ -94,46 +123,34 @@ const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, initialD
             </div>
 
             {/* Time zone preference */}
-            <div className="space-y-2">
-              <label className="text-[13px] font-bold text-gray-900">Time zone preference</label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0047CC]/5 focus:border-[#0047CC]/20 transition-all text-[14px] font-medium appearance-none bg-white cursor-pointer text-gray-700">
-                  <option value="">Select option</option>
-                  <option value="gmt+1">GMT + 1</option>
-                  <option value="gmt+0">GMT + 0</option>
-                  <option value="est">EST</option>
-                </select>
-                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-            </div>
+            <Select 
+              label="Time zone preference"
+              name="timeZone"
+              value={timeZone}
+              onChange={(e) => setTimeZone(e.target.value)}
+              options={timeZoneOptions}
+              placeholder="Select option"
+            />
 
             {/* Work format */}
-            <div className="space-y-2">
-              <label className="text-[13px] font-bold text-gray-900">Work format</label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0047CC]/5 focus:border-[#0047CC]/20 transition-all text-[14px] font-medium appearance-none bg-white cursor-pointer text-gray-700">
-                  <option value="">Select option</option>
-                  <option value="onsite">Onsite</option>
-                  <option value="remote">Remote</option>
-                  <option value="hybrid">Hybrid</option>
-                </select>
-                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-            </div>
+            <Select 
+              label="Work format"
+              name="workFormat"
+              value={workFormat}
+              onChange={(e) => setWorkFormat(e.target.value)}
+              options={workFormatOptions}
+              placeholder="Select option"
+            />
 
             {/* Work location */}
-            <div className="space-y-2">
-              <label className="text-[13px] font-bold text-gray-900">Work location</label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0047CC]/5 focus:border-[#0047CC]/20 transition-all text-[14px] font-medium appearance-none bg-white cursor-pointer text-gray-700">
-                  <option value="">Search location</option>
-                  <option value="lagos">Lagos, Nigeria</option>
-                  <option value="london">London, UK</option>
-                  <option value="new-york">New York, USA</option>
-                </select>
-                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-            </div>
+            <Select 
+              label="Work location"
+              name="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              options={locationOptions}
+              placeholder="Search location"
+            />
 
             {/* Start date */}
             <div className="space-y-2">

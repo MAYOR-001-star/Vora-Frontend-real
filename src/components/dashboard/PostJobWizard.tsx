@@ -8,6 +8,7 @@ import {
   BriefcaseIcon,
   TrendingUpIcon
 } from '../common/Icons';
+import Select from '../common/Select';
 
 interface PostJobWizardProps {
   isOpen: boolean;
@@ -176,32 +177,30 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose }) => {
                       onChange={(e) => setFormData({...formData, roleTitle: e.target.value})}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[13px] font-black text-gray-900">Role Type</label>
-                    <select 
-                      className="w-full px-5 py-4 bg-white border border-gray-100 rounded-xl focus:border-[#0047CC] transition-all outline-none text-[14px] font-bold shadow-sm appearance-none"
-                      value={formData.roleType}
-                      onChange={(e) => setFormData({...formData, roleType: e.target.value})}
-                    >
-                      <option>Internship</option>
-                      <option>Full-time</option>
-                      <option>Contract</option>
-                      <option>Voluntary</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[13px] font-black text-gray-900">Employment Level</label>
-                    <select 
-                      className="w-full px-5 py-4 bg-white border border-gray-100 rounded-xl focus:border-[#0047CC] outline-none text-[14px] font-bold shadow-sm"
-                      value={formData.level}
-                      onChange={(e) => setFormData({...formData, level: e.target.value})}
-                    >
-                      <option>Entry Level</option>
-                      <option>Mid Level</option>
-                      <option>Senior Level</option>
-                      <option>Executive</option>
-                    </select>
-                  </div>
+                  <Select 
+                    label="Role Type"
+                    name="roleType"
+                    value={formData.roleType}
+                    onChange={(e) => setFormData({...formData, roleType: e.target.value})}
+                    options={[
+                      { label: 'Internship', value: 'Internship' },
+                      { label: 'Full-time', value: 'Full-time' },
+                      { label: 'Contract', value: 'Contract' },
+                      { label: 'Voluntary', value: 'Voluntary' },
+                    ]}
+                  />
+                  <Select 
+                    label="Employment Level"
+                    name="level"
+                    value={formData.level}
+                    onChange={(e) => setFormData({...formData, level: e.target.value})}
+                    options={[
+                      { label: 'Entry Level', value: 'Entry Level' },
+                      { label: 'Mid Level', value: 'Mid Level' },
+                      { label: 'Senior Level', value: 'Senior Level' },
+                      { label: 'Executive', value: 'Executive' },
+                    ]}
+                  />
                   <div className="space-y-2">
                     <label className="text-[13px] font-black text-gray-900">Number of Positions</label>
                     <input 
