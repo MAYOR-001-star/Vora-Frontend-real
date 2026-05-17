@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
@@ -24,14 +24,123 @@ import {
   HIRING_PRIORITY_OPTIONS
 } from '../../data/employerOnboardingData';
 import Button from '../../components/common/Button';
+import { useQueryClient } from '@tanstack/react-query';
 import { CloseIcon, ArrowUpIcon, ArrowDownIcon, TrashIcon } from '../../components/common/Icons';
+import {
+  useEmployerOnboardingStep1Mutation,
+  useEmployerOnboardingStep2Mutation,
+  useEmployerOnboardingStep3Mutation,
+  useEmployerOnboardingStep4Mutation,
+  useEmployerOnboardingStep5Mutation,
+  useEmployerOnboardingStateQuery
+} from '../../services/queries/onboarding';
 
 const TOTAL_STEPS = 5;
 
 const EmployerOnboarding: React.FC = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
-  const [step, setStep] = useState(1);
+  
+  const stepParam = Number(searchParams.get('step'));
+  const initialStep = stepParam || location.state?.onboardingStep || 1;
+  const [step, setStep] = useState(initialStep);
+
+  const step1Mutation = useEmployerOnboardingStep1Mutation();
+  const step2Mutation = useEmployerOnboardingStep2Mutation();
+  const step3Mutation = useEmployerOnboardingStep3Mutation();
+  const step4Mutation = useEmployerOnboardingStep4Mutation();
+  const step5Mutation = useEmployerOnboardingStep5Mutation();
+  const { data: onboardingState } = useEmployerOnboardingStateQuery();
+
+  useEffect(() => {
+    if (onboardingState?.data) {
+      const savedFields = onboardingState.data.fields || {};
+      
+      if (onboardingState.data.onboardingCompleted) {
+        login({
+          firstName: savedFields.organisationName || 'Employer',
+          lastName: '',
+          role: 'employer'
+        });
+        navigate('/dashboard');
+        return;
+      }
+
+      // Step 1 restoration
+      if (
+        savedFields.organisationName ||
+        savedFields.country ||
+        savedFields.organisationType ||
+        savedFields.fundingModel ||
+        savedFields.institutionalMandates ||
+        savedFields.linkedinCompanyUrl ||
+        savedFields.websiteUrl
+      ) {
+        setOrgInfo({
+          organizationName: savedFields.organisationName || '',
+          organizationType: savedFields.organisationType || '',
+          primaryCountry: savedFields.country || '',
+          institutionalMandate: savedFields.institutionalMandates || [],
+          fundingModel: savedFields.fundingModel || '',
+          linkedinCompanyUrl: savedFields.linkedinCompanyUrl || '',
+          websiteUrl: savedFields.websiteUrl || '',
+        });
+      }
+
+      // Step 2 restoration
+      if (savedFields.primaryWorkTypes || savedFields.workforceModels) {
+        setWorkforceInfo({
+          workTypes: savedFields.primaryWorkTypes || [],
+          roleSettings: savedFields.workforceModels || [],
+        });
+      }
+
+      // Step 3 restoration
+      if (
+        savedFields.localProfessionalLicensing ||
+        savedFields.internationallyLicensedProfessionals ||
+        savedFields.remoteInternationalEligibleRoles ||
+        savedFields.relocationWorkPermitsSponsorship
+      ) {
+        setRegulatoryInfo({
+          localLicensing: savedFields.localProfessionalLicensing || '',
+          internationalLicensing: savedFields.internationallyLicensedProfessionals || '',
+          remoteEligibility: savedFields.remoteInternationalEligibleRoles || '',
+          sponsorship: savedFields.relocationWorkPermitsSponsorship || '',
+        });
+      }
+
+      // Step 4 restoration
+      if (savedFields.hiringPriorityRanking || savedFields.experienceDocumentationTypes) {
+        if (savedFields.hiringPriorityRanking) {
+          setHiringPriority(savedFields.hiringPriorityRanking);
+        }
+        if (savedFields.experienceDocumentationTypes) {
+          setExperienceDocs(savedFields.experienceDocumentationTypes);
+        }
+      }
+
+      // Step 5 restoration
+      if (
+        savedFields.preferredTalentVisibility ||
+        savedFields.structuredTrainingOrCpd ||
+        savedFields.postPlacementFeedback
+      ) {
+        setMatchInfo({
+          candidateVisibility: savedFields.preferredTalentVisibility || '',
+          structuredTraining: savedFields.structuredTrainingOrCpd || '',
+          placementFeedback: savedFields.postPlacementFeedback || '',
+        });
+      }
+
+      if (onboardingState.data.onboardingStep && !stepParam) {
+        setStep(onboardingState.data.onboardingStep);
+      }
+    }
+  }, [onboardingState, stepParam, navigate, login]);
 
   // Step 1: Organization Info
   const [orgInfo, setOrgInfo] = useState({
@@ -40,7 +149,11 @@ const EmployerOnboarding: React.FC = () => {
     primaryCountry: '',
     institutionalMandate: [] as string[],
     fundingModel: '',
+    linkedinCompanyUrl: '',
+    websiteUrl: '',
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   // Step 2: Workforce Architecture
   const [workforceInfo, setWorkforceInfo] = useState({
@@ -98,7 +211,8 @@ const EmployerOnboarding: React.FC = () => {
       orgInfo.organizationType &&
       orgInfo.primaryCountry &&
       orgInfo.institutionalMandate.length > 0 &&
-      orgInfo.fundingModel
+      orgInfo.fundingModel &&
+      orgInfo.linkedinCompanyUrl
     );
   }, [orgInfo]);
 
@@ -131,23 +245,68 @@ const EmployerOnboarding: React.FC = () => {
   }, [matchInfo]);
 
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === 1 && isStep1Valid) {
-      setStep(2);
-    } else if (step === 2 && isStep2Valid) {
-      setStep(3);
-    } else if (step === 3 && isStep3Valid) {
-      setStep(4);
-    } else if (step === 4 && isStep4Valid) {
-      setStep(5);
-    } else if (step === 5 && isStep5Valid) {
-      login({
-        firstName: orgInfo.organizationName,
-        lastName: '',
-        role: 'employer'
-      });
-      navigate('/onboarding/welcome', { state: { firstName: orgInfo.organizationName, role: 'employer' } });
+    setIsLoading(true);
+    try {
+      if (step === 1 && isStep1Valid) {
+        await step1Mutation.mutateAsync({
+          organisationName: orgInfo.organizationName,
+          country: orgInfo.primaryCountry,
+          organisationType: orgInfo.organizationType,
+          institutionalMandates: orgInfo.institutionalMandate,
+          fundingModel: orgInfo.fundingModel,
+          linkedinCompanyUrl: orgInfo.linkedinCompanyUrl || undefined,
+          websiteUrl: orgInfo.websiteUrl || undefined,
+        });
+        await queryClient.invalidateQueries({ queryKey: ['employer-onboarding', 'state'] });
+        setStep(2);
+        window.scrollTo(0, 0);
+      } else if (step === 2 && isStep2Valid) {
+        await step2Mutation.mutateAsync({
+          primaryWorkTypes: workforceInfo.workTypes,
+          workforceModels: workforceInfo.roleSettings,
+        });
+        await queryClient.invalidateQueries({ queryKey: ['employer-onboarding', 'state'] });
+        setStep(3);
+        window.scrollTo(0, 0);
+      } else if (step === 3 && isStep3Valid) {
+        await step3Mutation.mutateAsync({
+          localProfessionalLicensing: regulatoryInfo.localLicensing,
+          internationallyLicensedProfessionals: regulatoryInfo.internationalLicensing,
+          remoteInternationalEligibleRoles: regulatoryInfo.remoteEligibility,
+          relocationWorkPermitsSponsorship: regulatoryInfo.sponsorship,
+        });
+        await queryClient.invalidateQueries({ queryKey: ['employer-onboarding', 'state'] });
+        setStep(4);
+        window.scrollTo(0, 0);
+      } else if (step === 4 && isStep4Valid) {
+        await step4Mutation.mutateAsync({
+          hiringPriorityRanking: hiringPriority,
+          experienceDocumentationTypes: experienceDocs,
+        });
+        await queryClient.invalidateQueries({ queryKey: ['employer-onboarding', 'state'] });
+        setStep(5);
+        window.scrollTo(0, 0);
+      } else if (step === 5 && isStep5Valid) {
+        await step5Mutation.mutateAsync({
+          preferredTalentVisibility: matchInfo.candidateVisibility,
+          structuredTrainingOrCpd: matchInfo.structuredTraining,
+          postPlacementFeedback: matchInfo.placementFeedback,
+        });
+        await queryClient.invalidateQueries({ queryKey: ['employer-onboarding', 'state'] });
+
+        login({
+          firstName: orgInfo.organizationName,
+          lastName: '',
+          role: 'employer'
+        });
+        navigate('/onboarding/welcome', { state: { firstName: orgInfo.organizationName, role: 'employer' } });
+      }
+    } catch (err) {
+      // Catch error
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -182,7 +341,7 @@ const EmployerOnboarding: React.FC = () => {
     if (step === 1) {
       navigate(-1);
     } else {
-      setStep(prev => prev - 1);
+      setStep((prev: number) => prev - 1);
     }
   };
 
@@ -264,17 +423,44 @@ const EmployerOnboarding: React.FC = () => {
               helperText={touched.fundingModel && !orgInfo.fundingModel ? 'Funding model is required' : ''}
             />
 
+            <Input
+              label="Company LinkedIn URL"
+              name="linkedinCompanyUrl"
+              value={orgInfo.linkedinCompanyUrl}
+              onChange={handleChange}
+              onBlur={() => handleBlur('linkedinCompanyUrl')}
+              placeholder="https://linkedin.com/company/your-company"
+              error={touched.linkedinCompanyUrl && !orgInfo.linkedinCompanyUrl}
+              helperText={touched.linkedinCompanyUrl && !orgInfo.linkedinCompanyUrl ? 'Company LinkedIn URL is required' : ''}
+            />
+
+            <Input
+              label={
+                <span>
+                  Website URL <span className="text-gray-400 italic font-normal text-xs ml-1">optional</span>
+                </span>
+              }
+              name="websiteUrl"
+              value={orgInfo.websiteUrl}
+              onChange={handleChange}
+              placeholder="https://your-company.com"
+            />
+
+
+
             <div className="flex gap-4 pt-4">
               <Button
                 variant="outline"
                 onClick={handleBack}
                 className="min-h-[48px]"
+                disabled={isLoading}
               >
                 Back
               </Button>
               <Button
                 type="submit"
                 disabled={!isStep1Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -319,12 +505,14 @@ const EmployerOnboarding: React.FC = () => {
                 variant="outline"
                 onClick={handleBack}
                 className="min-h-[48px]"
+                disabled={isLoading}
               >
                 Back
               </Button>
               <Button
                 type="submit"
                 disabled={!isStep2Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -395,12 +583,14 @@ const EmployerOnboarding: React.FC = () => {
                 variant="outline"
                 onClick={handleBack}
                 className="min-h-[48px]"
+                disabled={isLoading}
               >
                 Back
               </Button>
               <Button
                 type="submit"
                 disabled={!isStep3Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -546,12 +736,14 @@ const EmployerOnboarding: React.FC = () => {
                 variant="outline"
                 onClick={handleBack}
                 className="min-h-[48px]"
+                disabled={isLoading}
               >
                 Back
               </Button>
               <Button
                 type="submit"
                 disabled={!isStep4Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -610,12 +802,14 @@ const EmployerOnboarding: React.FC = () => {
                 variant="outline"
                 onClick={handleBack}
                 className="min-h-[48px]"
+                disabled={isLoading}
               >
                 Back
               </Button>
               <Button
                 type="submit"
                 disabled={!isStep5Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed

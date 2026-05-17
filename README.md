@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# 🌟 VORA Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+VORA is a modern, high-fidelity talent matching and employer alignment platform built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. It provides seamless, beautiful, and secure workflows for three primary user roles: **Talent**, **Mentors**, and **Employers**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Features
 
-## React Compiler
+### 🏢 Employer Hub & Premium Post Job Flow
+*   **Unified Post Job Entry**: Seamless modal-to-wizard transition. Clicking "Post a job" triggers a selection modal (`PostJobModal`) allowing employers to choose hiring modes and upload job descriptions before entering the full-screen flow.
+*   **Premium Post Job Wizard (`PostJobWizard`)**: A state-of-the-art multi-step form built with a highly responsive sidebar navigation, regional timezone shortcuts, and geopolitical policy configurations.
+*   **Escrow & Vault Integration (Scheduled Hiring)**: Custom-designed Vault lifecycle panel that expands dynamically, featuring:
+    *   Dynamic **Role specification version allowance meter** that tracks remaining allowed edits.
+    *   Escrow lock fee warnings.
+    *   Start/end date schedulers.
+    *   Beautiful visual stepper of the Vault lifecycle.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 👤 Talent Hub & Modernized Onboarding
+*   **Robust Multi-Step Onboarding**: Smoothly guides professionals through identity verification, interest mapping, and professional backgrounds.
+*   **Bidirectional ISO-2 Translation**: Seamlessly translates user-friendly dropdown options (like `Nigeria`, `United Kingdom`) into standard 2-letter ISO codes (`NG`, `GB`) to conform with strict backend API schemas, while performing reverse-mapping to keep components fully populated and reactive upon page reloads.
 
-## Expanding the ESLint configuration
+### 🔒 Core Services & Security
+*   **VORA Query Client**: Unified query services structured in `@tanstack/react-query` under `src/services/queries/`.
+*   **Secure Authentication Flow**: Integrated OTP verification and OAuth authentication.
+*   **Resend Verification Code**: Updated standard registration flows to point to the correct backend `/api/v1/auth/resend-verification` endpoint.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+*   **Framework**: React 18+ (Vite)
+*   **Language**: TypeScript (strict type checks)
+*   **Styles**: Tailwind CSS + custom premium animations
+*   **State Management**: React Context (`AuthContext`)
+*   **Server State**: `@tanstack/react-query` (v5)
+*   **Icons**: Custom Lucide wrapper icons
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 📦 Project Directory Layout
+
+```
+src/
+├── components/          # Reusable shared components
+│   ├── common/          # Buttons, Inputs, Icons, Tags
+│   └── employer/        # PostJobWizard, PostJobModal, ApplicantsTabView
+├── context/             # Authentication & global context providers
+├── data/                # Static lists, onboarding options, mapping data
+├── layout/              # Multi-tier route wrapper templates
+├── pages/               # Page routes grouped by role
+│   ├── auth/            # Login, Signup, OTP Verification
+│   ├── employer/        # Jobs management, Employer Onboarding
+│   ├── mentor/          # Mentor Onboarding, Mentor Dashboard
+│   └── talent/          # Talent Onboarding, Profile Setup
+├── services/            # API client and TanStack mutations/queries
+└── types/               # Strictly declared TypeScript interfaces
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚡ Development & Build
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Install dependencies:
+```bash
+pnpm install
+# or
+npm install
+```
+
+### Start Vite development server:
+```bash
+npm run dev
+```
+
+### Typecheck code for errors:
+```bash
+npx tsc --noEmit
+```
+
+### Build production bundle:
+```bash
+npm run build
 ```

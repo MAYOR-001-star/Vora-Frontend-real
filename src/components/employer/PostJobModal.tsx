@@ -8,9 +8,14 @@ import {
 interface PostJobModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onContinue?: (config: {
+    isScheduled: boolean;
+    goLiveDate: string;
+    isPrefilled: boolean;
+  }) => void;
 }
 
-const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
+const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue }) => {
   const [hiringMode, setHiringMode] = useState<'live' | 'vault' | null>(null);
   const [goLiveDate, setGoLiveDate] = useState('');
   const [entryMethod, setEntryMethod] = useState<'upload' | 'manual' | null>(null);
@@ -220,8 +225,15 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
             <button 
               disabled={!isReady()}
               onClick={() => {
-                // Navigate to full wizard or process
-                resetModal();
+                if (onContinue) {
+                  onContinue({
+                    isScheduled: hiringMode === 'vault',
+                    goLiveDate: hiringMode === 'vault' ? goLiveDate : '',
+                    isPrefilled: entryMethod === 'upload',
+                  });
+                } else {
+                  resetModal();
+                }
               }}
               className={`w-full py-4 rounded-full text-[15px] font-medium transition-all shadow-xl ${
                 isReady() ? 'bg-[#0047CC] text-white hover:bg-[#003d99] shadow-blue-500/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed shadow-none'

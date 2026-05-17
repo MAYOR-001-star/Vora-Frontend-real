@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
@@ -7,6 +7,16 @@ import MultiSelect from '../../components/common/MultiSelect';
 import Button from '../../components/common/Button';
 import { capitalizeFirstLetter } from '../../utils/stringUtils';
 import { validatePortfolioUrl } from '../../utils/validation';
+import {
+  useMentorOnboardingStep1Mutation,
+  useMentorOnboardingStep2Mutation,
+  useMentorOnboardingStep3Mutation,
+  useMentorOnboardingStep4Mutation,
+  useMentorOnboardingStep5Mutation,
+  useMentorOnboardingStateQuery,
+  useCompleteMentorOnboardingMutation,
+  useUploadMentorCertificationMutation,
+} from '../../services/queries/onboarding';
 import {
   TITLE_OPTIONS,
   PRIMARY_EXPERTISE_OPTIONS,
@@ -30,7 +40,21 @@ const TOTAL_STEPS = 5;
 const MentorProfile: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [step, setStep] = useState(1);
+  const [searchParams] = useSearchParams();
+  const stepParam = searchParams.get('step');
+  const initialStep = stepParam ? parseInt(stepParam, 10) : 1;
+
+  const [step, setStep] = useState(initialStep);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const step1Mutation = useMentorOnboardingStep1Mutation();
+  const step2Mutation = useMentorOnboardingStep2Mutation();
+  const step3Mutation = useMentorOnboardingStep3Mutation();
+  const uploadCertMutation = useUploadMentorCertificationMutation();
+  const step4Mutation = useMentorOnboardingStep4Mutation();
+  const step5Mutation = useMentorOnboardingStep5Mutation();
+  const completeOnboardingMutation = useCompleteMentorOnboardingMutation();
+  const { data: onboardingState } = useMentorOnboardingStateQuery();
 
   // Step 1: Personal Information
   const [personalInfo, setPersonalInfo] = useState({
@@ -56,7 +80,12 @@ const MentorProfile: React.FC = () => {
   });
   const [currentCertType, setCurrentCertType] = useState('');
   const [otherCertName, setOtherCertName] = useState('');
-  const [certificates, setCertificates] = useState<{ id: string; type: string; displayLabel: string; files: File[] }[]>([]);
+  const [certificates, setCertificates] = useState<{
+    id: string;
+    type: string;
+    displayLabel: string;
+    files: { name: string; size: number; key?: string; isUploading?: boolean }[];
+  }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Step 4: Availability and Engagement Preferences
@@ -79,6 +108,73 @@ const MentorProfile: React.FC = () => {
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
+  // Sync state with backend on mount / fetch success
+  useEffect(() => {
+    if (onboardingState?.data) {
+      const savedFields = onboardingState.data.fields || {};
+
+      // Step 1
+      if (savedFields.title || savedFields.firstName || savedFields.lastName || savedFields.professionalTitle) {
+        setPersonalInfo({
+          title: savedFields.title || '',
+          firstName: savedFields.firstName || '',
+          lastName: savedFields.lastName || '',
+          professionalTitle: savedFields.professionalTitle || '',
+        });
+      }
+
+      // Step 2
+      if (savedFields.primaryExpertise || savedFields.functionalStrength || savedFields.mentorshipFocus) {
+        setExpertiseInfo({
+          primaryExpertise: savedFields.primaryExpertise || [],
+          functionalStrength: savedFields.functionalStrength || [],
+          mentorshipFocus: savedFields.mentorshipFocus || [],
+        });
+      }
+
+      // Step 3
+      if (savedFields.currentRole || savedFields.organization || savedFields.yearsOfExperienceBand || savedFields.websiteOrPortfolioUrl) {
+        setExperienceInfo({
+          currentRole: savedFields.currentRole || '',
+          organization: savedFields.organization || '',
+          yearsOfExperience: savedFields.yearsOfExperienceBand || '',
+          websitePortfolio: savedFields.websiteOrPortfolioUrl || '',
+        });
+      }
+
+      // Step 4
+      if (savedFields.mentorshipFormat || savedFields.sessionsPerMonth || savedFields.preferredSessionLength || savedFields.talentAccess || savedFields.timezone || savedFields.preferredLanguage) {
+        setAvailabilityInfo({
+          mentorshipFormat: savedFields.mentorshipFormat || [],
+          sessionsPerMonth: savedFields.sessionsPerMonth ? String(savedFields.sessionsPerMonth) : '',
+          sessionLength: savedFields.preferredSessionLength || [],
+          candidateAccess: savedFields.talentAccess || [],
+          timezone: savedFields.timezone || '',
+          preferredLanguage: savedFields.preferredLanguage || '',
+          regionalEquityPricing: savedFields.regionalEquityPricingEnabled ?? true,
+        });
+      }
+
+      // Step 5
+      const backendCourseIntent = savedFields.courseIntent || (savedFields as any).courseInterest;
+      if (backendCourseIntent) {
+        const localInterest = backendCourseIntent === 'explore_later' || backendCourseIntent === 'later' ? 'later' : 'interested';
+        setCourseInterest(localInterest as any);
+        if (localInterest === 'interested') {
+          setCourseDetails({
+            courseType: savedFields.typeOfInterest || (savedFields as any).courseType || [],
+            preferredFormat: savedFields.preferredFormat || '',
+          });
+        }
+      }
+
+      // Restore saved onboarding step progress
+      if (onboardingState.data.step && !stepParam) {
+        setStep(onboardingState.data.step);
+      }
+    }
+  }, [onboardingState, stepParam]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     let { name, value } = e.target;
     if (name === 'organization' || name === 'firstName' || name === 'lastName') {
@@ -99,7 +195,7 @@ const MentorProfile: React.FC = () => {
     setTouched(prev => ({ ...prev, [field]: true }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     if (newFiles.length === 0 || !currentCertType) return;
 
@@ -107,8 +203,13 @@ const MentorProfile: React.FC = () => {
       ? otherCertName || 'Other Certification'
       : LICENSE_OPTIONS.find(o => o.value === currentCertType)?.label || '';
 
+    const filesToUpload = newFiles.map(f => ({
+      name: f.name,
+      size: f.size,
+      isUploading: true
+    }));
+
     setCertificates(prev => {
-      // Check if we already have a certificate of this type (and name if other)
       const existing = prev.find(c => 
         c.type === currentCertType && 
         (currentCertType !== 'other' || c.displayLabel === otherCertName)
@@ -117,7 +218,7 @@ const MentorProfile: React.FC = () => {
       if (existing) {
         return prev.map(c => 
           c.id === existing.id 
-            ? { ...c, files: [...c.files, ...newFiles] } 
+            ? { ...c, files: [...c.files, ...filesToUpload] } 
             : c
         );
       }
@@ -125,12 +226,36 @@ const MentorProfile: React.FC = () => {
         id: Math.random().toString(36).substr(2, 9), 
         type: currentCertType, 
         displayLabel: certLabel,
-        files: newFiles 
+        files: filesToUpload 
       }];
     });
     
-    // Reset file input and type selection if desired, or keep type selected for more uploads
     if (fileInputRef.current) fileInputRef.current.value = '';
+
+    for (const file of newFiles) {
+      try {
+        const response = await uploadCertMutation.mutateAsync(file);
+        const backendDocKey = response.data.docs;
+        
+        setCertificates(prev => prev.map(c => {
+          const hasFile = c.files.some(f => f.name === file.name);
+          if (hasFile) {
+            return {
+              ...c,
+              files: c.files.map(f => f.name === file.name ? { ...f, isUploading: false, key: backendDocKey } : f)
+            };
+          }
+          return c;
+        }));
+      } catch (err) {
+        setCertificates(prev => prev.map(c => {
+          return {
+            ...c,
+            files: c.files.filter(f => f.name !== file.name)
+          };
+        }).filter(c => c.files.length > 0));
+      }
+    }
   };
 
   const removeCertFile = (certId: string, fileName: string) => {
@@ -146,8 +271,6 @@ const MentorProfile: React.FC = () => {
   const removeCertificate = (id: string) => {
     setCertificates(prev => prev.filter(c => c.id !== id));
   };
-
-
 
   const portfolioError = useMemo(() => {
     if (!touched.websitePortfolio) return '';
@@ -176,7 +299,8 @@ const MentorProfile: React.FC = () => {
       experienceInfo.organization &&
       experienceInfo.yearsOfExperience &&
       !validatePortfolioUrl(experienceInfo.websitePortfolio) &&
-      certificates.length > 0
+      certificates.length > 0 &&
+      certificates.every(c => c.files.every(f => !f.isUploading))
     );
   }, [experienceInfo, certificates]);
 
@@ -204,24 +328,151 @@ const MentorProfile: React.FC = () => {
     return false;
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === 1 && isStep1Valid) {
-      setStep(2);
-    } else if (step === 2 && isStep2Valid) {
-      setStep(3);
-    } else if (step === 3 && isStep3Valid) {
-      setStep(4);
-    } else if (step === 4 && isStep4Valid) {
-      setStep(5);
-    } else if (step === 5 && courseInterest) {
-      login({
-        title: personalInfo.title,
-        firstName: personalInfo.firstName,
-        lastName: personalInfo.lastName,
-        role: 'mentor'
-      });
-      navigate('/onboarding/welcome', { state: { firstName: `${personalInfo.firstName} ${personalInfo.lastName}`, role: 'mentor' } });
+    setIsLoading(true);
+
+    try {
+      if (step === 1 && isStep1Valid) {
+        await step1Mutation.mutateAsync({
+          title: personalInfo.title,
+          professionalTitle: personalInfo.professionalTitle || undefined,
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName,
+        });
+        setStep(2);
+        window.scrollTo(0, 0);
+      } else if (step === 2 && isStep2Valid) {
+        await step2Mutation.mutateAsync({
+          primaryExpertise: expertiseInfo.primaryExpertise,
+          functionalStrength: expertiseInfo.functionalStrength,
+          mentorshipFocus: expertiseInfo.mentorshipFocus,
+        });
+        setStep(3);
+        window.scrollTo(0, 0);
+      } else if (step === 3 && isStep3Valid) {
+        const uploadedCertifications = certificates.flatMap(cert => 
+          cert.files
+            .filter(f => f.key && !f.isUploading)
+            .map(f => ({
+              title: cert.displayLabel,
+              docs: f.key!
+            }))
+        );
+
+        await step3Mutation.mutateAsync({
+          currentRole: experienceInfo.currentRole,
+          organization: experienceInfo.organization,
+          yearsOfExperienceBand: experienceInfo.yearsOfExperience.endsWith(' years')
+            ? experienceInfo.yearsOfExperience
+            : `${experienceInfo.yearsOfExperience} years`,
+          websiteOrPortfolioUrl: experienceInfo.websitePortfolio || undefined,
+          certifications: uploadedCertifications,
+        });
+        setStep(4);
+        window.scrollTo(0, 0);
+      } else if (step === 4 && isStep4Valid) {
+        const mappedMentorshipFormat = availabilityInfo.mentorshipFormat.map(f => {
+          if (f === '1-on-1-sessions') return '1-on-1 sessions';
+          if (f === 'group-sessions') return 'Group sessions';
+          return f;
+        });
+
+        const mappedSessionLength = availabilityInfo.sessionLength.map(l => {
+          if (l === '30mins') return '30 mins';
+          if (l === '45mins') return '45 mins';
+          if (l === '1hour') return '1 hour';
+          if (l === '2hours') return '2 hours';
+          return l;
+        });
+
+        const mappedTalentAccess = availabilityInfo.candidateAccess.map(a => {
+          if (a === 'open-matched' || a === 'Open to matched candidates' || a === 'Open to matched talent') {
+            return 'Open to matched talent';
+          }
+          if (a === 'invite-only' || a === 'Invite-only') {
+            return 'Invite-only';
+          }
+          if (a === 'employer-referred' || a === 'Employer-referred only') {
+            return 'Employer-referred only';
+          }
+          return a;
+        });
+
+        const mappedTimezone = (() => {
+          const tz = availabilityInfo.timezone;
+          if (tz === 'WAT') return 'WAT (West Africa Time)';
+          if (tz === 'GMT') return 'GMT (Greenwich Mean Time)';
+          if (tz === 'EST') return 'EST (Eastern Standard Time)';
+          if (tz === 'CST') return 'CST (Central Standard Time)';
+          if (tz === 'PST') return 'PST (Pacific Standard Time)';
+          if (tz === 'EAT') return 'EAT (East Africa Time)';
+          return tz;
+        })();
+
+        const mappedLanguage = (() => {
+          const lang = availabilityInfo.preferredLanguage;
+          if (lang === 'english') return 'en';
+          if (lang === 'french') return 'fr';
+          if (lang === 'spanish') return 'es';
+          if (lang === 'arabic') return 'ar';
+          if (lang === 'portuguese') return 'pt';
+          return lang;
+        })();
+
+        await step4Mutation.mutateAsync({
+          mentorshipFormat: mappedMentorshipFormat,
+          sessionsPerMonth: availabilityInfo.sessionsPerMonth,
+          preferredSessionLength: mappedSessionLength,
+          talentAccess: mappedTalentAccess,
+          timezone: mappedTimezone,
+          preferredLanguage: mappedLanguage,
+          regionalEquityPricingEnabled: availabilityInfo.regionalEquityPricing,
+        });
+        setStep(5);
+        window.scrollTo(0, 0);
+      } else if (step === 5 && courseInterest) {
+        const mappedTypeOfInterest = courseInterest === 'interested' && courseDetails.courseType
+          ? courseDetails.courseType.map(t => {
+              if (t === 'career-readiness') return 'Career readiness & professional judgment';
+              if (t === 'technical-domain') return 'Technical / domain-specific skills';
+              if (t === 'leadership-decision') return 'Leadership & decision-making';
+              if (t === 'research-policy') return 'Research, policy, or practice-focused';
+              return t;
+            })
+          : undefined;
+
+        const mappedPreferredFormat = courseInterest === 'interested' && courseDetails.preferredFormat
+          ? (() => {
+              const f = courseDetails.preferredFormat;
+              if (f === 'short-structured') return 'Short structured course';
+              if (f === 'deep-dive') return 'Deep-dive series';
+              if (f === 'case-based') return 'Case-based learning';
+              return f;
+            })()
+          : undefined;
+
+        await step5Mutation.mutateAsync({
+          courseIntent: courseInterest === 'later' ? 'explore_later' : 'interested',
+          typeOfInterest: mappedTypeOfInterest,
+          preferredFormat: mappedPreferredFormat,
+        });
+
+        // Trigger final onboard completion triggers eligibility review
+        await completeOnboardingMutation.mutateAsync();
+
+        login({
+          title: personalInfo.title,
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName,
+          role: 'mentor'
+        });
+        navigate('/onboarding/welcome', { state: { firstName: `${personalInfo.firstName} ${personalInfo.lastName}`, role: 'mentor' } });
+      }
+    } catch (err) {
+      // Catch exceptions gracefully
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -232,7 +483,6 @@ const MentorProfile: React.FC = () => {
       setStep(prev => prev - 1);
     }
   };
-
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6">
@@ -254,7 +504,7 @@ const MentorProfile: React.FC = () => {
       {/* Step 1: Personal Information */}
       {step === 1 && (
         <>
-          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C]  mb-8">
+          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C] mb-8">
             Personal Information
           </h1>
 
@@ -307,14 +557,17 @@ const MentorProfile: React.FC = () => {
             <div className="flex gap-4 pt-4">
               <Button
                 variant="outline"
+                type="button"
                 onClick={handleBack}
                 className="min-h-[48px]"
               >
                 Back
               </Button>
               <Button
+                variant={isStep1Valid ? 'primary' : 'secondary'}
                 type="submit"
                 disabled={!isStep1Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -327,7 +580,7 @@ const MentorProfile: React.FC = () => {
       {/* Step 2: Expertise and Focus Area */}
       {step === 2 && (
         <>
-          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C]  mb-8">
+          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C] mb-8">
             Expertise and Focus Area
           </h1>
 
@@ -365,14 +618,17 @@ const MentorProfile: React.FC = () => {
             <div className="flex gap-4 pt-4">
               <Button
                 variant="outline"
+                type="button"
                 onClick={handleBack}
                 className="min-h-[48px]"
               >
                 Back
               </Button>
               <Button
+                variant={isStep2Valid ? 'primary' : 'secondary'}
                 type="submit"
                 disabled={!isStep2Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -385,7 +641,7 @@ const MentorProfile: React.FC = () => {
       {/* Step 3: Professional Experience */}
       {step === 3 && (
         <>
-          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C]  mb-8">
+          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C] mb-8">
             Professional Experience
           </h1>
 
@@ -513,17 +769,24 @@ const MentorProfile: React.FC = () => {
                         {cert.files.map((file) => (
                           <div key={file.name} className="flex items-center gap-3 p-2 rounded-lg bg-[#F3F4F6] group">
                             <div className="w-8 h-8 rounded bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                              <FileIcon className="w-4 h-4 text-[#0047CC]" />
+                              {file.isUploading ? (
+                                <div className="w-4 h-4 border-2 border-[#0047CC] border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <FileIcon className="w-4 h-4 text-[#0047CC]" />
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-medium text-[#1C1C1C] truncate">{file.name}</p>
-                              <p className="text-[10px] text-[#9CA3AF]">{(file.size / (1024 * 1024)).toFixed(1)}MB</p>
+                              <p className="text-[10px] text-[#9CA3AF]">
+                                {file.isUploading ? 'Uploading...' : `${(file.size / (1024 * 1024)).toFixed(1)}MB`}
+                              </p>
                             </div>
                             <button
                               type="button"
                               onClick={() => removeCertFile(cert.id, file.name)}
                               className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer p-1"
                               title="Remove file"
+                              disabled={file.isUploading}
                             >
                               <TrashIcon size={14} />
                             </button>
@@ -539,14 +802,17 @@ const MentorProfile: React.FC = () => {
             <div className="flex gap-4 pt-4">
               <Button
                 variant="outline"
+                type="button"
                 onClick={handleBack}
                 className="min-h-[48px]"
               >
                 Back
               </Button>
               <Button
+                variant={isStep3Valid ? 'primary' : 'secondary'}
                 type="submit"
                 disabled={!isStep3Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -559,7 +825,7 @@ const MentorProfile: React.FC = () => {
       {/* Step 4: Availability and Engagement Preferences */}
       {step === 4 && (
         <>
-          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C]  mb-8">
+          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C] mb-8">
             Availability and Engagement Preferences
           </h1>
 
@@ -656,14 +922,17 @@ const MentorProfile: React.FC = () => {
             <div className="flex gap-4 pt-4">
               <Button
                 variant="outline"
+                type="button"
                 onClick={handleBack}
                 className="min-h-[48px]"
               >
                 Back
               </Button>
               <Button
+                variant={isStep4Valid ? 'primary' : 'secondary'}
                 type="submit"
                 disabled={!isStep4Valid}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Proceed
@@ -672,10 +941,11 @@ const MentorProfile: React.FC = () => {
           </form>
         </>
       )}
+
       {/* Step 5: Teach at Scale */}
       {step === 5 && (
         <>
-          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C]  mb-2">
+          <h1 className="text-xl sm:text-2xl font-medium text-[#1C1C1C] mb-2">
             Teach at Scale, On your Terms
           </h1>
 
@@ -772,14 +1042,17 @@ const MentorProfile: React.FC = () => {
             <div className="flex gap-4 pt-4">
               <Button
                 variant="outline"
+                type="button"
                 onClick={handleBack}
                 className="min-h-[48px]"
               >
                 Back
               </Button>
               <Button
+                variant={getStepValidity() ? 'primary' : 'secondary'}
                 type="submit"
                 disabled={!getStepValidity()}
+                isLoading={isLoading}
                 className="min-h-[48px]"
               >
                 Save & Continue

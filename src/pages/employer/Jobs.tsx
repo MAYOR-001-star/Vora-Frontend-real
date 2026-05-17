@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { SAMPLE_JOBS } from '../../constants/mockData';
 import PostJobModal from '../../components/employer/PostJobModal';
+import PostJobWizard from '../../components/employer/PostJobWizard';
 import { JOBS_TABS } from '../../constants/tabs';
 import TabSlider from '../../components/common/TabSlider';
 import Button from '../../components/common/Button';
@@ -21,6 +22,12 @@ const Jobs: React.FC = () => {
   const [activeTab, setActiveTab] = useState('All jobs');
   const [searchQuery, setSearchQuery] = useState('');
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isPostWizardOpen, setIsPostWizardOpen] = useState(false);
+  const [wizardConfig, setWizardConfig] = useState<{
+    isScheduled: boolean;
+    goLiveDate: string;
+    isPrefilled: boolean;
+  }>({ isScheduled: false, goLiveDate: '', isPrefilled: false });
   const tabs = JOBS_TABS;
 
   const getJobStatusVariant = (status: string): any => {
@@ -212,6 +219,17 @@ const Jobs: React.FC = () => {
       <PostJobModal 
         isOpen={isPostModalOpen} 
         onClose={() => setIsPostModalOpen(false)} 
+        onContinue={(config) => {
+          setIsPostModalOpen(false);
+          setWizardConfig(config);
+          setIsPostWizardOpen(true);
+        }}
+      />
+
+      <PostJobWizard 
+        isOpen={isPostWizardOpen} 
+        onClose={() => setIsPostWizardOpen(false)} 
+        initialConfig={wizardConfig}
       />
     </div>
   );

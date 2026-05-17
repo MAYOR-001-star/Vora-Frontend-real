@@ -14,7 +14,9 @@ import {
   WalletIcon
 } from '../common/Icons';
 import PostJobWizard from './PostJobWizard';
+import PostJobModal from './PostJobModal';
 import Tag from '../common/Tag';
+import { useAuth } from '../../context/AuthContext';
 
 // --- Sub-components for Employer Dashboard ---
 
@@ -65,7 +67,14 @@ const SectionHeader: React.FC<{ title: string; linkText?: string; onLinkClick?: 
 );
 
 const EmployerDashboard: React.FC = () => {
-  const [isPostJobOpen, setIsPostJobOpen] = React.useState(false);
+  const { user } = useAuth();
+  const [isPostModalOpen, setIsPostModalOpen] = React.useState(false);
+  const [isPostWizardOpen, setIsPostWizardOpen] = React.useState(false);
+  const [wizardConfig, setWizardConfig] = React.useState<{
+    isScheduled: boolean;
+    goLiveDate: string;
+    isPrefilled: boolean;
+  }>({ isScheduled: false, goLiveDate: '', isPrefilled: false });
 
   // Mock data based on provided HTML
   const activeJobs = [
@@ -98,7 +107,7 @@ const EmployerDashboard: React.FC = () => {
             Dashboard
           </h1>
           <p className="text-[12px] lg:text-[14px] font-medium text-gray-400">
-            Tuesday, 10 March 2026 · Welcome back, Eric
+            Tuesday, 10 March 2026 · Welcome back, {user?.firstName || 'Employer'}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 lg:gap-3">
@@ -106,7 +115,7 @@ const EmployerDashboard: React.FC = () => {
             <BellIcon size={14} /> Alerts <span className="bg-red-500 text-white text-[9px] font-medium px-1.5 py-0.5 rounded-full ml-1">3</span>
           </button>
           <button 
-            onClick={() => setIsPostJobOpen(true)}
+            onClick={() => setIsPostModalOpen(true)}
             className="flex items-center gap-2 px-4 lg:px-5 py-2 lg:py-2.5 bg-[#0047CC] text-white rounded-full text-[11px] lg:text-[13px] font-medium hover:bg-[#003d99] transition-all shadow-lg shadow-blue-500/20 cursor-pointer"
           >
             <PlusIcon size={14} /> Post a Job
@@ -151,7 +160,7 @@ const EmployerDashboard: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <QuickActionBtn label="Post a Job" sub="Create a new listing" icon={PlusIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" onClick={() => setIsPostJobOpen(true)} />
+            <QuickActionBtn label="Post a Job" sub="Create a new listing" icon={PlusIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" onClick={() => setIsPostModalOpen(true)} />
             <QuickActionBtn label="Confirm Hire" sub="Send offer & lock escrow" icon={CheckIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" />
             <QuickActionBtn label="Bulk Hire" sub="Confirm multiple hires" icon={UsersIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" />
             <QuickActionBtn label="Top Up Wallet" sub="Add funds for escrow" icon={TrendingUpIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" />
@@ -268,7 +277,7 @@ const EmployerDashboard: React.FC = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <p className="text-[11px] font-medium text-white/70 uppercase tracking-widest mb-2">Available Balance</p>
             <p className="text-[36px] font-medium tracking-tight leading-none mb-1">$3,240.00</p>
-            <p className="text-[11px] font-medium text-white/60 mb-6">VORA Employer Wallet · Eric Nelson</p>
+            <p className="text-[11px] font-medium text-white/60 mb-6">VORA Employer Wallet · {user?.firstName ? `${user.firstName}${user.lastName ? ' ' + user.lastName : ''}` : 'Employer'}</p>
             <div className="flex gap-2">
               <button className="flex-1 py-2.5 bg-white text-[#0047CC] rounded-full text-[13px] font-medium hover:scale-[1.03] transition-transform cursor-pointer">
                 Top Up
@@ -334,14 +343,18 @@ const EmployerDashboard: React.FC = () => {
             <SectionHeader title="Account & Settings" linkText="Manage" onLinkClick={() => {}} />
             <div className="columns-2 gap-2 space-y-2">
               {[
-                { label: 'Profile', sub: 'Eric · Admin', icon: UserIcon },
+                { label: 'Profile', sub: `${user?.firstName || 'Employer'} · Admin`, icon: UserIcon },
                 { label: 'Team', sub: '3 members', icon: UsersIcon },
                 { label: 'Billing', sub: 'Enterprise', icon: TrendingUpIcon },
                 { label: 'Payments', sub: '4 saved', icon: CreditCardIcon },
                 { label: 'Alerts', sub: 'In-app', icon: BellIcon },
                 { label: 'Post Job', sub: 'New listing', icon: PlusIcon }
               ].map((tile, i) => (
-                <div key={i} className="break-inside-avoid p-4 bg-gray-50/50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-xl transition-all cursor-pointer group">
+                <div 
+                  key={i} 
+                  onClick={() => tile.label === 'Post Job' && setIsPostModalOpen(true)}
+                  className="break-inside-avoid p-4 bg-gray-50/50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-xl transition-all cursor-pointer group"
+                >
                   <tile.icon size={16} className="text-[#0047CC] mb-3" />
                   <p className="text-[12px] font-medium text-gray-900 leading-tight">{tile.label}</p>
                   <p className="text-[10px] font-medium text-gray-400 mt-0.5 truncate">{tile.sub}</p>
@@ -352,7 +365,21 @@ const EmployerDashboard: React.FC = () => {
         </div>
       </div>
 
-      <PostJobWizard isOpen={isPostJobOpen} onClose={() => setIsPostJobOpen(false)} />
+      <PostJobModal 
+        isOpen={isPostModalOpen} 
+        onClose={() => setIsPostModalOpen(false)} 
+        onContinue={(config) => {
+          setIsPostModalOpen(false);
+          setWizardConfig(config);
+          setIsPostWizardOpen(true);
+        }}
+      />
+
+      <PostJobWizard 
+        isOpen={isPostWizardOpen} 
+        onClose={() => setIsPostWizardOpen(false)} 
+        initialConfig={wizardConfig}
+      />
     </div>
   );
 };

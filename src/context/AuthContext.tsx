@@ -1,22 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-
-interface User {
-  firstName: string;
-  lastName: string;
-  role: 'talent' | 'mentor' | 'employer';
-  title?: string;
-  email?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (userData: User) => void;
-  logout: () => void;
-  updateUser: (updates: Partial<User>) => void;
-}
+import type { User, AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -36,18 +20,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     }
     setIsLoading(false);
+
+    const handleUnauthorized = () => {
+      logout();
+    };
+    
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User, token?: string) => {
     setUser(userData);
     localStorage.setItem('vora_user', JSON.stringify(userData));
     localStorage.setItem('vora_role', userData.role);
+    if (token) {
+      localStorage.setItem('auth_token', token);
+    }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('vora_user');
     localStorage.removeItem('vora_role');
+    localStorage.removeItem('auth_token');
   };
 
   const updateUser = (updates: Partial<User>) => {

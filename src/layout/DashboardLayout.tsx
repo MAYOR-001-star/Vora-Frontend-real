@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   MenuIcon,
   CloseIcon,
 } from '../components/common/Icons';
 import { useAuth } from '../context/AuthContext';
+import { useTalentOnboardingStateQuery, useMentorOnboardingStateQuery, useGetTalentProfileQuery, useGetMentorProfileQuery, useEmployerOnboardingStateQuery } from '../services/queries/onboarding';
 
 import { 
   EMPLOYER_NAV_ITEMS,
@@ -20,8 +21,66 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   
+  const isTalent = user?.role?.toLowerCase() === 'talent';
+  const isMentor = user?.role?.toLowerCase() === 'mentor';
+  const isEmployer = user?.role?.toLowerCase() === 'employer';
+
+  const navigate = useNavigate();
+
+  // Synchronize authenticated profile details in dashboard layout
+  const { data: talentProfile } = useGetTalentProfileQuery(!!user && isTalent);
+  const { data: talentState } = useTalentOnboardingStateQuery(!!user && isTalent);
+  const { data: mentorProfile } = useGetMentorProfileQuery(!!user && isMentor);
+  const { data: mentorState } = useMentorOnboardingStateQuery(!!user && isMentor);
+  const { data: employerState } = useEmployerOnboardingStateQuery(!!user && isEmployer);
+
+  useEffect(() => {
+    if (user && isEmployer && employerState?.data) {
+      if (!employerState.data.onboardingCompleted) {
+        const nextStep = employerState.data.onboardingStep || 1;
+        navigate(`/onboarding/employer?step=${nextStep}`);
+      }
+    }
+  }, [user, isEmployer, employerState, navigate]);
+
+  useEffect(() => {
+    if (user && isTalent) {
+      if (talentProfile?.data) {
+        const { firstName, lastName } = talentProfile.data;
+        if (firstName && (user.firstName !== firstName || user.lastName !== lastName)) {
+          updateUser({ firstName, lastName });
+          return;
+        }
+      }
+      if (talentState?.data?.fields) {
+        const { firstName, lastName } = talentState.data.fields;
+        if (firstName && (user.firstName !== firstName || user.lastName !== lastName)) {
+          updateUser({ firstName, lastName });
+        }
+      }
+    }
+  }, [talentProfile, talentState, isTalent, user, updateUser]);
+
+  useEffect(() => {
+    if (user && isMentor) {
+      if (mentorProfile?.data) {
+        const { firstName, lastName } = mentorProfile.data;
+        if (firstName && (user.firstName !== firstName || user.lastName !== lastName)) {
+          updateUser({ firstName, lastName });
+          return;
+        }
+      }
+      if (mentorState?.data?.fields) {
+        const { firstName, lastName } = mentorState.data.fields;
+        if (firstName && (user.firstName !== firstName || user.lastName !== lastName)) {
+          updateUser({ firstName, lastName });
+        }
+      }
+    }
+  }, [mentorProfile, mentorState, isMentor, user, updateUser]);
+
   if (!user) return null; // Or a loading state
 
   const fullName = user.title 
@@ -86,7 +145,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 `}
               >
                 {isActive(item.path) && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#0047CC]" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#0047CC]" />
                 )}
                 <item.icon size={22} strokeWidth={isActive(item.path) ? 2.5 : 2} />
                 <span>{item.name}</span>

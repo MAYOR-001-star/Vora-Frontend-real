@@ -135,7 +135,7 @@ const ApplicantsTabView: React.FC<ApplicantsTabViewProps> = ({ onHire }) => {
                     <th className="pb-4 font-medium">Location</th>
                     <th className="pb-4 font-medium">Specialization</th>
                     <th className="pb-4 font-medium">Applied On</th>
-                    <th className="pb-4 font-medium text-right">Overall Status</th>
+                    <th className="pb-4 font-medium text-center">Overall Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -148,11 +148,16 @@ const ApplicantsTabView: React.FC<ApplicantsTabViewProps> = ({ onHire }) => {
                       <td className="py-4 text-[13px] font-medium text-gray-500">{applicant.location}</td>
                       <td className="py-4 text-[13px] font-medium text-gray-500">{applicant.course}</td>
                       <td className="py-4 text-[13px] font-medium text-gray-500">{applicant.dateApplied}</td>
-                      <td className="py-4 text-right">
+                      <td className="py-4 text-center">
                         <Tag 
                           label={applicant.status} 
-                          variant={applicant.status === 'Passed' ? 'green' : 'red'} 
-                          className="ml-auto"
+                          variant={
+                            applicant.status.toLowerCase() === 'pending review' ? 'gray' : 
+                            applicant.status.toLowerCase() === 'under review' ? 'yellow' : 
+                            ['hired', 'passed'].includes(applicant.status.toLowerCase()) ? 'green' : 
+                            ['rejected', 'failed'].includes(applicant.status.toLowerCase()) ? 'red' : 'gray'
+                          } 
+                          className="mx-auto min-w-[110px] justify-center"
                         />
                       </td>
                     </tr>

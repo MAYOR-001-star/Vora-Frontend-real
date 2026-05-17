@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import { useVerifyOTPMutation, useResendOTPMutation } from '../../services/queries/auth';
+import { routeAfterAuth } from '../../utils/auth';
 
 const VerifyOTP: React.FC = () => {
   const location = useLocation();
@@ -9,7 +11,9 @@ const VerifyOTP: React.FC = () => {
   
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60);
-  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState('');
+  const verifyMutation = useVerifyOTPMutation();
+  const resendMutation = useResendOTPMutation();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -40,27 +44,40 @@ const VerifyOTP: React.FC = () => {
 
   const isComplete = otp.every(digit => digit !== '');
 
-  const handleVerify = (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isComplete) return;
 
-    setIsLoading(true);
-    console.log('Verifying OTP:', otp.join(''));
-    
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-      // Route to Employer onboarding
-      navigate('/onboarding/employer');
-    }, 1000);
+    setFormError('');
+    try {
+      const response = await verifyMutation.mutateAsync({ email, code: otp.join('') });
+      const authData = response.data;
+      const user = authData?.user;
+      
+      if (user) {
+        const targetRoute = routeAfterAuth(user);
+        navigate(targetRoute, { state: { email, accountType: user.role } });
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
+      setFormError(error?.message || 'Invalid verification code. Please try again.');
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (timer > 0) return;
-    setTimer(60);
-    setOtp(['', '', '', '', '', '']);
-    inputRefs.current[0]?.focus();
-    console.log('Resending OTP to:', email);
+    setFormError('');
+    try {
+      await resendMutation.mutateAsync({ email });
+      setTimer(60);
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    } catch (error: any) {
+      setFormError(error?.message || 'Failed to resend verification code. Please try again.');
+    }
   };
 
   return (
@@ -73,6 +90,12 @@ const VerifyOTP: React.FC = () => {
           We've sent a 6-digit verification code to <span className="font-medium text-gray-900">{email}</span>. Enter the code below to verify your email.
         </p>
       </div>
+
+      {formError && (
+        <div className="w-full max-w-[480px] mb-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+          <p className="text-sm font-medium text-red-600 text-center">{formError}</p>
+        </div>
+      )}
 
       <form onSubmit={handleVerify} className="w-full max-w-[480px] space-y-10">
         <div className="flex justify-between gap-2 sm:gap-4">
@@ -97,10 +120,11 @@ const VerifyOTP: React.FC = () => {
             </p>
           ) : (
             <Button 
-              variant="outline"
+              variant="link"
               onClick={handleResend}
               fullWidth={false}
-              className="border-none text-[#0047CC] text-sm font-medium underline decoration-2 underline-offset-4 hover:bg-transparent hover:text-blue-700 p-0"
+              isLoading={resendMutation.isPending}
+              className="mx-auto text-[#0047CC] text-sm font-medium underline decoration-2 underline-offset-4 hover:bg-transparent hover:text-blue-700 p-0"
             >
               Resend OTP
             </Button>
@@ -110,8 +134,8 @@ const VerifyOTP: React.FC = () => {
         <Button 
           variant={isComplete ? 'primary' : 'secondary'}
           type="submit"
-          disabled={!isComplete}
-          isLoading={isLoading}
+          disabled={!isComplete || verifyMutation.isPending}
+          isLoading={verifyMutation.isPending}
         >
           Verify email
         </Button>

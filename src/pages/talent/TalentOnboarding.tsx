@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTalentOnboardingStep1Mutation, useTalentOnboardingStep2Mutation, useTalentOnboardingStateQuery } from '../../services/queries/onboarding';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
@@ -33,11 +34,170 @@ const RTW_STUDY = ['study_permit'];
 const RTW_PERMIT = ['work_permit', 'open_permit'];
 const RTW_PR = ['ilr_uk', 'green_card', 'pr_canada', 'pr_aus_nz', 'pr_eu', 'pr_other'];
 
+const countryToIsoMap: Record<string, string> = {
+  'Australia': 'AU',
+  'Belgium': 'BE',
+  'Brazil': 'BR',
+  'Canada': 'CA',
+  'China': 'CN',
+  'Denmark': 'DK',
+  'Egypt': 'EG',
+  'Ethiopia': 'ET',
+  'Finland': 'FI',
+  'France': 'FR',
+  'Germany': 'DE',
+  'Ghana': 'GH',
+  'India': 'IN',
+  'Indonesia': 'ID',
+  'Ireland': 'IE',
+  'Israel': 'IL',
+  'Italy': 'IT',
+  'Japan': 'JP',
+  'Kenya': 'KE',
+  'Malaysia': 'MY',
+  'Mexico': 'MX',
+  'Netherlands': 'NL',
+  'New Zealand': 'NZ',
+  'Nigeria': 'NG',
+  'Norway': 'NO',
+  'Pakistan': 'PK',
+  'Philippines': 'PH',
+  'Poland': 'PL',
+  'Portugal': 'PT',
+  'Rwanda': 'RW',
+  'Saudi Arabia': 'SA',
+  'Singapore': 'SG',
+  'South Africa': 'ZA',
+  'South Korea': 'KR',
+  'Spain': 'ES',
+  'Sweden': 'SE',
+  'Switzerland': 'CH',
+  'Tanzania': 'TZ',
+  'Turkey': 'TR',
+  'Uganda': 'UG',
+  'United Arab Emirates': 'AE',
+  'United Kingdom': 'GB',
+  'United States': 'US',
+  'Vietnam': 'VN',
+  'Zimbabwe': 'ZW',
+};
+
+const getCountryIsoCode = (name: string): string => {
+  if (!name) return name;
+  const normalized = name.trim();
+  if (normalized.length === 2) return normalized.toUpperCase();
+  return countryToIsoMap[normalized] || normalized;
+};
+
+const getCountryFullName = (code: string): string => {
+  if (!code) return code;
+  const normalized = code.trim().toUpperCase();
+  if (normalized.length !== 2) return code;
+  const entry = Object.entries(countryToIsoMap).find(([_, iso]) => iso === normalized);
+  return entry ? entry[0] : code;
+};
+
 const TalentOnboarding: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
-  const [step, setStep] = useState(1);
+  
+  const stepParam = Number(searchParams.get('step'));
+  const initialStep = stepParam || location.state?.onboardingStep || 1;
+  const [step, setStep] = useState(initialStep);
   const [isLoading, setIsLoading] = useState(false);
+  const step1Mutation = useTalentOnboardingStep1Mutation();
+  const step2Mutation = useTalentOnboardingStep2Mutation();
+  const { data: onboardingState } = useTalentOnboardingStateQuery();
+
+  useEffect(() => {
+    if (onboardingState?.data) {
+      const savedFields = onboardingState.data.fields || {};
+      if (savedFields.firstName || savedFields.lastName) {
+        setFormData({
+          firstName: savedFields.firstName || '',
+          lastName: savedFields.lastName || '',
+        });
+      }
+      if (savedFields.professionalTitle) setProfessionalTitle(savedFields.professionalTitle);
+      if (savedFields.areasOfInterest) setAreasOfInterest(savedFields.areasOfInterest);
+      if (savedFields.country) setCountry(savedFields.country);
+      if (savedFields.nationalities) setNationalities(savedFields.nationalities);
+      if (savedFields.studyPermitType) setStudyPermitType(savedFields.studyPermitType);
+      if (savedFields.studyCountry) setStudyCountry(getCountryFullName(savedFields.studyCountry));
+      if (savedFields.studyValidity) setStudyValidity(savedFields.studyValidity);
+      if (savedFields.studyHoursManual) setStudyHoursManual(savedFields.studyHoursManual);
+      if (savedFields.permitType) setPermitType(savedFields.permitType);
+      if (savedFields.permitCountry) setPermitCountry(getCountryFullName(savedFields.permitCountry));
+      if (savedFields.permitValidity) setPermitValidity(savedFields.permitValidity);
+      if (savedFields.prType) setPrType(savedFields.prType);
+      if (savedFields.prCountry) setPrCountry(getCountryFullName(savedFields.prCountry));
+      if (savedFields.prValidity) setPrValidity(savedFields.prValidity);
+
+      // Map backend-specific names back to local wizard state
+      if (savedFields.countryOfResidence) {
+        setResidence(getCountryFullName(savedFields.countryOfResidence));
+      }
+      if (savedFields.residenceCity) setCity(savedFields.residenceCity);
+      if (savedFields.rightToWorkStatus) {
+        const rtwMap: Record<string, string> = {
+          'NATIONAL_ROLE_COUNTRY_NO_VISA': 'national',
+          'EU_EEA_FREEDOM_MOVEMENT': 'eu_eea',
+          'STUDY_PERMIT': 'study_permit',
+          'WORK_PERMIT': 'work_permit',
+          'OPEN_PERMIT': 'open_permit',
+          'UK_ILR_SETTLED': 'ilr_uk',
+          'US_GREEN_CARD': 'green_card',
+          'PR_CANADA': 'pr_canada',
+          'PR_AUS_NZ': 'pr_aus_nz',
+          'PR_EU': 'pr_eu',
+          'PR_OTHER': 'pr_other',
+          'NEED_SPONSORSHIP': 'need_sponsorship',
+          'REMOTE_ONLY': 'remote_only'
+        };
+        const found = Object.entries(rtwMap).find(([backendVal, _]) => backendVal === savedFields.rightToWorkStatus)?.[1];
+        if (found) setRightToWork(found);
+      }
+      if (savedFields.willingnessToRelocate) {
+        const relocMap: Record<string, string> = {
+          'OPEN_ANYWHERE': 'open',
+          'SPECIFIC_REGIONS': 'specific',
+          'STAYING_CURRENT_LOCATION': 'no',
+          'REMOTE_ONLY': 'remote'
+        };
+        const found = relocMap[savedFields.willingnessToRelocate];
+        if (found) setRelocation(found);
+      }
+      if (savedFields.relocateCountryCodes) {
+        setRelocationDestinations(savedFields.relocateCountryCodes.join(', '));
+      }
+      if (savedFields.preferredWorkArrangement) {
+        const arrMap: Record<string, string> = {
+          'FULLY_REMOTE': 'fully-remote',
+          'HYBRID': 'hybrid',
+          'ONSITE': 'onsite',
+          'FLEXIBLE': 'flexible'
+        };
+        const found = arrMap[savedFields.preferredWorkArrangement];
+        if (found) setWorkArrangement(found);
+      }
+      if (savedFields.experienceLevel) {
+        const expMap: Record<string, string> = {
+          'STUDENT_GRADUATE': 'student-graduate',
+          'ENTRY_LEVEL': 'entry-academic',
+          'MID_LEVEL': 'mid-professional',
+          'SENIOR_LEVEL': 'senior-professional'
+        };
+        const found = expMap[savedFields.experienceLevel];
+        if (found) setExperienceLevel(found);
+      }
+
+      if (onboardingState.data.step && !stepParam && !location.state?.onboardingStep) {
+        setStep(onboardingState.data.step);
+      }
+    }
+  }, [onboardingState, stepParam, location.state]);
 
   // Step 1 state
   const [formData, setFormData] = useState({
@@ -130,25 +290,121 @@ const TalentOnboarding: React.FC = () => {
     return true;
   }, [professionalTitle, areasOfInterest, otherInterest, experienceLevel, country, nationalities, residence, city, rightToWork, relocation, relocationDestinations, workArrangement, integrityChecked, showStudyPanel, studyPermitType, studyCountry, studyValidity, studyHoursData, studyHoursManual, showPermitPanel, permitType, permitCountry, permitValidity, showPRPanel, prType, prCountry, prValidity]);
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-      if (step === 1 && isStep1Valid) {
+    if (step === 1 && isStep1Valid) {
+      try {
+        await step1Mutation.mutateAsync({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        });
         setStep(2);
         window.scrollTo(0, 0);
-      } else if (step === 2 && isStep2Valid) {
+      } catch (error) {
+        // Errors are automatically caught and toasted by our interceptor
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (step === 2 && isStep2Valid) {
+      try {
+        const payloadExperienceLevel = (() => {
+          switch (experienceLevel) {
+            case 'student-graduate': return 'STUDENT_GRADUATE';
+            case 'entry-academic': return 'ENTRY_LEVEL';
+            case 'entry-non-academic': return 'ENTRY_LEVEL';
+            case 'mid-professional': return 'MID_LEVEL';
+            case 'senior-professional': return 'SENIOR_LEVEL';
+            case 'masters': return 'STUDENT_GRADUATE';
+            case 'phd': return 'STUDENT_GRADUATE';
+            case 'post-doctorate': return 'STUDENT_GRADUATE';
+            default: return 'STUDENT_GRADUATE';
+          }
+        })();
+
+        const payloadRightToWorkStatus = (() => {
+          switch (rightToWork) {
+            case 'national': return 'NATIONAL_ROLE_COUNTRY_NO_VISA';
+            case 'eu_eea': return 'EU_EEA_FREEDOM_MOVEMENT';
+            case 'study_permit': return 'STUDY_PERMIT';
+            case 'work_permit': return 'WORK_PERMIT';
+            case 'open_permit': return 'OPEN_PERMIT';
+            case 'ilr_uk': return 'UK_ILR_SETTLED';
+            case 'green_card': return 'US_GREEN_CARD';
+            case 'pr_canada': return 'PR_CANADA';
+            case 'pr_aus_nz': return 'PR_AUS_NZ';
+            case 'pr_eu': return 'PR_EU';
+            case 'pr_other': return 'PR_OTHER';
+            case 'need_sponsorship': return 'NEED_SPONSORSHIP';
+            case 'remote_only': return 'REMOTE_ONLY';
+            default: return 'NATIONAL_ROLE_COUNTRY_NO_VISA';
+          }
+        })();
+
+        const payloadWillingnessToRelocate = (() => {
+          switch (relocation) {
+            case 'open': return 'OPEN_ANYWHERE';
+            case 'specific': return 'SPECIFIC_REGIONS';
+            case 'no': return 'STAYING_CURRENT_LOCATION';
+            case 'remote': return 'REMOTE_ONLY';
+            default: return 'OPEN_ANYWHERE';
+          }
+        })();
+
+        const payloadPreferredWorkArrangement = (() => {
+          switch (workArrangement) {
+            case 'fully-remote': return 'FULLY_REMOTE';
+            case 'hybrid': return 'HYBRID';
+            case 'onsite': return 'ONSITE';
+            case 'flexible': return 'FLEXIBLE';
+            default: return 'FULLY_REMOTE';
+          }
+        })();
+
+        const payloadRelocateCountryCodes = relocation === 'specific'
+          ? relocationDestinations.split(',').map(s => getCountryIsoCode(s.trim())).filter(Boolean)
+          : [];
+
+        await step2Mutation.mutateAsync({
+          professionalTitle,
+          areasOfInterest,
+          experienceLevel: payloadExperienceLevel,
+          country,
+          region: country,
+          nationalities,
+          countryOfResidence: getCountryIsoCode(residence),
+          residenceCity: city,
+          rightToWorkStatus: payloadRightToWorkStatus,
+          willingnessToRelocate: payloadWillingnessToRelocate,
+          relocateCountryCodes: payloadRelocateCountryCodes,
+          preferredWorkArrangement: payloadPreferredWorkArrangement,
+          workAuthorisationConfirmed: true,
+
+          studyPermitType: showStudyPanel ? studyPermitType : undefined,
+          studyCountry: showStudyPanel ? getCountryIsoCode(studyCountry) : undefined,
+          studyValidity: showStudyPanel ? studyValidity : undefined,
+          studyHoursManual: (showStudyPanel && !studyHoursData) ? studyHoursManual : undefined,
+          permitType: showPermitPanel ? permitType : undefined,
+          permitCountry: showPermitPanel ? getCountryIsoCode(permitCountry) : undefined,
+          permitValidity: showPermitPanel ? permitValidity : undefined,
+          prType: showPRPanel ? prType : undefined,
+          prCountry: showPRPanel ? getCountryIsoCode(prCountry) : undefined,
+          prValidity: showPRPanel ? prValidity : undefined,
+        });
+
         login({
           firstName: formData.firstName,
           lastName: formData.lastName,
           role: 'talent'
         });
         navigate('/onboarding/welcome', { state: { firstName: formData.firstName, role: 'talent' } });
+      } catch (error) {
+        // Errors are automatically caught and toasted by our interceptor
+      } finally {
+        setIsLoading(false);
       }
-    }, 1200);
+    }
   };
 
   // Auto-fill PR country for deterministic statuses

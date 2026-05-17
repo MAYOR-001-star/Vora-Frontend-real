@@ -4,13 +4,16 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import { validateEmail } from '../../utils/validation';
 import { GoogleIcon, AppleIcon } from '../../components/common/Icons';
+import { useLoginMutation } from '../../services/queries/auth';
+import { routeAfterAuth } from '../../utils/auth';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const [formError, setFormError] = useState('');
+  const loginMutation = useLoginMutation();
+
   const [touched, setTouched] = useState({
     email: false,
     password: false
@@ -31,47 +34,41 @@ const Login: React.FC = () => {
     return email && password && !emailError && !passwordError;
   }, [email, password, emailError, passwordError]);
 
-  const handleLogin = (e: React.FormEvent | React.MouseEvent) => {
+  const handleLogin = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
 
-    setIsLoading(true);
-    console.log('Logging in user:', { email, password });
-    
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      const nameFromEmail = email.split('@')[0];
-      const userData = {
-        firstName: nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1),
-        lastName: '',
-        role: 'talent' // Default role for mock login
-      };
-      localStorage.setItem('vora_user', JSON.stringify(userData));
-      localStorage.setItem('vora_role', 'talent');
-      
-      navigate('/dashboard');
-    }, 1200);
+    setFormError('');
+
+    try {
+      const response = await loginMutation.mutateAsync({ email, password });
+      const authData = response.data;
+      const user = authData?.user;
+
+      if (user) {
+        const targetRoute = routeAfterAuth(user);
+        navigate(targetRoute, { state: { email, accountType: user.role } });
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
+      const errMsg = error?.message || 'Invalid email or password. Please try again.';
+      if (
+        errMsg.toLowerCase().includes('email not verified') ||
+        errMsg.toLowerCase().includes('verification email') ||
+        errMsg.toLowerCase().includes('not verified')
+      ) {
+        navigate('/verify-email', { state: { email } });
+      } else {
+        setFormError(errMsg);
+      }
+    }
   };
 
   const handleSocialLogin = (provider: 'Google' | 'Apple') => {
-    setIsLoading(true);
     console.log(`Signing in with ${provider}`);
-
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-      // For demo, assume success and route to dashboard
-      const userData = {
-        firstName: 'User',
-        lastName: '',
-        role: 'talent'
-      };
-      localStorage.setItem('vora_user', JSON.stringify(userData));
-      localStorage.setItem('vora_role', 'talent');
-      navigate('/dashboard');
-    }, 1500);
+    // Omitted real social logic for now, redirecting to dashboard
+    navigate('/dashboard');
   };
 
   const handleBlur = (field: keyof typeof touched) => {
@@ -89,8 +86,14 @@ const Login: React.FC = () => {
         </p>
       </div>
 
+      {formError && (
+        <div className="max-w-[480px] mx-auto mb-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+          <p className="text-sm font-medium text-red-600">{formError}</p>
+        </div>
+      )}
+
       <form className="space-y-6 sm:space-y-8 max-w-[480px] mx-auto" autoComplete="off">
-        <Input 
+        <Input
           label="Email"
           type="email"
           value={email}
@@ -102,7 +105,7 @@ const Login: React.FC = () => {
           autoComplete="off"
         />
 
-        <Input 
+        <Input
           label="Password"
           type="password"
           value={password}
@@ -115,12 +118,12 @@ const Login: React.FC = () => {
           autoComplete="current-password"
         />
 
-        <Button 
+        <Button
           variant={isFormValid ? 'primary' : 'secondary'}
           type="submit"
           onClick={handleLogin}
-          disabled={!isFormValid}
-          isLoading={isLoading}
+          disabled={!isFormValid || loginMutation.isPending}
+          isLoading={loginMutation.isPending}
         >
           Log in
         </Button>
@@ -132,11 +135,11 @@ const Login: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button variant="social" onClick={() => handleSocialLogin('Google')} disabled={isLoading}>
+          <Button variant="social" onClick={() => handleSocialLogin('Google')} disabled={loginMutation.isPending}>
             <GoogleIcon />
             <span>Sign in with Google</span>
           </Button>
-          <Button variant="social" onClick={() => handleSocialLogin('Apple')} disabled={isLoading}>
+          <Button variant="social" onClick={() => handleSocialLogin('Apple')} disabled={loginMutation.isPending}>
             <AppleIcon />
             <span>Sign in with Apple</span>
           </Button>

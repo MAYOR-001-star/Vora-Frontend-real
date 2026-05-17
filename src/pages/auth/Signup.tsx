@@ -5,6 +5,7 @@ import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import { validateEmail, validateWorkEmail, validatePassword, validateAccountType } from '../../utils/validation';
 import { GoogleIcon, AppleIcon } from '../../components/common/Icons';
+import { useSignupMutation } from '../../services/queries/auth';
 
 
 const Signup: React.FC = () => {
@@ -12,8 +13,10 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [accountType, setAccountType] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const [formError, setFormError] = useState('');
+
+  const signupMutation = useSignupMutation();
+
   const [touched, setTouched] = useState({
     email: false,
     password: false,
@@ -39,50 +42,37 @@ const Signup: React.FC = () => {
     return email && password && accountType && !emailError && !passwordError && !accountTypeError;
   }, [email, password, accountType, emailError, passwordError, accountTypeError]);
 
-  const handleSignup = (e: React.FormEvent | React.MouseEvent) => {
+  const handleSignup = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
 
-    setIsLoading(true);
-    console.log('Registering user:', { email, password, accountType });
-    
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      if (accountType === 'Employer') {
-        // Route to OTP verification ONLY for Employers
-        navigate('/verify-otp', { state: { email, accountType } });
-      } else if (accountType === 'Talent') {
-        navigate('/onboarding/talent');
-      } else if (accountType === 'Mentor') {
-        navigate('/onboarding/mentor-apply');
-      }
-    }, 1200);
+    setFormError('');
+    try {
+      const backendRole = accountType.toUpperCase() as 'TALENT' | 'EMPLOYER' | 'MENTOR';
+      await signupMutation.mutateAsync({ email, password, role: backendRole });
+
+      // Route all standard form signups to OTP verification first
+      navigate('/verify-email', { state: { email, accountType } });
+    } catch (error: any) {
+      setFormError(error?.message || 'Registration failed. Please try again.');
+    }
   };
 
   const handleSocialSignup = (provider: 'Google' | 'Apple') => {
     // Simulate getting email from social provider
     // For demo purposes, we use the email in the input if present, or a default
-    // const signupEmail = email || `user@vora.com`; // default to work-like email for demo if empty
-    const signupEmail = email || `user@gmail.com`; 
-    
-    setIsLoading(true);
-    console.log(`Signing up with ${provider}:`, signupEmail);
+    const signupEmail = email || `user@gmail.com`;
 
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-      const isWorkEmail = validateWorkEmail(signupEmail) === '';
-      
-      if (isWorkEmail) {
-        // Employers (work emails) MUST verify OTP
-        navigate('/verify-otp', { state: { email: signupEmail, accountType: 'Employer' } });
-      } else {
-        // Talent/Mentor (personal emails) go to type selection
-        navigate('/select-type', { state: { email: signupEmail } });
-      }
-    }, 1500);
+    console.log(`Signing up with ${provider}:`, signupEmail);
+    const isWorkEmail = validateWorkEmail(signupEmail) === '';
+
+    if (isWorkEmail) {
+      // Employers (work emails) MUST verify OTP
+      navigate('/verify-email', { state: { email: signupEmail, accountType: 'Employer' } });
+    } else {
+      // Talent/Mentor (personal emails) go to type selection
+      navigate('/select-type', { state: { email: signupEmail } });
+    }
   };
 
   const handleBlur = (field: keyof typeof touched) => {
@@ -100,8 +90,14 @@ const Signup: React.FC = () => {
         </p>
       </div>
 
+      {formError && (
+        <div className="max-w-[480px] mx-auto mb-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+          <p className="text-sm font-medium text-red-600">{formError}</p>
+        </div>
+      )}
+
       <form className="space-y-6 sm:space-y-8 max-w-[480px] mx-auto" autoComplete="off">
-        <Input 
+        <Input
           label="Email"
           type="email"
           value={email}
@@ -113,7 +109,7 @@ const Signup: React.FC = () => {
           autoComplete="off"
         />
 
-        <Input 
+        <Input
           label="Password"
           type="password"
           value={password}
@@ -126,7 +122,7 @@ const Signup: React.FC = () => {
           autoComplete="new-password"
         />
 
-        <Select 
+        <Select
           label="Account type"
           value={accountType}
           onChange={(e) => setAccountType(e.target.value)}
@@ -141,12 +137,12 @@ const Signup: React.FC = () => {
           helperText={accountTypeError}
         />
 
-        <Button 
+        <Button
           variant={isFormValid ? 'primary' : 'secondary'}
           type="submit"
           onClick={handleSignup}
-          disabled={!isFormValid}
-          isLoading={isLoading}
+          disabled={!isFormValid || signupMutation.isPending}
+          isLoading={signupMutation.isPending}
         >
           Get started
         </Button>
@@ -158,11 +154,11 @@ const Signup: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button variant="social" onClick={() => handleSocialSignup('Google')} disabled={isLoading}>
+          <Button variant="social" onClick={() => handleSocialSignup('Google')} disabled={signupMutation.isPending}>
             <GoogleIcon />
             <span>Sign up with Google</span>
           </Button>
-          <Button variant="social" onClick={() => handleSocialSignup('Apple')} disabled={isLoading}>
+          <Button variant="social" onClick={() => handleSocialSignup('Apple')} disabled={signupMutation.isPending}>
             <AppleIcon />
             <span>Sign up with Apple</span>
           </Button>

@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import MainLayout from './layout/MainLayout'
 import DashboardLayout from './layout/DashboardLayout'
+import { Toaster } from 'react-hot-toast'
 
 // Lazy load pages for performance
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -20,10 +21,13 @@ const JobDetails = lazy(() => import('./pages/employer/JobDetails'))
 const Rejection = lazy(() => import('./pages/employer/Rejection'))
 const TalentProfile = lazy(() => import('./pages/talent/TalentProfile'))
 const FinalAlignmentSession = lazy(() => import('./pages/employer/FinalAlignmentSession'))
+const OnboardingContainer = lazy(() => import('./pages/onboarding/OnboardingContainer'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 const App = () => {
   return (
     <MainLayout>
+      <Toaster position="top-right" reverseOrder={false} />
       <Suspense fallback={
         <div className="fixed inset-0 flex justify-center items-center bg-white z-[9999]">
           <div className="w-10 h-10 border-4 border-[#0047CC] border-t-transparent rounded-full animate-spin"></div>
@@ -43,10 +47,12 @@ const App = () => {
           {/* Auth Routes */}
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/verify-email" element={<VerifyOTP />} />
+          <Route path="/verify-email" element={<VerifyOTP />} />
           <Route path="/select-type" element={<SelectAccountType />} />
 
           {/* Onboarding Routes */}
+          <Route path="/onboarding" element={<OnboardingContainer />} />
           <Route path="/onboarding/employer" element={<EmployerOnboarding />} />
           <Route path="/onboarding/talent" element={<TalentOnboarding />} />
           <Route path="/onboarding/mentor-apply" element={<MentorApply />} />
@@ -54,6 +60,9 @@ const App = () => {
           <Route path="/onboarding/welcome" element={<Welcome />} />
 
           <Route path="/settings" element={<div className="text-center py-20 text-gray-500 text-lg">Settings Page (Coming Soon)</div>} />
+
+          {/* Wildcard Fallback 404 Route */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </MainLayout>

@@ -15,44 +15,310 @@ import Input from '../common/Input';
 interface PostJobWizardProps {
   isOpen: boolean;
   onClose: () => void;
+  initialConfig?: {
+    isScheduled: boolean;
+    goLiveDate: string;
+    isPrefilled: boolean;
+  };
 }
 
 const STEPS = [
-  { id: 1, title: 'Role Details', sub: 'Title, level & location' },
-  { id: 2, title: 'Responsibilities', sub: 'What they will do' },
-  { id: 3, title: 'Experience', sub: 'Background & skills' },
-  { id: 4, title: 'Team & Communication', sub: 'Culture & style' },
-  { id: 5, title: 'Compensation', sub: 'Budget & benefits' },
-  { id: 6, title: 'Preview & Post', sub: 'Final review' }
+  { id: 1, title: 'Role details', sub: 'Title, level & location' },
+  { id: 2, title: 'Responsibilities & skills', sub: 'What they will do' },
+  { id: 3, title: 'Experience & background', sub: 'Qualifications & languages' },
+  { id: 4, title: 'Team collaboration & communication', sub: 'Culture & style' },
+  { id: 5, title: 'Compensation & documentation', sub: 'Budget & benefits' },
+  { id: 6, title: 'Preview', sub: 'Final review' }
 ];
 
-const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose }) => {
+const ROLE_TYPE_GROUPS = [
+  {
+    label: 'Employment',
+    options: [
+      { label: 'Full-time employment', value: 'Full-time employment' },
+      { label: 'Part-time employment', value: 'Part-time employment' }
+    ]
+  },
+  {
+    label: 'Contract & Consultancy',
+    options: [
+      { label: 'Contract', value: 'Contract' },
+      { label: 'Consultancy', value: 'Consultancy' },
+      { label: 'Locum / Agency shift', value: 'Locum / Agency shift' },
+      { label: 'Secondment', value: 'Secondment' }
+    ]
+  },
+  {
+    label: 'Internships & Placements',
+    options: [
+      { label: 'Internship (paid)', value: 'Internship (paid)' },
+      { label: 'Internship (unpaid)', value: 'Internship (unpaid)' },
+      { label: 'Academic placement (degree requirement)', value: 'Academic placement (degree requirement)' },
+      { label: 'Traineeship', value: 'Traineeship' },
+      { label: 'Volunteer placement', value: 'Volunteer placement' }
+    ]
+  },
+  {
+    label: 'Fellowships & Scholarships',
+    options: [
+      { label: 'Fellowship', value: 'Fellowship' },
+      { label: 'Postdoctoral fellowship', value: 'Postdoctoral fellowship' }
+    ]
+  },
+  {
+    label: 'Academic & Research',
+    options: [
+      { label: 'PhD studentship (funded)', value: 'PhD studentship (funded)' },
+      { label: 'PhD studentship (self-funded)', value: 'PhD studentship (self-funded)' },
+      { label: 'Research associate / postdoc', value: 'Research associate / postdoc' },
+      { label: 'Teaching post', value: 'Teaching post' }
+    ]
+  },
+  {
+    label: 'Clinical Training',
+    options: [
+      { label: 'Residency / Foundation year placement', value: 'Residency / Foundation year placement' },
+      { label: 'Government / VSO placement', value: 'Government / VSO placement' },
+      { label: 'Clinical elective (student observership)', value: 'Clinical elective (student observership)' },
+      { label: 'Pre-registration placement (pharmacy / allied health)', value: 'Pre-registration placement (pharmacy / allied health)' }
+    ]
+  },
+  {
+    label: 'University — Student Matching',
+    options: [
+      { label: 'Offer of admission — undergraduate programme', value: 'Offer of admission — undergraduate programme' },
+      { label: 'Offer of admission — postgraduate taught (MSc / MPH / MBA)', value: 'Offer of admission — postgraduate taught (MSc / MPH / MBA)' },
+      { label: 'Offer of admission — PhD / doctoral programme', value: 'Offer of admission — PhD / doctoral programme' },
+      { label: 'Scholarship offer — full or partial funding', value: 'Scholarship offer — full or partial funding' },
+      { label: 'Short course / CPD / professional certificate', value: 'Short course / CPD / professional certificate' },
+      { label: 'Exchange / visiting student placement', value: 'Exchange / visiting student placement' },
+      { label: 'Intercalating year / BSc placement (medical student)', value: 'Intercalating year / BSc placement (medical student)' },
+      { label: 'Summer school / intensive programme', value: 'Summer school / intensive programme' }
+    ]
+  },
+  {
+    label: 'Health-Adjacent — Operations & Support',
+    options: [
+      { label: 'Finance / Accounting', value: 'Finance / Accounting' },
+      { label: 'Human Resources (HR)', value: 'Human Resources (HR)' },
+      { label: 'Procurement / Supply Chain / Logistics', value: 'Procurement / Supply Chain / Logistics' },
+      { label: 'Legal / Compliance / Regulatory Affairs', value: 'Legal / Compliance / Regulatory Affairs' },
+      { label: 'Administration / Office Management', value: 'Administration / Office Management' },
+      { label: 'Customer Service / Patient Services', value: 'Customer Service / Patient Services' },
+      { label: 'Facilities / Estates / Engineering', value: 'Facilities / Estates / Engineering' },
+      { label: 'Catering / Nutrition Support Services', value: 'Catering / Nutrition Support Services' },
+      { label: 'Security / Safeguarding Officer', value: 'Security / Safeguarding Officer' },
+      { label: 'Driver / Transport Coordinator', value: 'Driver / Transport Coordinator' }
+    ]
+  },
+  {
+    label: 'Health-Adjacent — Technology & Data',
+    options: [
+      { label: 'Software Engineer / Developer', value: 'Software Engineer / Developer' },
+      { label: 'Data Engineer / Analyst', value: 'Data Engineer / Analyst' },
+      { label: 'IT Support / Systems Administrator', value: 'IT Support / Systems Administrator' },
+      { label: 'Cybersecurity Specialist', value: 'Cybersecurity Specialist' },
+      { label: 'UX / Product Designer', value: 'UX / Product Designer' }
+    ]
+  },
+  {
+    label: 'Health-Adjacent — Communications & Creative',
+    options: [
+      { label: 'Graphic Designer', value: 'Graphic Designer' },
+      { label: 'Videographer / Photographer', value: 'Videographer / Photographer' },
+      { label: 'Social Media Manager', value: 'Social Media Manager' },
+      { label: 'Copywriter / Content Creator', value: 'Copywriter / Content Creator' },
+      { label: 'Translator / Interpreter', value: 'Translator / Interpreter' },
+      { label: 'Fundraising / Development Officer', value: 'Fundraising / Development Officer' },
+      { label: 'Grant Writer', value: 'Grant Writer' }
+    ]
+  }
+];
+
+const EMPLOYMENT_LEVEL_OPTIONS = [
+  { label: 'Student / Graduate', value: 'Student / Graduate' },
+  { label: 'Entry level', value: 'Entry level' },
+  { label: 'Mid level', value: 'Mid level' },
+  { label: 'Senior level', value: 'Senior level' },
+  { label: 'Executive / Director', value: 'Executive / Director' }
+];
+
+const WORK_FORMAT_OPTIONS = [
+  { label: 'Fully onsite', value: 'Fully onsite' },
+  { label: 'Hybrid', value: 'Hybrid' },
+  { label: 'Remote - specific timezone(s) required', value: 'Remote - specific timezone(s) required' },
+  { label: 'Remote - no timezone restriction', value: 'Remote - no timezone restriction' },
+  { label: 'Flexible / candidate preference', value: 'Flexible / candidate preference' }
+];
+
+const INT_POLICY_OPTIONS = [
+  { label: 'Local candidates only - no international applicants', value: 'Local candidates only - no international applicants' },
+  { label: 'Open to international - visa sponsorship offered', value: 'Open to international - visa sponsorship offered' },
+  { label: 'Open to international - candidate must have their own right to work', value: 'Open to international - candidate must have their own right to work' },
+  { label: 'Global remote - no country-of-residence restriction whatsoever', value: 'Global remote - no country-of-residence restriction' }
+];
+
+const SECURITY_CLEARANCE_OPTIONS = [
+  { label: 'None required', value: 'None required' },
+  { label: 'Basic background check only', value: 'Basic background check only' },
+  { label: 'Government / national security clearance', value: 'Government / national security clearance' },
+  { label: 'Five Eyes / allied clearance required', value: 'Five Eyes / allied clearance required' }
+];
+
+const WORK_PERMIT_OPTIONS = [
+  { label: 'Full right to work required', value: 'Full right to work required' },
+  { label: 'Skilled worker / sponsored visa', value: 'Skilled worker / sponsored visa' },
+  { label: 'Student visa with work rights', value: 'Student visa with work rights' },
+  { label: 'Open / unrestricted work permit', value: 'Open / unrestricted work permit' },
+  { label: 'Permanent residency / settled status', value: 'Permanent residency / settled status' },
+  { label: 'Consultancy / self-employed arrangement possible', value: 'Consultancy / self-employed arrangement possible' }
+];
+
+const TZ_REGIONS: Record<string, string[]> = {
+  EMEA: [
+    'UTC+0 (GMT – London, Dublin, Accra, Dakar, Abidjan)',
+    'UTC+1 (CET – Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
+    'UTC+2 (EET – Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT – Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)'
+  ],
+  AMER: [
+    'UTC-8 (PST – Los Angeles, Vancouver)',
+    'UTC-7 (MST – Denver, Phoenix)',
+    'UTC-6 (CST – Chicago, Mexico City)',
+    'UTC-5 (EST – New York, Toronto)',
+    'UTC-4 (AST – Caracas, La Paz, Halifax)',
+    'UTC-3 (BRT – São Paulo, Buenos Aires, Montevideo)'
+  ],
+  APAC: [
+    'UTC+5:30 (IST – Mumbai, New Delhi)',
+    'UTC+6 (BST – Dhaka, Almaty)',
+    'UTC+7 (ICT – Bangkok, Jakarta, Hanoi, Phnom Penh)',
+    'UTC+8 (SGT/CST – Singapore, Beijing, Manila, Kuala Lumpur, Perth)',
+    'UTC+9 (JST/KST – Tokyo, Seoul)',
+    'UTC+10 (AEST – Sydney, Melbourne, Brisbane)',
+    'UTC+12 (NZST – Auckland, Fiji)'
+  ],
+  AFRICA: [
+    'UTC+0 (GMT – London, Dublin, Accra, Dakar, Abidjan)',
+    'UTC+1 (CET – Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
+    'UTC+2 (EET – Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT – Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)'
+  ],
+  MENA: [
+    'UTC+2 (EET – Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT – Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)',
+    'UTC+3:30 (IRST – Tehran)',
+    'UTC+4 (GST – Dubai, Abu Dhabi, Baku, Tbilisi)',
+    'UTC+5 (PKT – Islamabad, Karachi, Tashkent)'
+  ],
+  ALL: [
+    'UTC+0 (GMT – London, Dublin, Accra, Dakar, Abidjan)',
+    'UTC+1 (CET – Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
+    'UTC+2 (EET – Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT – Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)',
+    'UTC+4 (GST – Dubai, Abu Dhabi, Baku, Tbilisi)',
+    'UTC+5:30 (IST – Mumbai, New Delhi)',
+    'UTC+7 (ICT – Bangkok, Jakarta, Hanoi, Phnom Penh)',
+    'UTC+8 (SGT/CST – Singapore, Beijing, Manila, Kuala Lumpur, Perth)',
+    'UTC-5 (EST – New York, Toronto)',
+    'UTC-3 (BRT – São Paulo, Buenos Aires, Montevideo)',
+    'UTC+10 (AEST – Sydney, Melbourne, Brisbane)'
+  ]
+};
+
+const TZ_GROUPS = [
+  {
+    label: 'Americas (AMER)',
+    options: [
+      { label: 'UTC-8 (PST – Los Angeles, Vancouver)', value: 'UTC-8 (PST – Los Angeles, Vancouver)' },
+      { label: 'UTC-7 (MST – Denver, Phoenix)', value: 'UTC-7 (MST – Denver, Phoenix)' },
+      { label: 'UTC-6 (CST – Chicago, Mexico City)', value: 'UTC-6 (CST – Chicago, Mexico City)' },
+      { label: 'UTC-5 (EST – New York, Toronto)', value: 'UTC-5 (EST – New York, Toronto)' },
+      { label: 'UTC-4 (AST – Caracas, La Paz, Halifax)', value: 'UTC-4 (AST – Caracas, La Paz, Halifax)' },
+      { label: 'UTC-3 (BRT – São Paulo, Buenos Aires, Montevideo)', value: 'UTC-3 (BRT – São Paulo, Buenos Aires, Montevideo)' }
+    ]
+  },
+  {
+    label: 'Western Europe & West Africa (part of EMEA)',
+    options: [
+      { label: 'UTC+0 (GMT – London, Dublin, Accra, Dakar, Abidjan)', value: 'UTC+0 (GMT – London, Dublin, Accra, Dakar, Abidjan)' },
+      { label: 'UTC+1 (CET – Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)', value: 'UTC+1 (CET – Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)' }
+    ]
+  },
+  {
+    label: 'Eastern Europe & East/Southern Africa (part of EMEA)',
+    options: [
+      { label: 'UTC+2 (EET – Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)', value: 'UTC+2 (EET – Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)' },
+      { label: 'UTC+3 (EAT – Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)', value: 'UTC+3 (EAT – Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)' }
+    ]
+  },
+  {
+    label: 'Middle East & Central/South Asia (MENA / part of APAC)',
+    options: [
+      { label: 'UTC+3:30 (IRST – Tehran)', value: 'UTC+3:30 (IRST – Tehran)' },
+      { label: 'UTC+4 (GST – Dubai, Abu Dhabi, Baku, Tbilisi)', value: 'UTC+4 (GST – Dubai, Abu Dhabi, Baku, Tbilisi)' },
+      { label: 'UTC+4:30 (AFT – Kabul)', value: 'UTC+4:30 (AFT – Kabul)' },
+      { label: 'UTC+5 (PKT – Islamabad, Karachi, Tashkent)', value: 'UTC+5 (PKT – Islamabad, Karachi, Tashkent)' },
+      { label: 'UTC+5:30 (IST – Mumbai, New Delhi, Colombo)', value: 'UTC+5:30 (IST – Mumbai, New Delhi, Colombo)' },
+      { label: 'UTC+5:45 (NPT – Kathmandu)', value: 'UTC+5:45 (NPT – Kathmandu)' },
+      { label: 'UTC+6 (BST – Dhaka, Almaty)', value: 'UTC+6 (BST – Dhaka, Almaty)' }
+    ]
+  },
+  {
+    label: 'Southeast & East Asia (APAC)',
+    options: [
+      { label: 'UTC+7 (ICT – Bangkok, Jakarta, Hanoi, Phnom Penh)', value: 'UTC+7 (ICT – Bangkok, Jakarta, Hanoi, Phnom Penh)' },
+      { label: 'UTC+8 (SGT/CST – Singapore, Beijing, Manila, Kuala Lumpur, Perth)', value: 'UTC+8 (SGT/CST – Singapore, Beijing, Manila, Kuala Lumpur, Perth)' },
+      { label: 'UTC+9 (JST/KST – Tokyo, Seoul)', value: 'UTC+9 (JST/KST – Tokyo, Seoul)' },
+      { label: 'UTC+9:30 (ACST – Darwin, Adelaide)', value: 'UTC+9:30 (ACST – Darwin, Adelaide)' },
+      { label: 'UTC+10 (AEST – Sydney, Melbourne, Brisbane)', value: 'UTC+10 (AEST – Sydney, Melbourne, Brisbane)' },
+      { label: 'UTC+12 (NZST – Auckland, Fiji)', value: 'UTC+12 (NZST – Auckland, Fiji)' }
+    ]
+  }
+];
+
+const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialConfig }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMobStepNavOpen, setIsMobStepNavOpen] = useState(false);
 
   // Form State
-  const [formData, setFormData] = useState({
-    roleTitle: '',
-    roleType: 'Internship',
-    level: 'Entry Level',
-    positions: '1',
-    format: 'Remote',
-    location: '',
-    startDate: '',
-    endDate: '',
-    summary: '',
-    responsibilities: '',
-    skills: [] as string[],
-    newSkill: '',
-    academicLevel: 'Bachelor\'s Degree',
-    experienceYears: '0-1 year',
-    language: 'English',
-    payType: 'Fixed',
-    currency: 'USD',
-    minPay: '',
-    maxPay: '',
-    benefits: [] as string[]
-  });
+  const [roleType, setRoleType] = useState('');
+  const [roleTitle, setRoleTitle] = useState('');
+  const [level, setLevel] = useState('');
+  const [positions, setPositions] = useState('1');
+  const [timeCommitment, setTimeCommitment] = useState('');
+  const [workFormat, setWorkFormat] = useState('');
+  const [location, setLocation] = useState('');
+  const [additionalLocations, setAdditionalLocations] = useState<string[]>([]);
+  const [newLocationInput, setNewLocationInput] = useState('');
+  const [selectedTimezones, setSelectedTimezones] = useState<string[]>([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [summary, setSummary] = useState('');
+
+  // Eligibility state
+  const [internationalPolicy, setInternationalPolicy] = useState('');
+  const [securityClearance, setSecurityClearance] = useState('');
+  const [selectedWorkPermits, setSelectedWorkPermits] = useState<string[]>([]);
+
+  // Scheduled Hiring state
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [goLiveDate, setGoLiveDate] = useState('');
+  const [editsCount, setEditsCount] = useState(0);
+
+  // Prefill Banner State
+  const [showPrefillBanner, setShowPrefillBanner] = useState(false);
+
+  // Sync initial config from post modal choices
+  useEffect(() => {
+    if (isOpen && initialConfig) {
+      setIsScheduled(initialConfig.isScheduled);
+      setGoLiveDate(initialConfig.goLiveDate || '');
+      setShowPrefillBanner(initialConfig.isPrefilled);
+      setCurrentStep(1);
+    }
+  }, [isOpen, initialConfig]);
 
   useEffect(() => {
     if (isOpen) {
@@ -68,7 +334,6 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose }) => {
     setTimeout(() => {
       onClose();
       setIsClosing(false);
-      setCurrentStep(1);
     }, 400);
   };
 
@@ -77,227 +342,749 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose }) => {
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 6));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
+  // Additional locations logic
+  const handleAddLocation = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const clean = newLocationInput.trim();
+    if (clean && !additionalLocations.includes(clean)) {
+      setAdditionalLocations([...additionalLocations, clean]);
+    }
+    setNewLocationInput('');
+  };
+
+  const handleRemoveLocation = (loc: string) => {
+    setAdditionalLocations(additionalLocations.filter(l => l !== loc));
+  };
+
+  // Timezone shortcuts helper
+  const handleAddTZRegion = (region: string) => {
+    const list = TZ_REGIONS[region] || [];
+    const merged = [...selectedTimezones];
+    list.forEach(tz => {
+      if (!merged.includes(tz)) merged.push(tz);
+    });
+    setSelectedTimezones(merged);
+  };
+
+  const handleClearTimezones = () => {
+    setSelectedTimezones([]);
+  };
+
+  const handleRemoveTimezone = (tz: string) => {
+    setSelectedTimezones(selectedTimezones.filter(t => t !== tz));
+  };
+
+  const handleToggleTimezone = (tz: string) => {
+    if (selectedTimezones.includes(tz)) {
+      handleRemoveTimezone(tz);
+    } else {
+      setSelectedTimezones([...selectedTimezones, tz]);
+    }
+  };
+
+  // Work format helpers
+  const showLocSection = workFormat === 'Fully onsite' || workFormat === 'Hybrid';
+  const showTzSection = workFormat === 'Remote - specific timezone(s) required' || workFormat === 'Remote - no timezone restriction' || workFormat === 'Hybrid' || workFormat === 'Flexible / candidate preference';
+
+  // Step 2 placeholder state
+  const [responsibilities, setResponsibilities] = useState('');
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState('');
+
   const addSkill = () => {
-    if (formData.newSkill.trim() && !formData.skills.includes(formData.newSkill.trim())) {
-      setFormData({
-        ...formData,
-        skills: [...formData.skills, formData.newSkill.trim()],
-        newSkill: ''
-      });
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+      setSkills([...skills, newSkill.trim()]);
+      setNewSkill('');
     }
   };
 
   const removeSkill = (skill: string) => {
-    setFormData({
-      ...formData,
-      skills: formData.skills.filter(s => s !== skill)
-    });
+    setSkills(skills.filter(s => s !== skill));
   };
 
+  // Scheduled Hiring version segments
+  const editsRemaining = 3 - editsCount;
+
   return (
-    <div className={`fixed inset-0 z-[200] flex flex-col bg-[#F7F7F7] transition-all duration-500 ease-in-out ${isClosing ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
+    <div className={`fixed inset-0 z-[600] flex flex-col bg-[#F7F7F7] font-['Nunito_Sans'] transition-all duration-500 ease-in-out ${isClosing ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
       {/* Top Header */}
-      <div className="h-[72px] bg-white border-b border-gray-100 px-8 flex items-center justify-between shrink-0">
+      <div className="h-[72px] bg-white border-b border-[#E6E6E6] px-8 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
-          <div className="w-8 h-8 bg-[#0047CC] rounded-lg flex items-center justify-center">
-            <BriefcaseIcon size={18} className="text-white" />
-          </div>
-          <div>
-            <h2 className="text-[16px] font-medium text-gray-900 tracking-tight leading-none">Post a Job</h2>
-            <p className="text-[11px] font-medium text-gray-400 mt-1">Draft saved automatically</p>
-          </div>
+          <button 
+            onClick={handleClose} 
+            className="flex items-center gap-1.5 text-sm font-bold text-[#4A4A4A] hover:text-[#0047CC] transition-colors cursor-pointer"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Post a job
+          </button>
         </div>
-        <button 
-          onClick={handleClose}
-          className="w-10 h-10 rounded-full hover:bg-gray-50 flex items-center justify-center text-gray-400 transition-colors group cursor-pointer"
-        >
-          <CloseIcon size={24} className="group-hover:rotate-90 transition-transform duration-300" />
-        </button>
+        <div className="flex items-center gap-4">
+          <span className="text-[11px] font-semibold text-[#808080]">Draft saved automatically</span>
+          <button 
+            onClick={handleClose}
+            className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-colors group cursor-pointer"
+          >
+            <CloseIcon size={22} className="group-hover:rotate-90 transition-transform duration-300" />
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Steps */}
-        <div className="w-[320px] bg-white border-r border-gray-100 p-8 hidden lg:flex flex-col">
-          <div className="space-y-8">
-            {STEPS.map((step) => (
-              <div key={step.id} className="flex gap-4 group">
-                <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-medium transition-all duration-300 ${
-                    currentStep === step.id 
-                      ? 'bg-[#0047CC] text-white shadow-lg shadow-blue-500/30' 
-                      : currentStep > step.id 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-gray-50 text-gray-400 border border-gray-100'
+        {/* Step Navigation Sidebar (Desktop) */}
+        <div className="w-[280px] bg-white border-r border-[#E6E6E6] py-6 hidden lg:flex flex-col overflow-y-auto shrink-0">
+          <div className="space-y-1">
+            {STEPS.map((step) => {
+              const isDone = currentStep > step.id;
+              const isCur = currentStep === step.id;
+              return (
+                <div key={step.id} className="flex items-start gap-3.5 px-6 py-2.5">
+                  <div className={`w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300 ${
+                    isDone 
+                      ? 'bg-[#2CA62C] border-[#2CA62C]' 
+                      : isCur 
+                        ? 'border-[#0047CC] bg-[#EBF6FF]' 
+                        : 'border-[#E6E6E6] bg-white'
                   }`}>
-                    {currentStep > step.id ? <CheckIcon size={14} /> : step.id}
+                    {isDone ? (
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    ) : isCur ? (
+                      <div className="w-2 h-2 rounded-full bg-[#0047CC]" />
+                    ) : null}
                   </div>
-                  {step.id !== 6 && (
-                    <div className={`w-0.5 h-10 my-1 rounded-full ${currentStep > step.id ? 'bg-green-500' : 'bg-gray-50'}`} />
-                  )}
+                  <div>
+                    <p className={`text-sm tracking-tight leading-tight ${isCur ? 'text-[#0047CC] font-bold' : isDone ? 'text-[#4A4A4A] font-semibold' : 'text-[#ADADAD] font-semibold'}`}>
+                      {step.title}
+                    </p>
+                    <p className="text-[11px] font-medium text-gray-400 mt-0.5">{step.sub}</p>
+                  </div>
                 </div>
-                <div className="pt-0.5">
-                  <p className={`text-[14px] font-medium tracking-tight ${currentStep === step.id ? 'text-[#0047CC]' : 'text-gray-900 opacity-60'}`}>
-                    {step.title}
-                  </p>
-                  <p className="text-[11px] font-medium text-gray-400 mt-0.5">{step.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-auto p-6 bg-blue-50/50 rounded-2xl border border-blue-100/50">
-            <div className="flex gap-3">
-              <InfoIcon size={16} className="text-[#0047CC] shrink-0 mt-0.5" />
-              <p className="text-[11px] font-medium text-[#0047CC] leading-relaxed">
-                Tip: Clearer job descriptions attract 40% more qualified candidates. Be specific about the goals.
-              </p>
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto bg-white lg:bg-transparent">
-          <div className="max-w-3xl mx-auto py-12 px-6 lg:px-12">
-            
-            {/* Step 1: Role Details */}
+        {/* Form Body Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#F7F7F7]">
+          {/* Mobile Step Nav Dropdown */}
+          <button 
+            onClick={() => setIsMobStepNavOpen(!isMobStepNavOpen)}
+            className="flex lg:hidden items-center justify-between px-6 py-3.5 bg-white border-b border-[#E6E6E6] text-[13px] font-bold text-[#4A4A4A] w-full cursor-pointer"
+          >
+            <span>Step {currentStep} of 6: {STEPS[currentStep - 1].title}</span>
+            <svg 
+              width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              className={`transition-transform duration-200 ${isMobStepNavOpen ? 'rotate-180' : ''}`}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          {isMobStepNavOpen && (
+            <div className="lg:hidden bg-white border-b border-[#E6E6E6] py-3 space-y-1 animate-in slide-in-from-top duration-250">
+              {STEPS.map((step) => {
+                const isDone = currentStep > step.id;
+                const isCur = currentStep === step.id;
+                return (
+                  <button
+                    key={step.id}
+                    onClick={() => {
+                      setCurrentStep(step.id);
+                      setIsMobStepNavOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-6 py-2 w-full text-left hover:bg-gray-50 cursor-pointer"
+                  >
+                    <div className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                      isDone 
+                        ? 'bg-[#2CA62C] border-[#2CA62C]' 
+                        : isCur 
+                          ? 'border-[#0047CC] bg-[#EBF6FF]' 
+                          : 'border-[#E6E6E6]'
+                    }`}>
+                      {isDone ? (
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      ) : isCur ? (
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#0047CC]" />
+                      ) : null}
+                    </div>
+                    <span className={`text-[13px] ${isCur ? 'text-[#0047CC] font-bold' : 'text-[#4A4A4A]'}`}>{step.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="flex-1 p-6 md:p-10 max-w-4xl w-full mx-auto space-y-6">
+            {/* Prefill Notification Banner */}
+            {showPrefillBanner && (
+              <div className="flex items-start gap-3 p-4 bg-[#EBF6FF] border border-[#BDD9FF] rounded-xl animate-in fade-in duration-300">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2" className="shrink-0 mt-0.5">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div className="flex-1">
+                  <p className="text-[13px] leading-relaxed text-[#1e3a8a]">
+                    We have pre-filled your job post using your uploaded document. Review each section and make any changes before publishing.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setShowPrefillBanner(false)}
+                  className="text-[#387DFF] hover:text-[#0047CC] p-0.5 cursor-pointer shrink-0"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* STEP 1: ROLE DETAILS */}
             {currentStep === 1 && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="space-y-2">
-                  <span className="bg-blue-50 text-[#0047CC] text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded">Step 01</span>
-                  <h3 className="text-[28px] font-medium text-gray-900 tracking-tight leading-tight">Tell us about the role</h3>
-                  <p className="text-[14px] font-medium text-gray-400">Provide basic information to help candidates find your job.</p>
+              <div className="bg-white border border-[#E6E6E6] rounded-[20px] p-6 md:p-9 shadow-sm space-y-8 animate-in fade-in duration-300">
+                <div>
+                  <h2 className="text-xl md:text-[22px] font-extrabold text-[#1A1A1A] tracking-tight">Role details</h2>
+                  <p className="text-[13px] text-[#808080] mt-1.5 leading-relaxed">
+                    Core information about this role. VORA uses these fields to determine geopolitical eligibility, match candidates to your timezone, and score candidates on role fit.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input 
-                    label="Role Title"
-                    name="roleTitle"
-                    placeholder="e.g. Public Health Research Intern"
-                    value={formData.roleTitle}
-                    onChange={(e) => setFormData({...formData, roleTitle: e.target.value})}
-                  />
+                  {/* Role Type */}
                   <Select 
-                    label="Role Type"
-                    name="roleType"
-                    value={formData.roleType}
-                    onChange={(e) => setFormData({...formData, roleType: e.target.value})}
-                    options={[
-                      { label: 'Internship', value: 'Internship' },
-                      { label: 'Full-time', value: 'Full-time' },
-                      { label: 'Contract', value: 'Contract' },
-                      { label: 'Voluntary', value: 'Voluntary' },
-                    ]}
+                    label="Role type"
+                    value={roleType}
+                    placeholder="Select option"
+                    groups={ROLE_TYPE_GROUPS}
+                    onChange={(e) => setRoleType(e.target.value)}
                   />
-                  <Select 
-                    label="Employment Level"
-                    name="level"
-                    value={formData.level}
-                    onChange={(e) => setFormData({...formData, level: e.target.value})}
-                    options={[
-                      { label: 'Entry Level', value: 'Entry Level' },
-                      { label: 'Mid Level', value: 'Mid Level' },
-                      { label: 'Senior Level', value: 'Senior Level' },
-                      { label: 'Executive', value: 'Executive' },
-                    ]}
-                  />
+
+                  {/* Role Title */}
                   <Input 
-                    label="Number of Positions"
+                    label="Role title"
+                    placeholder="e.g. Global Health Research Intern"
+                    value={roleTitle}
+                    onChange={(e) => setRoleTitle(e.target.value)}
+                  />
+
+                  {/* Employment Level */}
+                  <Select 
+                    label="Employment level"
+                    value={level}
+                    placeholder="Select option"
+                    options={EMPLOYMENT_LEVEL_OPTIONS}
+                    onChange={(e) => setLevel(e.target.value)}
+                  />
+
+                  {/* Available Positions */}
+                  <Input 
+                    label="Available positions"
                     type="number"
-                    value={formData.positions}
-                    onChange={(e) => setFormData({...formData, positions: e.target.value})}
+                    min="1"
+                    placeholder="e.g. 1, 2, 3 etc"
+                    value={positions}
+                    onChange={(e) => setPositions(e.target.value)}
                   />
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-[13px] font-medium text-gray-900 mb-8">Work Format & Location</label>
-                    <div className="grid grid-cols-3 gap-3 my-4">
-                      {['Onsite', 'Remote', 'Hybrid'].map((fmt) => (
-                        <Button
-                          key={fmt}
-                          variant={formData.format === fmt ? 'primary' : 'outline'}
-                          onClick={() => setFormData({...formData, format: fmt})}
-                          fullWidth={true}
-                          className={`min-h-[48px] text-[13px] ${
-                            formData.format === fmt 
-                              ? 'shadow-lg shadow-blue-500/20' 
-                              : 'text-gray-500 border-gray-100 hover:border-gray-200'
-                          }`}
+
+                  {/* Time Commitment */}
+                  <Input 
+                    label="Time commitment"
+                    placeholder="e.g. 20hrs per week / Full-time"
+                    value={timeCommitment}
+                    onChange={(e) => setTimeCommitment(e.target.value)}
+                  />
+
+                  {/* Work Format */}
+                  <Select 
+                    label="Work format"
+                    value={workFormat}
+                    placeholder="Select option"
+                    options={WORK_FORMAT_OPTIONS}
+                    onChange={(e) => setWorkFormat(e.target.value)}
+                  />
+
+                  {/* Work Location (primary) */}
+                  <Input 
+                    label="Work location (primary)"
+                    placeholder="e.g. Lagos, Nigeria — or 'Multiple locations'"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+
+                  {/* Multi-location Field (Unfurls when onsite or hybrid) */}
+                  {showLocSection && (
+                    <div className="col-span-1 md:col-span-2 space-y-2.5 p-4 bg-[#F7F7F7] border border-[#E6E6E6] rounded-xl animate-in slide-in-from-top-2 duration-300">
+                      <label className="text-[13px] font-bold text-[#1A1A1A]">
+                        Additional hiring locations <span className="text-[11px] text-[#808080] font-normal italic">if hiring across multiple offices or cities</span>
+                      </label>
+                      <p className="text-xs text-[#808080] leading-relaxed">
+                        Add each location separately. VORA will match candidates eligible to work in each location and route applications accordingly.
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-2.5 min-h-[32px] pt-1">
+                        {additionalLocations.map((loc) => (
+                          <span key={loc} className="inline-flex items-center gap-1.5 bg-[#EBF6FF] text-[#0047CC] border border-[#BDD9FF] rounded-full px-3 py-1 text-xs font-bold">
+                            {loc}
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveLocation(loc)}
+                              className="text-[#387DFF] hover:text-[#0047CC] font-bold text-sm cursor-pointer ml-0.5"
+                            >
+                              &#215;
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+
+                      <form 
+                        onSubmit={(e) => { e.preventDefault(); handleAddLocation(); }} 
+                        className="flex gap-2"
+                      >
+                        <input 
+                          type="text" 
+                          placeholder="e.g. Nairobi, Kenya"
+                          value={newLocationInput}
+                          onChange={(e) => setNewLocationInput(e.target.value)}
+                          className="flex-1 px-4 py-2.5 rounded-lg border border-[#E6E6E6] bg-white outline-none focus:border-[#0047CC] transition-all text-sm font-semibold"
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => handleAddLocation()}
+                          className="px-5 py-2.5 rounded-lg bg-[#0047CC] text-white hover:bg-[#003d99] text-xs font-extrabold transition-colors cursor-pointer"
                         >
-                          {fmt}
-                        </Button>
-                      ))}
+                          Add
+                        </button>
+                      </form>
                     </div>
-                    {formData.format !== 'Remote' && (
-                      <Input 
-                        label=""
-                        placeholder="City, Country"
-                        value={formData.location}
-                        onChange={(e) => setFormData({...formData, location: e.target.value})}
+                  )}
+
+                  {/* Timezones multi-select with shortcuts (Unfurls when remote/hybrid/flexible) */}
+                  {showTzSection && (
+                    <div className="col-span-1 md:col-span-2 space-y-3.5 p-4 bg-[#F7F7F7] border border-[#E6E6E6] rounded-xl animate-in slide-in-from-top-2 duration-300">
+                      <label className="text-[13px] font-bold text-[#1A1A1A]">
+                        Timezone requirement(s) <span className="text-[11px] text-[#808080] font-normal italic">select all that apply</span>
+                      </label>
+                      <p className="text-xs text-[#808080] leading-relaxed">
+                        VORA matches candidates who can sustainably overlap with <em>any</em> timezone you select. Select multiple for regional or global roles. Use the region shortcuts to quickly select an entire zone.
+                      </p>
+
+                      {/* Shortcut Buttons */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {['EMEA', 'AMER', 'APAC', 'AFRICA', 'MENA'].map((reg) => (
+                          <button 
+                            key={reg}
+                            type="button" 
+                            onClick={() => handleAddTZRegion(reg)}
+                            className="px-3.5 py-1.5 rounded-full border border-[#E6E6E6] bg-white hover:bg-[#EBF6FF] hover:border-[#0047CC] hover:text-[#0047CC] text-[11px] font-bold text-[#4A4A4A] transition-all cursor-pointer"
+                          >
+                            {reg}
+                          </button>
+                        ))}
+                        <button 
+                          type="button" 
+                          onClick={() => handleAddTZRegion('ALL')}
+                          className="px-3.5 py-1.5 rounded-full border border-[#0047CC] bg-[#EBF6FF] hover:bg-blue-100 text-[#0047CC] text-[11px] font-bold transition-all cursor-pointer"
+                        >
+                          All regions
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={handleClearTimezones}
+                          className="px-3.5 py-1.5 rounded-full border border-red-200 bg-white hover:bg-red-50 text-red-600 text-[11px] font-bold transition-all cursor-pointer"
+                        >
+                          Clear all
+                        </button>
+                      </div>
+
+                      {/* Displayed Selected Timezone Tags */}
+                      <div className="flex flex-wrap gap-2 pt-1 max-h-[160px] overflow-y-auto custom-scrollbar">
+                        {selectedTimezones.map((tz) => (
+                          <span key={tz} className="inline-flex items-center gap-1.5 bg-[#EBF6FF] text-[#0047CC] border border-[#BDD9FF] rounded-full px-3 py-1 text-[11px] font-bold">
+                            {tz}
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveTimezone(tz)}
+                              className="text-[#387DFF] hover:text-[#0047CC] font-bold text-sm cursor-pointer ml-0.5"
+                            >
+                              &#215;
+                            </button>
+                          </span>
+                        ))}
+                        {selectedTimezones.length === 0 && (
+                          <p className="text-[12px] font-medium text-gray-300 italic pt-1">No timezones selected yet</p>
+                        )}
+                      </div>
+
+                      {/* Scrollable multi-timezone selector list */}
+                      <div className="border border-[#E6E6E6] bg-white rounded-lg p-2 max-h-[220px] overflow-y-auto custom-scrollbar">
+                        {TZ_GROUPS.map((grp) => (
+                          <div key={grp.label} className="mb-3.5 last:mb-0">
+                            <h4 className="text-[10px] font-extrabold text-[#ADADAD] uppercase tracking-wider px-3.5 py-1.5 bg-gray-50/50 rounded">{grp.label}</h4>
+                            <div className="space-y-0.5 mt-1">
+                              {grp.options.map((opt) => {
+                                const isSel = selectedTimezones.includes(opt.value);
+                                return (
+                                  <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => handleToggleTimezone(opt.value)}
+                                    className={`w-full text-left px-3.5 py-2 text-xs rounded-md transition-colors cursor-pointer flex items-center justify-between ${
+                                      isSel 
+                                        ? 'bg-[#EBF6FF] text-[#0047CC] font-bold' 
+                                        : 'text-[#4A4A4A] hover:bg-gray-50'
+                                    }`}
+                                  >
+                                    <span>{opt.label}</span>
+                                    {isSel && (
+                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                      </svg>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Start Date */}
+                  <div className="flex flex-col w-full">
+                    <label className="block text-sm font-medium text-text-secondary mb-2.5">Start date</label>
+                    <div className="relative w-full">
+                      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-300">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ADADAD" strokeWidth="2">
+                          <rect x="3" y="4" width="18" height="18" rx="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                      </div>
+                      <input 
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full pl-12 pr-4 py-3 sm:py-3.5 rounded-lg border border-border-default bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all font-semibold text-sm text-[#1A1A1A]"
                       />
-                    )}
+                    </div>
                   </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-[13px] font-medium text-gray-900 mb-8">Role Summary</label>
+
+                  {/* End Date (optional) */}
+                  <div className="flex flex-col w-full">
+                    <label className="block text-sm font-medium text-text-secondary mb-2.5">
+                      End date <span className="text-[11px] text-gray-400 font-normal italic">optional</span>
+                    </label>
+                    <div className="relative w-full">
+                      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-300">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ADADAD" strokeWidth="2">
+                          <rect x="3" y="4" width="18" height="18" rx="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                      </div>
+                      <input 
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-full pl-12 pr-4 py-3 sm:py-3.5 rounded-lg border border-border-default bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all font-semibold text-sm text-[#1A1A1A]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Role Summary */}
+                  <div className="col-span-1 md:col-span-2 flex flex-col w-full">
+                    <label className="block text-sm font-medium text-text-secondary mb-2.5">Role summary</label>
                     <textarea 
-                      placeholder="Briefly describe the purpose of this role..."
-                      className="w-full px-5 py-4 bg-white border border-gray-100 rounded-xl focus:border-[#0047CC] outline-none text-[14px] font-medium shadow-sm h-32 resize-none mt-4"
-                      value={formData.summary}
-                      onChange={(e) => setFormData({...formData, summary: e.target.value})}
+                      placeholder="Briefly describe what this role is for and its primary purpose within your organisation. e.g. 'We are a specialist fertility clinic recruiting an experienced embryologist to lead our IVF laboratory.' or 'We are hiring a field epidemiologist to lead outbreak response in three provinces.'"
+                      value={summary}
+                      onChange={(e) => setSummary(e.target.value)}
+                      rows={4}
+                      className="w-full px-4 py-3 sm:py-3.5 rounded-lg border border-border-default bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all placeholder:text-gray-400 text-sm font-semibold text-[#1A1A1A] resize-y min-h-[96px] leading-relaxed"
                     />
-                    <p className="text-[11px] font-medium text-gray-400 text-right">0 / 500 characters</p>
                   </div>
+                </div>
+
+                {/* ELIGIBILITY & GEOPOLITICAL SECTION */}
+                <div className="pt-4 border-t border-[#E6E6E6] space-y-6">
+                  <div className="flex items-center gap-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2.3" className="shrink-0 text-[#0047CC]">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <h3 className="text-[15px] font-extrabold text-[#1A1A1A] tracking-tight">Eligibility and geopolitical settings</h3>
+                  </div>
+                  <p className="text-xs text-[#808080] leading-relaxed">
+                    These fields power VORA's geopolitical filter. Accurate answers here directly determine which candidates are legally eligible to see this role.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* International policy */}
+                    <div className="col-span-1 md:col-span-2">
+                      <Select 
+                        label="International candidate policy"
+                        value={internationalPolicy}
+                        placeholder="Select option"
+                        options={INT_POLICY_OPTIONS}
+                        onChange={(e) => setInternationalPolicy(e.target.value)}
+                        hint="This determines whether the geopolitical filter runs in standard or modified mode per VORA's matching rules."
+                      />
+                    </div>
+
+                    {/* Security clearance */}
+                    <Select 
+                      label="Security clearance required (optional)"
+                      value={securityClearance}
+                      placeholder="Select option"
+                      options={SECURITY_CLEARANCE_OPTIONS}
+                      onChange={(e) => setSecurityClearance(e.target.value)}
+                    />
+
+                    {/* Work permits accepted */}
+                    <div className="flex flex-col w-full">
+                      <label className="block text-sm font-medium text-[#374151] mb-2.5">
+                        Work permit types accepted <span className="text-[11px] text-gray-400 font-normal italic">optional</span>
+                      </label>
+                      <div className="flex flex-wrap gap-1.5 mb-2.5">
+                        {selectedWorkPermits.map((pm) => (
+                          <span key={pm} className="inline-flex items-center gap-1 bg-[#EBF6FF] text-[#0047CC] border border-[#BDD9FF] rounded-full px-2.5 py-1 text-[11px] font-bold">
+                            {pm.length > 25 ? pm.substring(0, 25) + '...' : pm}
+                            <button 
+                              type="button" 
+                              onClick={() => setSelectedWorkPermits(selectedWorkPermits.filter(p => p !== pm))}
+                              className="text-[#387DFF] hover:text-[#0047CC] font-bold cursor-pointer"
+                            >
+                              &#215;
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="relative">
+                        <select
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val && !selectedWorkPermits.includes(val)) {
+                              setSelectedWorkPermits([...selectedWorkPermits, val]);
+                            }
+                            e.target.value = '';
+                          }}
+                          className="w-full px-4 py-3 sm:py-3.5 rounded-lg border border-border-default bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all font-semibold text-sm text-[#1A1A1A]"
+                        >
+                          <option value="">Select all that apply...</option>
+                          {WORK_PERMIT_OPTIONS.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SCHEDULED HIRING SECTION */}
+                <div className="pt-6 border-t border-[#E6E6E6] space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2" className="text-[#0047CC]">
+                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span className="text-[15px] font-extrabold text-[#1A1A1A]">Scheduled Hiring</span>
+                      </div>
+                      <p className="text-[11px] text-[#808080] font-semibold leading-relaxed">
+                        Not hiring right now? Submit the role today and set the exact date it should go live.
+                      </p>
+                    </div>
+                    
+                    {/* Toggle Switch */}
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                      <input 
+                        type="checkbox" 
+                        checked={isScheduled} 
+                        onChange={() => setIsScheduled(!isScheduled)}
+                        className="sr-only peer" 
+                      />
+                      <div className="w-11 h-6 bg-[#E6E6E6] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0047CC] after:shadow-sm"></div>
+                    </label>
+                  </div>
+
+                  {isScheduled && (
+                    <div className="space-y-6 pt-4 border-t border-blue-100 bg-[#EBF6FF]/30 border border-[#BDD9FF] rounded-xl p-5 md:p-6 animate-in slide-in-from-top-2 duration-300">
+                      {/* Explainer Box */}
+                      <div className="flex items-start gap-3 p-4 bg-[#EBF6FF] border border-[#BDD9FF] rounded-xl">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2" className="shrink-0 mt-0.5 text-[#0047CC]">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <p className="text-xs md:text-[13px] leading-relaxed text-[#1e3a8a]">
+                          <strong>How Scheduled Hiring works:</strong> Your role enters Vault state immediately on submission. It is completely invisible — no candidate sees it, no candidate knows it exists. VORA locks your platform fee in escrow at today's rate. During the vault period, every candidate who joins VORA and completes onboarding is silently matched against your specification in the background. Those who score 80% or above are pre-qualified internally — they are never told about the role. On go-live day, the role publishes publicly, pre-qualified candidates are notified instantly, and any other qualified candidates in the pool are matched in real time.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Go Live Date */}
+                        <div className="flex flex-col w-full space-y-2">
+                          <label className="block text-sm font-semibold text-[#1A1A1A]">Go-live date</label>
+                          <div className="relative w-full">
+                            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-300">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ADADAD" strokeWidth="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                              </svg>
+                            </div>
+                            <input 
+                              type="date"
+                              value={goLiveDate}
+                              onChange={(e) => setGoLiveDate(e.target.value)}
+                              className="w-full pl-12 pr-4 py-3 rounded-lg border border-blue-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#0047CC]/20 focus:border-[#0047CC] transition-all font-semibold text-sm text-[#1A1A1A]"
+                            />
+                          </div>
+                          <span className="text-[11px] text-[#808080] leading-relaxed mt-1 font-semibold">
+                            The role becomes visible to candidates and matching fires on this date. There is no minimum or maximum lead time - you choose when you are ready to hire.
+                          </span>
+                        </div>
+
+                        {/* Specification Version Meter */}
+                        <div className="space-y-3.5">
+                          <label className="block text-sm font-semibold text-[#1A1A1A]">
+                            Role specification version <span className="text-[11px] text-gray-400 font-normal italic">edit allowance</span>
+                          </label>
+                          <div className="space-y-2">
+                            <div className="text-[12px] font-bold text-[#4A4A4A]">
+                              Edits remaining before go-live: <strong className="text-[#0047CC]" id="editsLeft">{editsRemaining} of 3</strong>
+                            </div>
+                            <div className="flex gap-1.5 h-1.5">
+                              {[0, 1, 2].map((seg) => (
+                                <button
+                                  key={seg}
+                                  type="button"
+                                  onClick={() => {
+                                    if (seg >= editsRemaining - 1) {
+                                      setEditsCount(3 - seg);
+                                    } else {
+                                      setEditsCount(2 - seg);
+                                    }
+                                  }}
+                                  className={`flex-1 h-full rounded-full transition-all duration-300 cursor-pointer ${
+                                    seg < editsRemaining ? 'bg-[#0047CC]' : 'bg-[#E6E6E6]'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <p className="text-[10px] text-[#808080] leading-relaxed font-semibold">
+                              You may edit the role specification up to 3 times before it goes live. Each edit triggers a 48-hour internal review window before the updated spec is locked.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Vault Lifecycle Steps */}
+                      <div className="border border-blue-100 bg-white rounded-xl p-5 md:p-6 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center text-[#0047CC] shrink-0">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <rect x="3" y="11" width="18" height="11" rx="2"/>
+                              <path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h4 className="text-[14px] font-extrabold text-[#182348]">Vault lifecycle</h4>
+                            <p className="text-[11px] text-[#808080] font-semibold mt-0.5">What happens between submission and go-live</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4 pt-1">
+                          {[
+                            { num: 1, title: 'Submission today:', text: 'Role enters Vault state. Invisible to all candidates. Fee locked in escrow at today\'s rate. You receive a submission confirmation and vault reference number.' },
+                            { num: 2, title: 'Vault period — silent matching:', text: 'No candidate sees this role or knows it exists. Every new candidate who joins VORA and completes their profile is silently matched against your specification. Those who score 80% or above are flagged internally as pre-qualified — they are not contacted, not told about the role. You can see the live count of pre-qualified candidates in your Vault dashboard at any time.' },
+                            { num: 3, title: '72 hours before go-live:', text: 'VORA sends you a reminder. You can cancel with a full refund to your wallet up until 24 hours before go-live.' },
+                            { num: 4, title: 'Go-live:', text: 'Role publishes publicly. Pre-qualified candidates are notified instantly — because matching already ran during the vault period, there is no processing delay. Any other qualified candidates in the pool are matched and notified in real time.' },
+                            { num: 5, title: 'If you cancel before go-live:', text: 'Full fee refund to your VORA wallet. No questions asked if cancelled more than 24 hours before go-live.' }
+                          ].map((step) => (
+                            <div key={step.num} className="flex gap-3">
+                              <div className="w-5 h-5 rounded-full bg-[#0047CC] text-white text-[11px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">
+                                {step.num}
+                              </div>
+                              <p className="text-[12px] leading-relaxed text-[#4A4A4A]">
+                                <strong>{step.title}</strong> {step.text}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Fee Locked Warning */}
+                      <div className="flex items-start gap-3 p-4 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#92400E" strokeWidth="2" className="shrink-0 mt-0.5 text-[#D97706]">
+                          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <p className="text-xs md:text-[13px] leading-relaxed text-[#92400E]">
+                          <strong>Fee rate locked today.</strong> Your escrow amount is calculated at submission using the current VORA fee rate. If VORA reprices before your go-live date, you pay the rate that was in force on the day you submitted. This is your protection for committing early.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Step 2: Responsibilities & Skills */}
+            {/* STEP 2: RESPONSIBILITIES & SKILLS */}
             {currentStep === 2 && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="space-y-2">
-                  <span className="bg-blue-50 text-[#0047CC] text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded">Step 02</span>
-                  <h3 className="text-[28px] font-medium text-gray-900 tracking-tight leading-tight">What will they do?</h3>
-                  <p className="text-[14px] font-medium text-gray-400">Define the core responsibilities and technical requirements.</p>
+              <div className="bg-white border border-[#E6E6E6] rounded-[20px] p-6 md:p-9 shadow-sm space-y-8 animate-in fade-in duration-300">
+                <div className="space-y-1.5">
+                  <span className="bg-blue-50 text-[#0047CC] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Step 02</span>
+                  <h3 className="text-xl md:text-[22px] font-extrabold text-[#1A1A1A] tracking-tight">What will they do?</h3>
+                  <p className="text-[13px] text-[#808080] leading-relaxed">Define the core responsibilities and technical requirements.</p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[13px] font-medium text-gray-900">Core Responsibilities</label>
+                    <label className="text-[13px] font-bold text-gray-900">Core Responsibilities</label>
                     <textarea 
                       placeholder="Enter responsibilities, one per line..."
-                      className="w-full px-5 py-4 mt-4 bg-white border border-gray-100 rounded-xl focus:border-[#0047CC] outline-none text-[14px] font-medium shadow-sm h-48 resize-none"
-                      value={formData.responsibilities}
-                      onChange={(e) => setFormData({...formData, responsibilities: e.target.value})}
+                      className="w-full px-4 py-3 rounded-lg border border-border-default bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all placeholder:text-gray-400 text-sm font-semibold text-[#1A1A1A] h-48 resize-none mt-2 leading-relaxed"
+                      value={responsibilities}
+                      onChange={(e) => setResponsibilities(e.target.value)}
                     />
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-[13px] font-medium text-gray-900">Required Skills</label>
+                    <label className="text-[13px] font-bold text-gray-900">Required Skills</label>
                     <div className="flex gap-2">
-                      <Input 
-                        label=""
+                      <input 
                         placeholder="e.g. Data Analysis, Stata, Python"
-                        value={formData.newSkill}
-                        onChange={(e) => setFormData({...formData, newSkill: e.target.value})}
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                        className="flex-1 px-4 py-2.5 rounded-lg border border-[#E6E6E6] bg-white outline-none focus:border-[#0047CC] transition-all text-sm font-semibold"
                       />
                       <Button 
                         onClick={addSkill}
                         fullWidth={false}
                         variant="outline"
-                        className="px-8 text-gray-500 hover:bg-[#0047CC] hover:text-white hover:border-[#0047CC] transition-all shadow-sm"
+                        className="px-6 text-gray-500 hover:bg-[#0047CC] hover:text-white hover:border-[#0047CC] transition-all shadow-sm font-extrabold text-xs"
                       >
                         Add
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-2 pt-2">
-                      {formData.skills.map(skill => (
-                        <div key={skill} className="flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-lg">
-                          <span className="text-[12px] font-medium text-[#0047CC]">{skill}</span>
-                          <button onClick={() => removeSkill(skill)} className="text-[#0047CC]/50 hover:text-[#0047CC]">
-                            <CloseIcon size={12} strokeWidth={3} />
+                      {skills.map(skill => (
+                        <span key={skill} className="inline-flex items-center gap-1.5 bg-[#EBF6FF] text-[#0047CC] border border-[#BDD9FF] rounded-full px-3 py-1 text-xs font-bold">
+                          {skill}
+                          <button 
+                            onClick={() => removeSkill(skill)} 
+                            className="text-[#387DFF] hover:text-[#0047CC] font-bold text-sm ml-0.5 cursor-pointer"
+                          >
+                            &#215;
                           </button>
-                        </div>
+                        </span>
                       ))}
-                      {formData.skills.length === 0 && (
-                        <p className="text-[12px] font-medium text-gray-300 italic">No skills added yet</p>
+                      {skills.length === 0 && (
+                        <p className="text-[12px] font-semibold text-gray-300 italic">No skills added yet</p>
                       )}
                     </div>
                   </div>
@@ -305,100 +1092,111 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            {/* Step 6: Preview (Mock for now) */}
+            {/* STEPS 3, 4, 5: UI IN PROGRESS */}
             {currentStep > 2 && currentStep < 6 && (
-              <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center animate-in fade-in zoom-in-95 duration-500">
-                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
+              <div className="bg-white border border-[#E6E6E6] rounded-[20px] p-12 text-center shadow-sm space-y-6 animate-in zoom-in-95 duration-300">
+                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
                   <TrendingUpIcon size={40} className="text-gray-300" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-[20px] font-medium text-gray-900 tracking-tight">Step {currentStep} UI In Progress</h3>
-                  <p className="text-[14px] font-medium text-gray-400">We're building the specialized inputs for this step.</p>
+                <div className="space-y-2 max-w-md mx-auto">
+                  <h3 className="text-lg font-bold text-gray-900 tracking-tight">Step {currentStep} UI In Progress</h3>
+                  <p className="text-[13px] font-semibold text-gray-400 leading-relaxed">
+                    We're building the specialized inputs for this step. Click Continue to advance or Back to modify your role details!
+                  </p>
                 </div>
               </div>
             )}
 
+            {/* STEP 6: PREVIEW */}
             {currentStep === 6 && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="space-y-2">
-                  <span className="bg-green-50 text-green-600 text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded">Final Step</span>
-                  <h3 className="text-[28px] font-medium text-gray-900 tracking-tight leading-tight">Preview your job</h3>
-                  <p className="text-[14px] font-medium text-gray-400">Last check before you publish to the talent pool.</p>
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <div className="space-y-1">
+                  <span className="bg-[#EEFBEE] text-[#1D871D] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Final Step</span>
+                  <h3 className="text-xl md:text-[22px] font-extrabold text-gray-900 tracking-tight leading-tight">Preview your job</h3>
+                  <p className="text-[13px] text-gray-400 font-semibold">Last check before you publish to the talent pool.</p>
                 </div>
 
-                <div className="bg-white border border-gray-100 rounded-[24px] shadow-sm overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#0047CC] to-[#387DFF] p-8 text-white">
-                    <div className="flex justify-between items-start">
+                <div className="bg-white border border-[#E6E6E6] rounded-[24px] shadow-sm overflow-hidden">
+                  <div className="bg-gradient-to-r from-[#0047CC] to-[#387DFF] p-6 md:p-8 text-white">
+                    <div className="flex justify-between items-start gap-4">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-medium uppercase tracking-widest text-white/70">Role Posting</span>
-                        <h4 className="text-[24px] font-medium tracking-tight">{formData.roleTitle || 'Untitled Role'}</h4>
-                        <p className="text-[13px] font-medium text-white/80">{formData.roleType} · {formData.level} · {formData.format}</p>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">Role Posting</span>
+                        <h4 className="text-xl md:text-2xl font-extrabold tracking-tight">{roleTitle || 'Untitled Role'}</h4>
+                        <p className="text-[13px] font-semibold text-white/85">
+                          {roleType || 'Full-time'} · {level || 'Entry level'} · {workFormat || 'Remote'}
+                        </p>
                       </div>
-                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
                         <BriefcaseIcon size={24} />
                       </div>
                     </div>
                   </div>
-                  <div className="p-8 space-y-8">
-                    <div className="grid grid-cols-2 gap-8">
+                  <div className="p-6 md:p-8 space-y-6">
+                    <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Location</p>
-                        <p className="text-[14px] font-medium text-gray-900">{formData.location || 'Remote'}</p>
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Location</p>
+                        <p className="text-sm font-bold text-gray-900">{location || 'Remote'}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Positions</p>
-                        <p className="text-[14px] font-medium text-gray-900">{formData.positions} Available</p>
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Positions</p>
+                        <p className="text-sm font-bold text-gray-900">{positions} Available</p>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Summary</p>
-                      <p className="text-[14px] font-medium text-gray-700 leading-relaxed">
-                        {formData.summary || 'No summary provided.'}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Skills</p>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.skills.map(skill => (
-                          <span key={skill} className="px-3 py-1 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-medium text-gray-600">{skill}</span>
-                        ))}
+                    {summary && (
+                      <div className="space-y-2">
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Summary</p>
+                        <p className="text-sm font-semibold text-gray-700 leading-relaxed">
+                          {summary}
+                        </p>
                       </div>
-                    </div>
+                    )}
+                    {skills.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Skills Required</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {skills.map(skill => (
+                            <span key={skill} className="px-3 py-1 bg-gray-50 border border-gray-100 rounded-lg text-xs font-semibold text-gray-600">{skill}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             )}
-
           </div>
-        </div>
-      </div>
 
-      {/* Footer Actions */}
-      <div className="h-[96px] bg-white border-t border-gray-100 px-8 flex items-center justify-between shrink-0">
-        <Button 
-          variant="outline"
-          fullWidth={false}
-          onClick={prevStep}
-          disabled={currentStep === 1}
-          className={`px-6 min-h-[44px] border-none text-[14px] ${
-            currentStep === 1 ? 'text-gray-300' : 'text-gray-900'
-          }`}
-        >
-          <ChevronLeftIcon size={18} /> Back
-        </Button>
+          {/* Sticky Bottom Actions Bar */}
+          <div className="h-[96px] bg-white border-t border-[#E6E6E6] px-8 flex items-center justify-between shrink-0 sticky bottom-0 z-10">
+            <Button 
+              variant="outline"
+              fullWidth={false}
+              onClick={prevStep}
+              disabled={currentStep === 1}
+              className={`px-6 min-h-[44px] text-sm font-extrabold flex items-center gap-1.5 ${
+                currentStep === 1 ? 'text-gray-300 border-none' : 'text-[#4A4A4A] border-[#E6E6E6]'
+              }`}
+            >
+              <ChevronLeftIcon size={18} /> Back
+            </Button>
 
-        <div className="flex items-center gap-4">
-          <button className="text-[14px] font-medium text-[#0047CC] hover:underline px-4">
-            Save as Draft
-          </button>
-          <Button 
-            onClick={currentStep === 6 ? handleClose : nextStep}
-            fullWidth={false}
-            className="px-8 min-h-[48px] text-[14px] shadow-lg shadow-blue-500/20"
-          >
-            {currentStep === 6 ? 'Post Job Now' : 'Continue'}
-            {currentStep !== 6 && <ChevronRightIcon size={18} />}
-          </Button>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={handleClose}
+                className="text-sm font-extrabold text-[#0047CC] hover:underline px-4 cursor-pointer"
+              >
+                Save as draft
+              </button>
+              <Button 
+                onClick={currentStep === 6 ? handleClose : nextStep}
+                fullWidth={false}
+                className="px-8 min-h-[48px] text-sm font-extrabold shadow-lg shadow-blue-500/20"
+              >
+                {currentStep === 6 ? 'Post Job Now' : 'Proceed'}
+                {currentStep !== 6 && <ChevronRightIcon size={18} />}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
