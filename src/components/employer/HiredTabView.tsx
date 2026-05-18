@@ -3,6 +3,7 @@ import {
   AlertTriangleIcon, 
   PlusIcon
 } from '../common/Icons';
+import Tag from '../common/Tag';
 
 const HiredTabView: React.FC = () => {
   const hired = [
@@ -76,10 +77,10 @@ const HiredTabView: React.FC = () => {
                 <p className="text-[10px] font-medium text-gray-400 mt-0.5">{candidate.actionSub}</p>
               </div>
               <div className="flex-[1.2]">
-                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${candidate.overdue ? 'bg-red-50 text-red-700 border-red-100' : 'bg-green-50 text-green-700 border-green-100'}`}>
-                  <div className={`w-1.5 h-1.5 rounded-full ${candidate.overdue ? 'bg-red-500' : 'bg-green-500'}`} />
-                  <span className="text-[11px] font-medium tracking-tight">{candidate.status}</span>
-                </div>
+                <Tag 
+                  label={candidate.status} 
+                  variant={candidate.overdue ? 'red' : 'green'} 
+                />
               </div>
               <div className="w-24 flex justify-end">
                 <button className={`px-4 py-2 rounded-lg text-[12px] font-medium transition-all hover:scale-105 active:scale-95 ${candidate.overdue ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-700'}`}>
