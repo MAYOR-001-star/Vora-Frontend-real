@@ -2,7 +2,9 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import MainLayout from './layout/MainLayout'
 import DashboardLayout from './layout/DashboardLayout'
+import EmployerRoute from './components/auth/EmployerRoute'
 import { Toaster } from 'react-hot-toast'
+import { defaultToastOptions } from './config/toastOptions'
 
 // Lazy load pages for performance
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -25,11 +27,17 @@ const OnboardingContainer = lazy(() => import('./pages/onboarding/OnboardingCont
 const NotFound = lazy(() => import('./pages/NotFound'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Payments = lazy(() => import('./pages/employer/Payments'))
+const VaultRoleConfirmation = lazy(() => import('./pages/employer/VaultRoleConfirmation'))
+const EditVaultRole = lazy(() => import('./pages/employer/EditVaultRole'))
 
 const App = () => {
   return (
     <MainLayout>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={defaultToastOptions}
+      />
       <Suspense fallback={
         <div className="fixed inset-0 flex justify-center items-center bg-white z-[9999]">
           <div className="w-10 h-10 border-4 border-[#0047CC] border-t-transparent rounded-full animate-spin"></div>
@@ -39,13 +47,14 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
           <Route path="/jobs" element={<DashboardLayout><Jobs /></DashboardLayout>} />
-          <Route path="/jobs/:id" element={<DashboardLayout><JobDetails /></DashboardLayout>} />
-          <Route path="/jobs/:id/reject/:applicantId" element={<DashboardLayout><Rejection /></DashboardLayout>} />
-          <Route path="/jobs/:id/alignment/:candidateId" element={<DashboardLayout><FinalAlignmentSession /></DashboardLayout>} />
+          <Route path="/jobs/vault/confirmation" element={<DashboardLayout><EmployerRoute><VaultRoleConfirmation /></EmployerRoute></DashboardLayout>} />
+          <Route path="/jobs/vault/edit/:id" element={<DashboardLayout><EmployerRoute><EditVaultRole /></EmployerRoute></DashboardLayout>} />
+          <Route path="/jobs/:id" element={<DashboardLayout><EmployerRoute><JobDetails /></EmployerRoute></DashboardLayout>} />
+          <Route path="/jobs/:id/reject/:applicantId" element={<DashboardLayout><EmployerRoute><Rejection /></EmployerRoute></DashboardLayout>} />
+          <Route path="/jobs/:id/alignment/:candidateId" element={<DashboardLayout><EmployerRoute><FinalAlignmentSession /></EmployerRoute></DashboardLayout>} />
+          <Route path="/payments" element={<DashboardLayout><EmployerRoute><Payments /></EmployerRoute></DashboardLayout>} />
           <Route path="/talents" element={<DashboardLayout><Talents /></DashboardLayout>} />
           <Route path="/talents/:id" element={<DashboardLayout><TalentProfile /></DashboardLayout>} />
-          <Route path="/payments" element={<DashboardLayout><Payments /></DashboardLayout>} />
-
           {/* Auth Routes */}
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />

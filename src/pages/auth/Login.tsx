@@ -8,6 +8,9 @@ import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
 import { useLoginMutation } from '../../services/queries/auth';
 import { routeAfterAuth } from '../../utils/auth';
 
+const authFooterLinkClass =
+  'font-medium text-[#60A5FA] hover:text-[#2563EB] transition-colors duration-200';
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -73,10 +76,10 @@ const Login: React.FC = () => {
   return (
     <div className="max-w-xl mx-auto py-12 sm:py-20 px-4">
       <div className="text-center mb-10 sm:mb-12">
-        <h1 className="text-2xl sm:text-[24px] font-medium mb-3 text-[#1C1C1C] leading-[32px] tracking-[-1%] ">
-          Welcome back to VORA
+        <h1 className="text-2xl sm:text-[24px] font-medium mb-3 text-[#1C1C1C] leading-[32px] tracking-[-1%] whitespace-nowrap">
+          Welcome back to vora.
         </h1>
-        <p className="text-[#6B7280] text-sm sm:text-lg max-w-md mx-auto">
+        <p className="text-[#6B7280] text-[11px] sm:text-xs leading-relaxed mx-auto whitespace-nowrap">
           Access your dashboard to manage jobs, mentorships, and career growth.
         </p>
       </div>
@@ -139,7 +142,7 @@ const Login: React.FC = () => {
 
         <p className="text-center text-[0.95rem] text-[#374151] pt-4">
           Don't have an account?{' '}
-          <Link to="/signup" className="font-medium text-[#2563EB] hover:underline decoration-2 underline-offset-4 cursor-pointer">
+          <Link to="/signup" className={authFooterLinkClass}>
             Create an account
           </Link>
         </p>

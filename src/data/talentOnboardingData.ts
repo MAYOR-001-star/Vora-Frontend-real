@@ -244,6 +244,25 @@ export const WORK_ARRANGEMENT_OPTIONS = [
   { label: 'Flexible, open to any', value: 'flexible' },
 ];
 
+/** UI work-arrangement value → API enum (talent onboarding step 2). */
+export const WORK_ARRANGEMENT_TO_API: Record<string, string> = {
+  'fully-remote': 'FULLY_REMOTE',
+  hybrid: 'HYBRID',
+  onsite: 'ONSITE_IN_PERSON',
+  flexible: 'FLEXIBLE_ANY',
+};
+
+/** API enum → UI work-arrangement value. */
+export const WORK_ARRANGEMENT_FROM_API: Record<string, string> = {
+  FULLY_REMOTE: 'fully-remote',
+  HYBRID: 'hybrid',
+  ONSITE_IN_PERSON: 'onsite',
+  FLEXIBLE_ANY: 'flexible',
+  // Legacy values saved before enum alignment
+  ONSITE: 'onsite',
+  FLEXIBLE: 'flexible',
+};
+
 // =============================================
 // STUDY PERMIT HOURS (per country)
 // =============================================

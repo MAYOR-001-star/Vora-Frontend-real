@@ -9,6 +9,35 @@ export const STEPS = [
   { id: 6, title: 'Preview', sub: 'Final review' }
 ];
 
+export const WIZARD_STEP_COUNT = STEPS.length;
+
+/** Keep wizard step in 1..6 (API may return 0 or out-of-range values). */
+export function clampWizardStep(step: number): number {
+  const n = Math.round(Number(step));
+  if (Number.isNaN(n) || n < 1) return 1;
+  return Math.min(n, WIZARD_STEP_COUNT);
+}
+
+/** Parse API `currentStep` (e.g. `2`, `2/5`) into wizard step 1..6. */
+export function parseRolePostingCurrentStep(value: unknown): number | null {
+  if (value == null) return null;
+  if (typeof value === 'number' && !Number.isNaN(value)) {
+    return clampWizardStep(value);
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    const fraction = trimmed.match(/^(\d+)\s*\/\s*\d+$/);
+    if (fraction) return clampWizardStep(Number(fraction[1]));
+    const parsed = parseInt(trimmed, 10);
+    if (!Number.isNaN(parsed)) return clampWizardStep(parsed);
+  }
+  return null;
+}
+
+export function getWizardStepTitle(step: number): string {
+  return STEPS[clampWizardStep(step) - 1]?.title ?? STEPS[0].title;
+}
+
 export const ROLE_TYPE_GROUPS: OptionGroup[] = [
   {
     label: 'Employment',
@@ -121,6 +150,18 @@ export const EMPLOYMENT_LEVEL_OPTIONS: Option[] = [
   { label: 'Executive / Director', value: 'Executive / Director' }
 ];
 
+export const TIME_COMMITMENT_OPTIONS: Option[] = [
+  { label: 'Full-time', value: 'Full-time' },
+  { label: 'Part-time', value: 'Part-time' },
+  { label: '10 hrs per week', value: '10 hrs per week' },
+  { label: '20 hrs per week', value: '20 hrs per week' },
+  { label: '20hrs per week / Full-time', value: '20hrs per week / Full-time' },
+  { label: '30 hrs per week', value: '30 hrs per week' },
+  { label: '40 hrs per week', value: '40 hrs per week' },
+  { label: 'Flexible / negotiable', value: 'Flexible / negotiable' },
+  { label: 'Project-based / fixed term', value: 'Project-based / fixed term' },
+];
+
 export const WORK_FORMAT_OPTIONS: Option[] = [
   { label: 'Fully onsite', value: 'Fully onsite' },
   { label: 'Hybrid', value: 'Hybrid' },
@@ -151,6 +192,43 @@ export const WORK_PERMIT_OPTIONS: Option[] = [
   { label: 'Permanent residency / settled status', value: 'Permanent residency / settled status' },
   { label: 'Consultancy / self-employed arrangement possible', value: 'Consultancy / self-employed arrangement possible' }
 ];
+
+/** API `timezoneRegions` labels for region shortcut buttons. */
+export const TZ_REGION_API_LABELS: Record<string, string> = {
+  EMEA: 'EMEA',
+  AMER: 'Americas',
+  APAC: 'Asia-Pacific',
+  AFRICA: 'Sub-Saharan Africa',
+  MENA: 'Middle East & N. Africa',
+  ALL: 'All regions',
+};
+
+/** Timezone dropdown values for a region shortcut (merges TZ_GROUPS + TZ_REGIONS). */
+export function getTimezoneValuesForRegionKey(regionKey: string): string[] {
+  const allValues = [
+    ...new Set(TZ_GROUPS.flatMap((g) => g.options.map((o) => o.value))),
+  ];
+
+  if (regionKey === 'ALL') return allValues;
+
+  const groupMatchers: Record<string, (label: string) => boolean> = {
+    EMEA: (l) => l.includes('EMEA') || l.includes('Europe'),
+    AMER: (l) => l.includes('Americas') || l.includes('AMER'),
+    APAC: (l) => l.includes('APAC') || l.includes('Southeast & East Asia'),
+    AFRICA: (l) => l.includes('Africa') && !l.includes('Middle East'),
+    MENA: (l) => l.includes('MENA') || l.includes('Middle East'),
+  };
+
+  const match = groupMatchers[regionKey];
+  const fromGroups = match
+    ? TZ_GROUPS.filter((g) => match(g.label)).flatMap((g) =>
+        g.options.map((o) => o.value)
+      )
+    : [];
+  const fromRegions = TZ_REGIONS[regionKey] ?? [];
+
+  return [...new Set([...fromGroups, ...fromRegions])];
+}
 
 export const TZ_REGIONS: Record<string, string[]> = {
   EMEA: [
@@ -253,6 +331,15 @@ export const TZ_GROUPS = [
       { label: 'UTC+12 (NZST – Auckland, Fiji)', value: 'UTC+12 (NZST – Auckland, Fiji)' }
     ]
   }
+];
+
+export const COMMUNICATION_RHYTHM_OPTIONS: Option[] = [
+  { label: 'Weekly team meetings', value: 'Weekly team meetings' },
+  { label: 'Daily handovers', value: 'Daily handovers' },
+  { label: 'Async by default', value: 'Async by default' },
+  { label: 'Bi-weekly check-ins', value: 'Bi-weekly check-ins' },
+  { label: 'Monthly reviews', value: 'Monthly reviews' },
+  { label: 'Ad-hoc / as needed', value: 'Ad-hoc / as needed' },
 ];
 
 export const PREFERRED_WORKING_STYLE_OPTIONS: Option[] = [

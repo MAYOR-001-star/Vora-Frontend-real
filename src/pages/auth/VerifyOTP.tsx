@@ -8,7 +8,7 @@ import {
   useOAuthResendOtpMutation,
 } from '../../services/queries/auth';
 import { routeAfterAuth } from '../../utils/auth';
-import { mapApiUserToContextUser } from '../../utils/oauth';
+import { resolveOAuthNavigation } from '../../utils/oauth';
 import { useAuth } from '../../context/AuthContext';
 import { getSetupToken } from '../../utils/oauth';
 import type { VerifyLocationState } from '../../types';
@@ -16,9 +16,9 @@ import type { VerifyLocationState } from '../../types';
 const VerifyOTP: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, setSetupToken } = useAuth();
   const state = (location.state as VerifyLocationState) || {};
-  const { email = '', oauth = false, otpExpiresInMinutes = 10, accountType = '' } = state;
+  const { email = '', oauth = false, otpExpiresInMinutes = 10 } = state;
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(oauth ? otpExpiresInMinutes * 60 : 60);
@@ -71,24 +71,30 @@ const VerifyOTP: React.FC = () => {
     if (!isComplete) return;
 
     setFormError('');
+    const code = otp.join('');
 
     try {
-      // DEVELOPMENT BYPASS: Skip calling real OTP verification API
-      console.log('Bypassing OTP verification for development — routing to /dashboard');
+      if (isOAuthFlow) {
+        const response = await oauthVerifyMutation.mutateAsync({ code });
+        const { route, state: navState } = resolveOAuthNavigation(
+          response.data,
+          login,
+          setSetupToken,
+        );
+        navigate(route, { state: navState });
+        return;
+      }
 
-      const mockRoleAPI = (accountType?.toUpperCase() || 'EMPLOYER') as 'TALENT' | 'EMPLOYER' | 'MENTOR';
-      const mockApiUser = {
-        firstName: 'Mock',
-        lastName: 'User',
-        role: mockRoleAPI,
-        email: email || 'mock@vora.com',
-        isEmailVerified: true
-      };
+      const response = await verifyMutation.mutateAsync({ email, code });
+      const authData = response.data;
+      const user = authData?.user;
 
-      login(mapApiUserToContextUser(mockApiUser), 'mock-access-token');
-      
-      const targetRoute = routeAfterAuth(mockApiUser);
-      navigate(targetRoute, { state: { email, accountType: mockApiUser.role } });
+      if (user) {
+        const targetRoute = routeAfterAuth(user);
+        navigate(targetRoute, { state: { email, accountType: user.role } });
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error: unknown) {
       const err = error as { message?: string };
       setFormError(err?.message || 'Invalid verification code. Please try again.');

@@ -95,7 +95,7 @@ const NationalityTagger: React.FC<NationalityTaggerProps> = ({
       )}
 
       {/* Search input */}
-      <div className="relative">
+      <div className={`relative ${isOpen ? 'z-20' : ''}`}>
         <input
           type="text"
           value={query}
@@ -116,7 +116,7 @@ const NationalityTagger: React.FC<NationalityTaggerProps> = ({
         </div>
 
         {isOpen && available.length > 0 && (
-          <div className="absolute z-10 mt-1.5 w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+          <div className="absolute z-20 mt-1.5 w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-48 overflow-y-auto custom-scrollbar">
             {available.map((option) => (
               <button
                 key={option}

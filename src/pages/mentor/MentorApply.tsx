@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import VoraLogo from '../../components/common/VoraLogo';
 
 const MentorApply: React.FC = () => {
   const navigate = useNavigate();
@@ -11,8 +12,10 @@ const MentorApply: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-12 sm:py-16 px-4 sm:px-6">
-      <h1 className="text-2xl sm:text-[28px] font-medium text-[#1C1C1C] leading-[36px] tracking-[-1%]  mb-2">
-        Welcome to VORA,
+      <h1 className="text-2xl sm:text-[28px] font-medium text-[#1C1C1C] leading-[36px] tracking-[-1%] mb-2 flex flex-wrap items-center gap-x-2">
+        <span>Welcome to</span>
+        <VoraLogo size="md" className="inline-flex" />
+        <span>,</span>
       </h1>
       <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1C]  mb-8">
         Let's set up your mentor profile

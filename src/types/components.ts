@@ -1,4 +1,5 @@
 import React from 'react';
+import type { PostJobContinueConfig } from './rolePosting';
 
 export interface Option {
   label: string;
@@ -17,6 +18,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   fullWidth?: boolean;
   pill?: boolean;
   isLoading?: boolean;
+  loadingLabel?: string;
 }
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -27,8 +29,19 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   icon?: React.ElementType;
 }
 
+export interface DatePickerProps {
+  value?: string;
+  onChange: (value: string) => void;
+  min?: string;
+  max?: string;
+  className?: string;
+}
+
 export interface SelectProps {
-  label: string | React.ReactNode;
+  label?: string | React.ReactNode;
+  hideLabel?: boolean;
+  variant?: 'default' | 'inline';
+  menuClassName?: string;
   name?: string;
   options?: Option[];
   groups?: OptionGroup[];
@@ -57,11 +70,7 @@ export interface MultiSelectProps {
 export interface PostJobWizardProps {
   isOpen: boolean;
   onClose: () => void;
-  initialConfig?: {
-    isScheduled: boolean;
-    goLiveDate: string;
-    isPrefilled: boolean;
-  };
+  initialConfig?: PostJobContinueConfig;
 }
 
 export interface SearchableSelectProps {
@@ -90,11 +99,7 @@ export interface NationalityTaggerProps {
 export interface PostJobModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onContinue?: (config: {
-    isScheduled: boolean;
-    goLiveDate: string;
-    isPrefilled: boolean;
-  }) => void;
+  onContinue?: (config: PostJobContinueConfig) => void;
 }
 
 export interface EditRoleModalProps {

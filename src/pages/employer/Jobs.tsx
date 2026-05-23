@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { 
   PlusIcon, 
   BriefcaseIcon, 
@@ -7,7 +8,7 @@ import {
   SearchIcon,
   MoreVerticalIcon
 } from '../../components/common/Icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SAMPLE_JOBS } from '../../constants/mockData';
 import PostJobModal from '../../components/employer/PostJobModal';
 import PostJobWizard from '../../components/employer/PostJobWizard';
@@ -16,19 +17,28 @@ import TabSlider from '../../components/common/TabSlider';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Tag from '../../components/common/Tag';
+import type { PostJobContinueConfig } from '../../types/rolePosting';
 
 const Jobs: React.FC = () => {
+  const { user } = useAuth();
+  const isEmployer = user?.role?.toLowerCase() === 'employer';
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('All jobs');
   const [searchQuery, setSearchQuery] = useState('');
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isPostWizardOpen, setIsPostWizardOpen] = useState(false);
-  const [wizardConfig, setWizardConfig] = useState<{
-    isScheduled: boolean;
-    goLiveDate: string;
-    isPrefilled: boolean;
-  }>({ isScheduled: false, goLiveDate: '', isPrefilled: false });
+  const [wizardConfig, setWizardConfig] = useState<PostJobContinueConfig | undefined>(
+    undefined
+  );
   const tabs = JOBS_TABS;
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && tabs.includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [searchParams, tabs]);
 
   const getJobStatusVariant = (status: string): any => {
     switch (status) {
@@ -53,14 +63,16 @@ const Jobs: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-[28px] font-medium text-[#0047CC]  tracking-tight">Jobs</h1>
-        <Button 
-          onClick={() => setIsPostModalOpen(true)}
-          fullWidth={false}
-          size="md" className="px-6 text-[14px]"
-        >
-          <PlusIcon size={14} strokeWidth={3} />
-          Post a job
-        </Button>
+        {isEmployer && (
+          <Button 
+            onClick={() => setIsPostModalOpen(true)}
+            fullWidth={false}
+            size="md" className="px-6 text-[14px]"
+          >
+            <PlusIcon size={14} strokeWidth={3} />
+            Post a job
+          </Button>
+        )}
       </div>
 
       {/* Tabs System */}
@@ -216,21 +228,25 @@ const Jobs: React.FC = () => {
         </div>
       </div>
 
-      <PostJobModal 
-        isOpen={isPostModalOpen} 
-        onClose={() => setIsPostModalOpen(false)} 
-        onContinue={(config) => {
-          setIsPostModalOpen(false);
-          setWizardConfig(config);
-          setIsPostWizardOpen(true);
-        }}
-      />
+      {isEmployer && (
+        <>
+          <PostJobModal 
+            isOpen={isPostModalOpen} 
+            onClose={() => setIsPostModalOpen(false)} 
+            onContinue={(config) => {
+              setIsPostModalOpen(false);
+              setWizardConfig(config);
+              setIsPostWizardOpen(true);
+            }}
+          />
 
-      <PostJobWizard 
-        isOpen={isPostWizardOpen} 
-        onClose={() => setIsPostWizardOpen(false)} 
-        initialConfig={wizardConfig}
-      />
+          <PostJobWizard 
+            isOpen={isPostWizardOpen} 
+            onClose={() => setIsPostWizardOpen(false)} 
+            initialConfig={wizardConfig}
+          />
+        </>
+      )}
     </div>
   );
 };

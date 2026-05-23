@@ -75,7 +75,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
       <label className="block text-sm font-medium text-[#374151] mb-2.5">
         {label}
       </label>
-      <div className="relative">
+      <div className={`relative ${isOpen ? 'z-20' : ''}`}>
         <div
           role="button"
           tabIndex={0}
@@ -112,7 +112,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         </div>
 
         {isOpen && (
-          <div className="absolute z-10 mt-1.5 w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-60 overflow-y-auto custom-scrollbar">
+          <div className="absolute z-20 mt-1.5 w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-60 overflow-y-auto custom-scrollbar">
             {options.map((option) => (
               <div
                 key={option.value}

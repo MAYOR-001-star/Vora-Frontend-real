@@ -8,6 +8,8 @@ import { AppleIcon } from '../../components/common/Icons';
 import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
 import { useSignupMutation } from '../../services/queries/auth';
 
+const authFooterLinkClass =
+  'font-medium text-[#60A5FA] hover:text-[#2563EB] transition-colors duration-200';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -66,10 +68,10 @@ const Signup: React.FC = () => {
   return (
     <div className="max-w-xl mx-auto py-12 sm:py-20 px-4">
       <div className="text-center mb-10 sm:mb-12">
-        <h1 className="text-2xl sm:text-[24px] font-medium mb-3 text-[#1C1C1C] leading-[32px] tracking-[-1%] ">
+        <h1 className="text-2xl sm:text-[24px] font-medium mb-3 text-[#1C1C1C] leading-[32px] tracking-[-1%] whitespace-nowrap">
           Start your Journey in Global health
         </h1>
-        <p className="text-[#6B7280] text-sm sm:text-lg max-w-md mx-auto">
+        <p className="text-[#6B7280] text-[11px] sm:text-xs leading-relaxed mx-auto whitespace-nowrap">
           Join thousands of professionals shaping the future of public health.
         </p>
       </div>
@@ -147,7 +149,7 @@ const Signup: React.FC = () => {
 
         <p className="text-center text-[0.95rem] text-[#374151] pt-4">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-[#2563EB] hover:underline decoration-2 underline-offset-4 cursor-pointer">
+          <Link to="/login" className={authFooterLinkClass}>
             Log in
           </Link>
         </p>

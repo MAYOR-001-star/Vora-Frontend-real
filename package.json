@@ -16,6 +16,7 @@
     "@mui/material": "^9.0.1",
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-query": "^5.100.10",
+    "country-state-city": "^3.2.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-hot-toast": "^2.6.0",

@@ -2,20 +2,39 @@ import React, { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import Button from '../common/Button';
 import Input from '../common/Input';
+import ScrollArea from '../common/ScrollArea';
+import { toISODate } from '../../utils/date';
+import { useAuth } from '../../context/AuthContext';
+import { useCreateRolePostingIntakeMutation } from '../../services/queries/rolePostings';
+import { buildCreateRolePostingIntakeBody } from '../../utils/rolePostingApi';
+import { parseRolePostingCurrentStep } from '../../constants/jobWizard';
+import { saveRolePostingDraft } from '../../utils/rolePostingDraft';
+import {
+  validatePostJobModal,
+  validateJobDocumentFile,
+  firstValidationMessage,
+} from '../../utils/postJobValidation';
 import type { PostJobModalProps } from '../../types';
+import type { ApiError } from '../../services/api';
 
 const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue }) => {
+  const { user } = useAuth();
+  const isEmployer = user?.role?.toLowerCase() === 'employer';
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [hireMode, setHireMode] = useState<'live' | 'vault' | null>(null);
   const [goLiveDate, setGoLiveDate] = useState('');
   const [fillMethod, setFillMethod] = useState<'upload' | 'manual' | null>(null);
   const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
   const [documentLink, setDocumentLink] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const createIntakeMutation = useCreateRolePostingIntakeMutation();
 
-  if (!isOpen) return null;
+  if (!isOpen || !isEmployer) return null;
 
   const resetModal = () => {
+    setFieldErrors({});
     setHireMode(null);
     setGoLiveDate('');
     setFillMethod(null);
@@ -31,6 +50,18 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const fileErr = validateJobDocumentFile(file);
+      if (fileErr) {
+        setFieldErrors((prev) => ({ ...prev, document: fileErr }));
+        toast.error(fileErr);
+        return;
+      }
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.document;
+        delete next.documentLink;
+        return next;
+      });
       const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
       setUploadedFile({
         name: file.name,
@@ -62,6 +93,17 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
+      const fileErr = validateJobDocumentFile(file);
+      if (fileErr) {
+        setFieldErrors((prev) => ({ ...prev, document: fileErr }));
+        toast.error(fileErr);
+        return;
+      }
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.document;
+        return next;
+      });
       const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
       setUploadedFile({
         name: file.name,
@@ -74,6 +116,9 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
   const isMethodSectionVisible = hireMode === 'live' || (hireMode === 'vault' && goLiveDate !== '');
 
   const getButtonState = () => {
+    if (isSubmitting) {
+      return { disabled: true, text: 'Creating draft…' };
+    }
     if (!hireMode) {
       return { disabled: true, text: 'Continue' };
     }
@@ -93,38 +138,79 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
     }
     // Manual mode
     if (hireMode === 'vault') {
-      return { disabled: false, text: 'Start filling in scheduled role →' };
+      return { disabled: false, text: 'Start filling in scheduled role' };
     }
-    return { disabled: false, text: 'Start filling in role details →' };
+    return { disabled: false, text: 'Start filling in role details' };
   };
 
   const buttonState = getButtonState();
 
-  const handleProceed = () => {
+  const handleProceed = async () => {
+    const errors = validatePostJobModal({
+      hireMode,
+      goLiveDate,
+      fillMethod,
+      uploadedFile,
+      documentLink,
+    });
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const msg = firstValidationMessage(errors);
+      if (msg) toast.error(msg);
+      return;
+    }
+    setFieldErrors({});
+
     const isScheduled = hireMode === 'vault';
     const isPrefilled = fillMethod === 'upload';
 
+    setIsSubmitting(true);
     try {
-      if (isScheduled) {
-        sessionStorage.setItem('voraScheduledMode', '1');
-        if (goLiveDate) sessionStorage.setItem('voraGoLive', goLiveDate);
-      } else {
-        sessionStorage.removeItem('voraScheduledMode');
-        sessionStorage.removeItem('voraGoLive');
-      }
-      sessionStorage.setItem('voraPostMode', isPrefilled ? 'upload' : 'manual');
-    } catch (e) {
-      console.error(e);
-    }
+      const body = buildCreateRolePostingIntakeBody(
+        hireMode!,
+        fillMethod!,
+        isScheduled ? goLiveDate : undefined
+      );
+      const response = await createIntakeMutation.mutateAsync(body);
+      const intake = response.data;
 
-    if (onContinue) {
-      onContinue({
+      try {
+        if (isScheduled) {
+          sessionStorage.setItem('voraScheduledMode', '1');
+          if (goLiveDate) sessionStorage.setItem('voraGoLive', goLiveDate);
+        } else {
+          sessionStorage.removeItem('voraScheduledMode');
+          sessionStorage.removeItem('voraGoLive');
+        }
+        sessionStorage.setItem('voraPostMode', isPrefilled ? 'upload' : 'manual');
+      } catch (e) {
+        console.error(e);
+      }
+
+      const continueConfig = {
         isScheduled,
         goLiveDate: isScheduled ? goLiveDate : '',
         isPrefilled,
-      });
+        rolePostingId: intake.id,
+        currentStep: parseRolePostingCurrentStep(intake.currentStep) ?? 1,
+        hiringMode: intake.hiringMode,
+        fillMethod: intake.fillMethod,
+      };
+
+      saveRolePostingDraft(continueConfig);
+
+      if (onContinue) {
+        onContinue(continueConfig);
+      }
+      resetModal();
+    } catch (err) {
+      const apiErr = err as ApiError;
+      if (apiErr?.message) {
+        setFieldErrors((prev) => ({ ...prev, submit: apiErr.message }));
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-    resetModal();
   };
 
   return (
@@ -133,7 +219,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
       <div className="absolute inset-0 bg-[#000]/50 backdrop-blur-xs" onClick={resetModal} />
 
       {/* Modal Content container */}
-      <div className="relative bg-white w-full sm:max-w-[520px] max-h-[92vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col scrollbar-hide fixed bottom-0 sm:relative">
+      <div className="relative bg-white w-full sm:max-w-[520px] max-h-[92vh] sm:max-h-[90vh] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden fixed bottom-0 sm:relative">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-5 flex items-center justify-between z-10">
           <h2 className="text-[18px] font-extrabold text-gray-900 tracking-tight">Post a Job</h2>
@@ -148,8 +234,8 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
           </button>
         </div>
 
-        {/* Scrollable Body */}
-        <div className="p-6 space-y-6 overflow-y-auto">
+        <ScrollArea className="flex-1 min-h-0">
+        <div className="p-6 space-y-6">
           {/* STEP 1: When do you want to hire? */}
           <div className="space-y-3">
             <div className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
@@ -220,22 +306,31 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                 {hireMode === 'vault' && (
                   <div 
                     onClick={(e) => e.stopPropagation()} 
-                    className="mt-3 p-4 bg-[#EBF6FF] border border-[#BDD9FF] rounded-lg text-left"
+                    className="mt-3 p-4 bg-white border border-[#E6E6E6] rounded-lg text-left"
                   >
-                    <label className="block text-[11px] font-extrabold text-[#0047CC] uppercase tracking-wider mb-2">
+                    <label className="block text-[11px] font-extrabold text-[#1A1A1A] uppercase tracking-wider mb-2">
                       Go-live date <span className="text-red-500">*</span>
                     </label>
                     <Input 
                       label=""
                       type="date" 
                       value={goLiveDate} 
-                      onChange={(e) => setGoLiveDate(e.target.value)} 
-                      className="border-[#BDD9FF] focus:border-[#0047CC] cursor-pointer"
+                      onChange={(e) => {
+                        setGoLiveDate(e.target.value);
+                        setFieldErrors((prev) => {
+                          const next = { ...prev };
+                          delete next.goLiveDate;
+                          return next;
+                        });
+                      }} 
+                      min={toISODate(new Date())}
+                      error={!!fieldErrors.goLiveDate}
+                      helperText={fieldErrors.goLiveDate}
                     />
                     <p className="text-[11px] text-[#1e3a8a] mt-3.5 leading-relaxed">
                       Role stays completely invisible until this exact date. No candidate knows it exists. During the vault period, every new candidate who joins VORA and completes onboarding is silently matched against your specification. Those who score 80% or above are pre-qualified internally — they are not told, not contacted. On go-live day, matching fires publicly for the first time and pre-qualified candidates are notified instantly. You can see how many VORA candidates currently qualify at any time.
                     </p>
-                    <div className="mt-3 text-[11px] text-[#1e3a8a] leading-relaxed bg-white/70 rounded-lg p-3 space-y-1">
+                    <div className="mt-3 text-[11px] text-[#1e3a8a] leading-relaxed bg-[#F7F7F7] border border-[#E6E6E6] rounded-lg p-3 space-y-1">
                       <div>① Complete the full role posting form below — same as a live role.</div>
                       <div>② On the preview screen you confirm your go-live date and pay escrow.</div>
                       <div>③ Role enters Vault. Fee rate locked at today's rate regardless of future repricing.</div>
@@ -315,20 +410,20 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
 
                       {/* File item preview */}
                       {uploadedFile && (
-                        <div className="flex items-center gap-2 bg-[#EEFBEE] border border-[#85E585] rounded-lg p-2.5 mt-2">
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1D871D" strokeWidth="2.5" className="shrink-0">
+                        <div className="flex items-center gap-2 bg-[#EBF6FF] border border-[#BDD9FF] rounded-lg p-2.5 mt-2">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2.5" className="shrink-0">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
                             <polyline points="14 2 14 8 20 8" />
                           </svg>
-                          <span className="text-[13px] font-bold text-[#135813] flex-1 truncate">
+                          <span className="text-[13px] font-bold text-[#0047CC] flex-1 truncate">
                             {uploadedFile.name}
                           </span>
-                          <span className="text-[11px] text-gray-500 shrink-0">
+                          <span className="text-[11px] text-[#4A4A4A] shrink-0">
                             {uploadedFile.size}
                           </span>
                           <button 
                             onClick={handleRemoveFile}
-                            className="p-1 hover:bg-green-100 rounded text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                            className="p-1 hover:bg-blue-100 rounded text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
                           >
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <line x1="18" y1="6" x2="6" y2="18" />
@@ -348,7 +443,17 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                         type="url" 
                         placeholder="https://yourorg.com/job-description or Google Doc URL"
                         value={documentLink}
-                        onChange={(e) => setDocumentLink(e.target.value)}
+                        onChange={(e) => {
+                          setDocumentLink(e.target.value);
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.document;
+                            delete next.documentLink;
+                            return next;
+                          });
+                        }}
+                        error={!!(fieldErrors.documentLink || fieldErrors.document)}
+                        helperText={fieldErrors.documentLink || fieldErrors.document}
                         className="border-gray-200 focus:border-[#0047CC]"
                       />
                     </div>
@@ -380,9 +485,14 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
             </div>
           )}
 
+          {fieldErrors.submit && (
+            <p className="text-sm text-red-600 font-medium mt-2">{fieldErrors.submit}</p>
+          )}
+
           {/* Action button */}
           <Button
             disabled={buttonState.disabled}
+            isLoading={isSubmitting}
             onClick={handleProceed}
             variant="primary"
             fullWidth={true}
@@ -393,6 +503,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
             {buttonState.text}
           </Button>
         </div>
+        </ScrollArea>
       </div>
     </div>
   );

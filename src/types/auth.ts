@@ -31,7 +31,6 @@ export interface VerifyLocationState {
   email?: string;
   oauth?: boolean;
   otpExpiresInMinutes?: number;
-  accountType?: string;
 }
 
 export interface SelectTypeLocationState {

@@ -18,6 +18,7 @@ import PostJobModal from './PostJobModal';
 import Tag from '../common/Tag';
 import Button from '../common/Button';
 import { useAuth } from '../../context/AuthContext';
+import type { PostJobContinueConfig } from '../../types/rolePosting';
 
 // --- Sub-components for Employer Dashboard ---
 
@@ -71,11 +72,9 @@ const EmployerDashboard: React.FC = () => {
   const { user } = useAuth();
   const [isPostModalOpen, setIsPostModalOpen] = React.useState(false);
   const [isPostWizardOpen, setIsPostWizardOpen] = React.useState(false);
-  const [wizardConfig, setWizardConfig] = React.useState<{
-    isScheduled: boolean;
-    goLiveDate: string;
-    isPrefilled: boolean;
-  }>({ isScheduled: false, goLiveDate: '', isPrefilled: false });
+  const [wizardConfig, setWizardConfig] = React.useState<
+    PostJobContinueConfig | undefined
+  >(undefined);
 
   // Mock data based on provided HTML
   const activeJobs = [

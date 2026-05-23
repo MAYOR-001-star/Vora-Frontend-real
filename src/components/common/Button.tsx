@@ -8,6 +8,7 @@ const Button: React.FC<ButtonProps> = ({
   fullWidth = true, 
   pill = true,
   isLoading = false,
+  loadingLabel = 'Processing...',
   className = '',
   disabled,
   size = 'lg',
@@ -45,7 +46,7 @@ const Button: React.FC<ButtonProps> = ({
       {isLoading ? (
         <div className="flex items-center justify-center gap-2">
           <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-          <span>Processing...</span>
+          <span>{loadingLabel}</span>
         </div>
       ) : (
         children

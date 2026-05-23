@@ -1,14 +1,14 @@
 import { useState, useMemo, useEffect } from 'react';
+import { Country } from 'country-state-city';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import MultiSelect from '../../components/common/MultiSelect';
-import SearchableSelect from '../../components/common/SearchableSelect';
+import LocationAutocomplete from '../../components/common/LocationAutocomplete';
 import { capitalizeFirstLetter } from '../../utils/stringUtils';
 import {
   ORG_TYPE_OPTIONS,
-  COUNTRY_OPTIONS,
   INSTITUTIONAL_MANDATE_OPTIONS,
   FUNDING_MODEL_OPTIONS,
   WORK_TYPE_OPTIONS,
@@ -33,6 +33,16 @@ import {
 } from '../../services/queries/onboarding';
 
 const TOTAL_STEPS = 4;
+
+/** Map stored ISO codes to full country names for LocationAutocomplete display. */
+function normalizeCountryDisplay(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (trimmed.length === 2) {
+    return Country.getCountryByCode(trimmed.toUpperCase())?.name ?? trimmed;
+  }
+  return trimmed;
+}
 
 const EmployerOnboarding: React.FC = () => {
   const queryClient = useQueryClient();
@@ -79,7 +89,7 @@ const EmployerOnboarding: React.FC = () => {
         setOrgInfo({
           organizationName: savedFields.organisationName || '',
           organizationType: savedFields.organisationType || '',
-          primaryCountry: savedFields.country || '',
+          primaryCountry: normalizeCountryDisplay(savedFields.country || ''),
           institutionalMandate: savedFields.institutionalMandates || [],
           fundingModel: savedFields.fundingModel || '',
           linkedinCompanyUrl: savedFields.linkedinCompanyUrl || '',
@@ -358,12 +368,20 @@ const EmployerOnboarding: React.FC = () => {
               helperText={touched.organizationType && !orgInfo.organizationType ? 'Organization type is required' : ''}
             />
 
-            <SearchableSelect
+            <LocationAutocomplete
               label="Primary country of operation"
-              options={COUNTRY_OPTIONS}
               value={orgInfo.primaryCountry}
-              onChange={(val) => setOrgInfo(prev => ({ ...prev, primaryCountry: val }))}
-              placeholder="Select country"
+              onChange={(val) => setOrgInfo((prev) => ({ ...prev, primaryCountry: val }))}
+              onBlur={() => handleBlur('primaryCountry')}
+              placeholder="Search country..."
+              searchMode="country"
+              labelClassName="block text-sm font-medium text-[#374151] mb-2.5"
+              error={touched.primaryCountry && !orgInfo.primaryCountry}
+              helperText={
+                touched.primaryCountry && !orgInfo.primaryCountry
+                  ? 'Primary country of operation is required'
+                  : ''
+              }
             />
 
             <MultiSelect

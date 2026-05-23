@@ -6,7 +6,7 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import MultiSelect from '../../components/common/MultiSelect';
-import SearchableSelect from '../../components/common/SearchableSelect';
+import LocationAutocomplete from '../../components/common/LocationAutocomplete';
 import NationalityTagger from '../../components/common/NationalityTagger';
 import { capitalizeFirstLetter } from '../../utils/stringUtils';
 import { 
@@ -19,13 +19,13 @@ import {
 import {
   INTEREST_OPTIONS,
   EXPERIENCE_OPTIONS,
-  COUNTRY_OPTIONS,
   NATIONALITIES,
   POPULAR_NATIONALITIES,
-  RESIDENCE_OPTIONS,
   RTW_GROUPS,
   RELOCATION_OPTIONS,
   WORK_ARRANGEMENT_OPTIONS,
+  WORK_ARRANGEMENT_FROM_API,
+  WORK_ARRANGEMENT_TO_API,
   STUDY_HOURS
 } from '../../data/talentOnboardingData';
 
@@ -82,11 +82,17 @@ const countryToIsoMap: Record<string, string> = {
   'Zimbabwe': 'ZW',
 };
 
+const extractCountryName = (location: string): string => {
+  const parts = location.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length >= 2) return parts[parts.length - 1];
+  return location.trim();
+};
+
 const getCountryIsoCode = (name: string): string => {
   if (!name) return name;
-  const normalized = name.trim();
-  if (normalized.length === 2) return normalized.toUpperCase();
-  return countryToIsoMap[normalized] || normalized;
+  const countryName = extractCountryName(name);
+  if (countryName.length === 2) return countryName.toUpperCase();
+  return countryToIsoMap[countryName] || countryName;
 };
 
 const getCountryFullName = (code: string): string => {
@@ -173,13 +179,8 @@ const TalentOnboarding: React.FC = () => {
         setRelocationDestinations(savedFields.relocateCountryCodes.join(', '));
       }
       if (savedFields.preferredWorkArrangement) {
-        const arrMap: Record<string, string> = {
-          'FULLY_REMOTE': 'fully-remote',
-          'HYBRID': 'hybrid',
-          'ONSITE': 'onsite',
-          'FLEXIBLE': 'flexible'
-        };
-        const found = arrMap[savedFields.preferredWorkArrangement];
+        const found =
+          WORK_ARRANGEMENT_FROM_API[savedFields.preferredWorkArrangement];
         if (found) setWorkArrangement(found);
       }
       if (savedFields.experienceLevel) {
@@ -221,8 +222,6 @@ const TalentOnboarding: React.FC = () => {
   const [relocationDestinations, setRelocationDestinations] = useState('');
   const [workArrangement, setWorkArrangement] = useState('');
   const [integrityChecked, setIntegrityChecked] = useState(false);
-  const isCountryLoading = false;
-
   // Study permit sub-panel
   const [studyPermitType, setStudyPermitType] = useState('');
   const [studyCountry, setStudyCountry] = useState('');
@@ -352,15 +351,8 @@ const TalentOnboarding: React.FC = () => {
           }
         })();
 
-        const payloadPreferredWorkArrangement = (() => {
-          switch (workArrangement) {
-            case 'fully-remote': return 'FULLY_REMOTE';
-            case 'hybrid': return 'HYBRID';
-            case 'onsite': return 'ONSITE';
-            case 'flexible': return 'FLEXIBLE';
-            default: return 'FULLY_REMOTE';
-          }
-        })();
+        const payloadPreferredWorkArrangement =
+          WORK_ARRANGEMENT_TO_API[workArrangement] ?? 'FULLY_REMOTE';
 
         const payloadRelocateCountryCodes = relocation === 'specific'
           ? relocationDestinations.split(',').map(s => getCountryIsoCode(s.trim())).filter(Boolean)
@@ -513,12 +505,14 @@ const TalentOnboarding: React.FC = () => {
               helperText={touched.experienceLevel && !experienceLevel ? 'Experience level is required' : ''}
             />
 
-            <SearchableSelect
+            <LocationAutocomplete
               label="Country / Region"
-              options={COUNTRY_OPTIONS}
               value={country}
               onChange={setCountry}
-              placeholder="Search country or city..."
+              onBlur={() => handleBlur('country')}
+              placeholder="Search country..."
+              searchMode="country"
+              labelClassName="block text-sm font-medium text-[#374151] mb-2.5"
               error={touched.country && !country}
               helperText={touched.country && !country ? 'Country/Region is required' : ''}
             />
@@ -546,26 +540,40 @@ const TalentOnboarding: React.FC = () => {
             />
 
             {/* 2. Country of current residence + City */}
-            <SearchableSelect
+            <LocationAutocomplete
               label="Country of current residence"
-              options={RESIDENCE_OPTIONS}
               value={residence}
-              onChange={setResidence}
+              onChange={(value) => {
+                setResidence(value);
+                setCity('');
+              }}
+              onBlur={() => handleBlur('residence')}
               placeholder="Search country..."
+              searchMode="country"
+              labelClassName="block text-sm font-medium text-[#374151] mb-2.5"
               error={touched.residence && !residence}
               helperText={touched.residence && !residence ? 'Residence country is required' : ''}
-              isLoading={isCountryLoading}
             />
             {residence && (
               <div className="-mt-1">
-                <Input
+                <LocationAutocomplete
                   label=""
-                  name="city"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={setCity}
+                  onBlur={() => handleBlur('city')}
                   placeholder="City or metropolitan area (required)"
+                  searchMode="city"
+                  countryName={residence}
+                  error={touched.city && !city.trim()}
+                  helperText={
+                    touched.city && !city.trim()
+                      ? 'City is required'
+                      : ''
+                  }
                 />
-                <p className="text-xs text-[#808080] mt-1 ml-0.5">The exact city is required; country alone is not sufficient for matching.</p>
+                <p className="text-xs text-[#808080] mt-1 ml-0.5">
+                  The exact city is required; country alone is not sufficient for matching.
+                </p>
               </div>
             )}
 
@@ -591,12 +599,13 @@ const TalentOnboarding: React.FC = () => {
                   onChange={(e) => setStudyPermitType(e.target.value)}
                   placeholder="e.g. F-1 (USA), Tier 4 / Student Route (UK), Subclass 500 (AU)"
                 />
-                <SearchableSelect
+                <LocationAutocomplete
                   label="Country of study"
-                  options={RESIDENCE_OPTIONS}
                   value={studyCountry}
                   onChange={setStudyCountry}
                   placeholder="Search country..."
+                  searchMode="country"
+                  labelClassName="block text-sm font-medium text-[#374151] mb-2.5"
                 />
                 <Input
                   label="Permit valid until"

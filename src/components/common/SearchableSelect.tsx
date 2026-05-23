@@ -50,7 +50,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
       <label className="block text-sm font-medium text-[#374151] mb-2.5">
         {label}
       </label>
-      <div className="relative">
+      <div className={`relative ${isOpen ? 'z-20' : ''}`}>
         <input
           type="text"
           value={query}
@@ -71,7 +71,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
         </div>
 
         {isOpen && (
-          <div className="absolute z-10 mt-1.5 w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+          <div className="absolute z-20 mt-1.5 w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-48 overflow-y-auto custom-scrollbar">
             {isLoading ? (
               <div className="flex items-center justify-center py-4 gap-2 text-gray-500">
                 <div className="w-4 h-4 border-2 border-gray-300 border-t-[#0047CC] rounded-full animate-spin"></div>
