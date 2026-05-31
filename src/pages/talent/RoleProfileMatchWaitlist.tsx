@@ -1,7 +1,6 @@
 import DashboardLayout from '../../layout/DashboardLayout';
-import RoleApplyAppShell, {
+import {
   buildUserDisplayName,
-  buildUserInitials,
 } from '../../components/talent/profileMatch/RoleApplyAppShell';
 import ProfileWaitlistHero from '../../components/talent/profileWaitlist/ProfileWaitlistHero';
 import RoleAlertPreferencesCard from '../../components/talent/profileWaitlist/RoleAlertPreferencesCard';
@@ -71,7 +70,7 @@ const RoleProfileMatchWaitlist: React.FC = () => {
   }
 
   const displayName = buildUserDisplayName(firstName, lastName);
-  const initials = buildUserInitials(firstName || displayName, lastName);
+
   const welcomeName = firstName.trim() || displayName.split(' ')[0] || 'there';
 
   return (

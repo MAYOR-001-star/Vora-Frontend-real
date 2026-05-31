@@ -19,7 +19,6 @@ const RoleProfileMatchResult = lazy(() => import('./pages/talent/RoleProfileMatc
 const RoleProfileRolesFound = lazy(() => import('./pages/talent/RoleProfileRolesFound'))
 const RoleProfileMatchWaitlist = lazy(() => import('./pages/talent/RoleProfileMatchWaitlist'))
 const RoleProfileMatchBlocked = lazy(() => import('./pages/talent/RoleProfileMatchBlocked'))
-const RoleApplyAppShell = lazy(() => import('./components/talent/profileMatch/RoleApplyAppShell'))
 const MentorApply = lazy(() => import('./pages/mentor/MentorApply'))
 const MentorProfile = lazy(() => import('./pages/mentor/MentorOnboarding'))
 const Welcome = lazy(() => import('./pages/onboarding/Welcome'))

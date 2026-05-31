@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '../common/Button';
 import PaginationControls from '../common/PaginationControls';
 import TransactionTableRow from './TransactionTableRow';
 import type { TransactionListItem } from '../../types/transactionsList';

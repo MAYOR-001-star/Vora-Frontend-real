@@ -1,4 +1,4 @@
-import { CheckIcon, BriefcaseIcon, ClockIcon } from '../../common/Icons';
+import { CheckIcon, BriefcaseIcon } from '../../common/Icons';
 import type { PublicRoleLandingData } from '../../../types/roleLanding';
 import { buildMatchConfirmedTitle, buildMatchConfirmedSubtitle } from '../../../utils/profileMatchResult';
 import { MATCH_TOP_PERCENTILE_LABEL } from '../../../constants/profileMatchResult';
