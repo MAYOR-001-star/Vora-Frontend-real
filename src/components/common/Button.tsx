@@ -30,6 +30,7 @@ const Button: React.FC<ButtonProps> = ({
     primary: "bg-brand-blue text-white hover:bg-brand-blue-hover disabled:bg-[#E6E6E6] disabled:text-[#ADADAD] disabled:cursor-not-allowed disabled:shadow-none",
     secondary: "bg-[#767b91] text-white hover:bg-[#64697c] disabled:bg-[#E6E6E6] disabled:text-[#ADADAD] disabled:cursor-not-allowed",
     outline: "border border-border-default text-text-secondary hover:bg-gray-50 disabled:bg-[#F7F7F7] disabled:text-[#ADADAD] disabled:border-[#E6E6E6] disabled:cursor-not-allowed",
+    'primary-outline': "border-[1.5px] border-brand-blue text-brand-blue hover:bg-[#EBF6FF] disabled:bg-[#F7F7F7] disabled:text-[#ADADAD] disabled:border-[#E6E6E6] disabled:cursor-not-allowed",
     social: "border border-border-default rounded-xl font-medium text-text-secondary hover:bg-gray-50 py-3.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed",
     link: "bg-transparent p-0 min-h-0 disabled:opacity-50 disabled:cursor-not-allowed"
   };

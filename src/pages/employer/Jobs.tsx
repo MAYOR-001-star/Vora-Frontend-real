@@ -3,8 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { 
   PlusIcon, 
   BriefcaseIcon, 
-  ChevronLeftIcon, 
-  ChevronRightIcon,
   SearchIcon,
   MoreVerticalIcon
 } from '../../components/common/Icons';
@@ -15,6 +13,7 @@ import PostJobWizard from '../../components/employer/PostJobWizard';
 import { JOBS_TABS } from '../../constants/tabs';
 import TabSlider from '../../components/common/TabSlider';
 import Button from '../../components/common/Button';
+import PaginationControls from '../../components/common/PaginationControls';
 import Input from '../../components/common/Input';
 import Tag from '../../components/common/Tag';
 import type { PostJobContinueConfig } from '../../types/rolePosting';
@@ -205,26 +204,12 @@ const Jobs: React.FC = () => {
           <p className="text-[12px] font-medium text-gray-400 tracking-tight">
             Showing 1 - {filteredJobs.length} of {filteredJobs.length} jobs
           </p>
-          <div className="flex items-center gap-6">
-            <Button 
-              variant="outline"
-              fullWidth={false}
-              disabled={true}
-              className="min-h-[40px] px-6 text-[13px]"
-            >
-              <ChevronLeftIcon size={16} strokeWidth={3} />
-              Previous
-            </Button>
-            <div className="w-px h-4 bg-gray-200" />
-            <Button 
-              variant="outline"
-              fullWidth={false}
-              className="min-h-[40px] px-6 text-[13px] border-[#0047CC] text-[#0047CC] hover:bg-blue-50"
-            >
-              Next
-              <ChevronRightIcon size={16} strokeWidth={3} className="group-hover:translate-x-0.5 transition-transform" />
-            </Button>
-          </div>
+          <PaginationControls
+            currentPage={0} // Dummy for now since logic not implemented
+            disablePrev={true}
+            disableNext={false}
+            onPageChange={() => {}}
+          />
         </div>
       </div>
 

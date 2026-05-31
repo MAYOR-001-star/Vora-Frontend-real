@@ -38,8 +38,15 @@ export const SubsectionTitle: React.FC<TypographyProps> = ({ children, className
 );
 
 /** Card / panel title. */
-export const CardTitle: React.FC<TypographyProps> = ({ children, className, as: Tag = 'h3' }) => (
-  <Tag className={merge('text-[15px] font-semibold text-[#1A1A1A]', className)}>{children}</Tag>
+export const CardTitle: React.FC<TypographyProps> = ({
+  children,
+  className,
+  as: Tag = 'h3',
+  id,
+}) => (
+  <Tag id={id} className={merge('text-[15px] font-semibold text-[#1A1A1A]', className)}>
+    {children}
+  </Tag>
 );
 
 /** Drawer / modal primary title. */

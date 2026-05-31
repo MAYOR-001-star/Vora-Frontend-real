@@ -13,6 +13,9 @@ import {
   refetchOnboardingState,
   TALENT_ONBOARDING_STATE_KEY,
 } from '../../utils/onboardingStateQuery';
+import RoleOnboardingShell from '../../components/auth/RoleOnboardingShell';
+import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { loadRoleApplySlug, saveRoleApplySlug } from '../../utils/roleSignup';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import MultiSelect from '../../components/common/MultiSelect';
@@ -123,13 +126,27 @@ const TalentOnboarding: React.FC = () => {
   const stepParam = Number(searchParams.get('step'));
   const initialStep = stepParam || location.state?.onboardingStep || 1;
   const [step, setStep] = useState(initialStep);
+
+  const roleSlug =
+    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || '';
+  const isRoleApplyFlow = Boolean(roleSlug);
+  const role = useMemo(
+    () => (isRoleApplyFlow ? getRoleLandingForSlug(roleSlug) : null),
+    [isRoleApplyFlow, roleSlug],
+  );
+
+  useEffect(() => {
+    const fromState = (location.state as { roleSlug?: string } | null)?.roleSlug;
+    if (fromState) saveRoleApplySlug(fromState);
+  }, [location.state]);
+
   const step1Mutation = useTalentOnboardingStep1Mutation();
   const step2Mutation = useTalentOnboardingStep2Mutation();
   const {
     data: onboardingState,
     isPending: isStatePending,
     isFetching: isStateFetching,
-  } = useTalentOnboardingStateQuery();
+  } = useTalentOnboardingStateQuery(!isRoleApplyFlow);
   const { isSubmittingStep, runStepSubmit } = useOnboardingStepSubmit();
 
   useEffect(() => {
@@ -280,8 +297,8 @@ const TalentOnboarding: React.FC = () => {
 
   useOnboardingStateHydration({
     step,
-    isStateFetching,
-    stateData: onboardingState?.data,
+    isStateFetching: isRoleApplyFlow ? false : isStateFetching,
+    stateData: isRoleApplyFlow ? undefined : onboardingState?.data,
     getSavedFields: getOnboardingFieldsFromState,
     hydrateStep: applyTalentStepFields,
   });
@@ -340,6 +357,11 @@ const TalentOnboarding: React.FC = () => {
 
     await runStepSubmit(async () => {
       if (step === 1 && isStep1Valid) {
+        if (isRoleApplyFlow) {
+          setStep(2);
+          window.scrollTo(0, 0);
+          return;
+        }
         try {
           await step1Mutation.mutateAsync({
             firstName: formData.firstName,
@@ -355,6 +377,16 @@ const TalentOnboarding: React.FC = () => {
       }
 
       if (step === 2 && isStep2Valid) {
+        if (isRoleApplyFlow) {
+          updateUser({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+          });
+          navigate('/onboarding/talent/cv', {
+            state: { firstName: formData.firstName, roleSlug },
+          });
+          return;
+        }
         try {
         const payloadExperienceLevel = (() => {
           switch (experienceLevel) {
@@ -445,7 +477,10 @@ const TalentOnboarding: React.FC = () => {
     });
   };
 
-  const showFullPage = useFullPageLoading(isStatePending, isSubmittingStep);
+  const showFullPage = useFullPageLoading(
+    isRoleApplyFlow ? false : isStatePending,
+    isRoleApplyFlow ? false : isSubmittingStep,
+  );
   const isStepBusy = isSubmittingStep;
 
   if (showFullPage) {
@@ -465,7 +500,7 @@ const TalentOnboarding: React.FC = () => {
     if (prMap[val]) setPrCountry(prMap[val]);
   };
 
-  return (
+  const onboardingContent = (
     <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6">
       {/* Progress Bar */}
       <div className="mb-12">
@@ -875,6 +910,12 @@ const TalentOnboarding: React.FC = () => {
       </form>
     </div>
   );
+
+  if (isRoleApplyFlow && role) {
+    return <RoleOnboardingShell role={role}>{onboardingContent}</RoleOnboardingShell>;
+  }
+
+  return onboardingContent;
 };
 
 export default TalentOnboarding;

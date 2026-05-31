@@ -115,3 +115,20 @@ input.vora-block-autofill:-webkit-autofill {
   animation-name: vora-autofill-start;
   animation-duration: 0.01s;
 }
+
+@keyframes profile-match-pulse {
+  0% {
+    width: 88px;
+    height: 88px;
+    opacity: 0.6;
+    top: 0;
+    left: 0;
+  }
+  100% {
+    width: 144px;
+    height: 144px;
+    opacity: 0;
+    top: -28px;
+    left: -28px;
+  }
+}

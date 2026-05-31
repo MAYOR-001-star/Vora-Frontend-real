@@ -2,7 +2,7 @@ import React from 'react';
 import { CloseIcon } from './Icons';
 
 interface TagProps {
-  label: string;
+  label: React.ReactNode;
   onRemove?: () => void;
   className?: string;
   variant?: 'blue' | 'green' | 'red' | 'gray' | 'yellow' | 'blue-light' | 'green-light' | 'outline' | 'purple';

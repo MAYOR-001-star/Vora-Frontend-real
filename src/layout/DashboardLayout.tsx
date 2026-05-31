@@ -168,7 +168,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     ? `${user.title} ${user.firstName || ''} ${user.lastName || ''}`.trim()
     : (user.lastName ? `${user.firstName || ''} ${user.lastName}` : (user.firstName || user.email || 'User'));
   const initials = ((user.firstName || user.email || 'U').charAt(0) + (user.lastName ? user.lastName.charAt(0) : '')).toUpperCase();
-  const roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  const isTalentMatchFlow = location.pathname.includes('/talent/match');
+  
+  let roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  if (isTalentMatchFlow) {
+    roleLabel = 'Job Seeker';
+  } else if (roleLabel === 'Employer') {
+    roleLabel = 'Admin Manager';
+  }
 
   const getNavItems = () => {
     if (user.role === 'employer') return EMPLOYER_NAV_ITEMS;
@@ -178,8 +185,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const navItems = getNavItems();
 
+  const useFullWidthContent =
+    location.pathname.startsWith('/payments') ||
+    location.pathname.includes('/jobs/vault/');
+
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === path;
+    if (path === '/jobs' && isTalentMatchFlow) return true;
     return location.pathname.startsWith(path);
   };
 
@@ -291,7 +303,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
               <div className="flex-1 min-w-0 group-data-[nav-collapsed=true]/sidebar:lg:hidden">
                 <p className="text-[13px] font-bold text-[#1A1A1A] truncate">{fullName}</p>
-                <p className="text-[11px] text-[#808080] font-medium truncate">{roleLabel === 'Employer' ? 'Admin Manager' : roleLabel}</p>
+                <p className="text-[11px] text-[#808080] font-medium truncate">{roleLabel}</p>
               </div>
             </div>
           </div>
@@ -314,7 +326,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto custom-scrollbar px-4 lg:px-8 pb-8 pt-6">
-          <div className="max-w-7xl mx-auto">
+          <div className={useFullWidthContent ? 'w-full max-w-none' : 'max-w-7xl mx-auto'}>
             {children}
           </div>
         </main>

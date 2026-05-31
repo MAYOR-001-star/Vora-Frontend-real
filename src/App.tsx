@@ -13,6 +13,13 @@ const Login = lazy(() => import('./pages/auth/Login'))
 const VerifyOTP = lazy(() => import('./pages/auth/VerifyOTP'))
 const EmployerOnboarding = lazy(() => import('./pages/employer/EmployerOnboarding'))
 const TalentOnboarding = lazy(() => import('./pages/talent/TalentOnboarding'))
+const RoleCvUpload = lazy(() => import('./pages/talent/RoleCvUpload'))
+const RoleProfileMatchBuilding = lazy(() => import('./pages/talent/RoleProfileMatchBuilding'))
+const RoleProfileMatchResult = lazy(() => import('./pages/talent/RoleProfileMatchResult'))
+const RoleProfileRolesFound = lazy(() => import('./pages/talent/RoleProfileRolesFound'))
+const RoleProfileMatchWaitlist = lazy(() => import('./pages/talent/RoleProfileMatchWaitlist'))
+const RoleProfileMatchBlocked = lazy(() => import('./pages/talent/RoleProfileMatchBlocked'))
+const RoleApplyAppShell = lazy(() => import('./components/talent/profileMatch/RoleApplyAppShell'))
 const MentorApply = lazy(() => import('./pages/mentor/MentorApply'))
 const MentorProfile = lazy(() => import('./pages/mentor/MentorOnboarding'))
 const Welcome = lazy(() => import('./pages/onboarding/Welcome'))
@@ -30,6 +37,9 @@ const Payments = lazy(() => import('./pages/employer/Payments'))
 const VaultRoleConfirmation = lazy(() => import('./pages/employer/VaultRoleConfirmation'))
 const EditVaultRole = lazy(() => import('./pages/employer/EditVaultRole'))
 const VaultEditReview = lazy(() => import('./pages/employer/VaultEditReview'))
+const JobPostedConfirmation = lazy(() => import('./pages/employer/JobPostedConfirmation'))
+const RoleLanding = lazy(() => import('./pages/public/RoleLanding'))
+const RoleSignup = lazy(() => import('./pages/auth/RoleSignup'))
 
 const App = () => {
   return (
@@ -46,17 +56,21 @@ const App = () => {
       }>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/role/:slug" element={<RoleLanding />} />
+          <Route path="/role/:slug/signup" element={<RoleSignup />} />
           <Route path="/dashboard" element={<ProtectedDashboardLayout><Dashboard /></ProtectedDashboardLayout>} />
           <Route path="/jobs" element={<ProtectedDashboardLayout><Jobs /></ProtectedDashboardLayout>} />
+          <Route path="/jobs/posted/confirmation" element={<ProtectedDashboardLayout><EmployerRoute><JobPostedConfirmation /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/jobs/vault/confirmation" element={<ProtectedDashboardLayout><EmployerRoute><VaultRoleConfirmation /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/jobs/vault/edit/:id" element={<ProtectedDashboardLayout><EmployerRoute><EditVaultRole /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/jobs/vault/review/:id?" element={<ProtectedDashboardLayout><EmployerRoute><VaultEditReview /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/jobs/:id" element={<ProtectedDashboardLayout><EmployerRoute><JobDetails /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/jobs/:id/reject/:applicantId" element={<ProtectedDashboardLayout><EmployerRoute><Rejection /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/jobs/:id/alignment/:candidateId" element={<ProtectedDashboardLayout><EmployerRoute><FinalAlignmentSession /></EmployerRoute></ProtectedDashboardLayout>} />
-          <Route path="/payments" element={<ProtectedDashboardLayout><EmployerRoute><Payments /></EmployerRoute></ProtectedDashboardLayout>} />
+          <Route path="/payments/*" element={<ProtectedDashboardLayout><EmployerRoute><Payments /></EmployerRoute></ProtectedDashboardLayout>} />
           <Route path="/talents" element={<ProtectedDashboardLayout><Talents /></ProtectedDashboardLayout>} />
           <Route path="/talents/:id" element={<ProtectedDashboardLayout><TalentProfile /></ProtectedDashboardLayout>} />
+
           {/* Auth Routes */}
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
@@ -67,6 +81,12 @@ const App = () => {
           <Route path="/onboarding" element={<OnboardingContainer />} />
           <Route path="/onboarding/welcome" element={<Welcome />} />
           <Route path="/onboarding/employer" element={<EmployerOnboarding />} />
+          <Route path="/onboarding/talent/cv" element={<RoleCvUpload />} />
+          <Route path="/onboarding/talent/match" element={<RoleProfileMatchBuilding />} />
+          <Route path="/onboarding/talent/match/result" element={<RoleProfileMatchResult />} />
+          <Route path="/onboarding/talent/match/blocked" element={<RoleProfileMatchBlocked />} />
+          <Route path="/onboarding/talent/match/roles" element={<RoleProfileRolesFound />} />
+          <Route path="/onboarding/talent/match/waitlist" element={<RoleProfileMatchWaitlist />} />
           <Route path="/onboarding/talent" element={<TalentOnboarding />} />
           <Route path="/onboarding/mentor-apply/profile" element={<MentorProfile />} />
           <Route path="/onboarding/mentor-apply" element={<MentorApply />} />

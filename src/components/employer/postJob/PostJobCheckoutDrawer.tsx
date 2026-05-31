@@ -101,7 +101,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
           </div>
 
           {isScheduled ? (
-            <AlertBanner variant="green" className="mb-5 !text-[12px]">
+            <AlertBanner variant="blue" className="mb-5 !text-[12px]">
               <strong>Vault mode — fee locked at today&apos;s rate.</strong> Your role is invisible until
               go-live. VORA silently matches new candidates during the vault period.
             </AlertBanner>

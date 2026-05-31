@@ -1,12 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import AuthCenterLogoNav from '../../components/auth/AuthCenterLogoNav';
+import RoleVerifyContextBanner from '../../components/auth/RoleVerifyContextBanner';
 import {
   AuthPageShell,
   AuthPageHeader,
   AuthFormCard,
   AuthErrorBanner,
   AuthOtpInputGrid,
+  authFooterLinkClass,
 } from '../../components/auth/AuthPageLayout';
 import {
   useVerifyOTPMutation,
@@ -20,16 +23,33 @@ import { useAuth } from '../../context/AuthContext';
 import { getSetupToken } from '../../utils/oauth';
 import type { VerifyLocationState } from '../../types';
 import { useFullPageLoading } from '../../hooks/useFullPageLoading';
+import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { getRoleSignupPath, saveRoleApplySlug } from '../../utils/roleSignup';
 
 const VerifyOTP: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { login, setSetupToken } = useAuth();
   const state = (location.state as VerifyLocationState) || {};
-  const { email = '', oauth = false, otpExpiresInMinutes = 10 } = state;
+  const {
+    email = '',
+    oauth = false,
+    otpExpiresInMinutes = 10,
+    roleSlug,
+    mockAuth = false,
+    accountType,
+  } = state;
+
+  const role = useMemo(
+    () => (roleSlug ? getRoleLandingForSlug(roleSlug) : null),
+    [roleSlug],
+  );
+  const isRoleFlow = Boolean(roleSlug);
+
+  const resendCooldownSecs = mockAuth ? 60 : oauth ? otpExpiresInMinutes * 60 : 60;
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [timer, setTimer] = useState(oauth ? otpExpiresInMinutes * 60 : 60);
+  const [timer, setTimer] = useState(resendCooldownSecs);
   const [formError, setFormError] = useState('');
   const verifyMutation = useVerifyOTPMutation();
   const resendMutation = useResendOTPMutation();
@@ -37,7 +57,7 @@ const VerifyOTP: React.FC = () => {
   const oauthResendMutation = useOAuthResendOtpMutation();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const isOAuthFlow = oauth || !!getSetupToken();
+  const isOAuthFlow = (oauth || !!getSetupToken()) && !mockAuth;
 
   useEffect(() => {
     if (isOAuthFlow && !getSetupToken()) {
@@ -71,8 +91,16 @@ const VerifyOTP: React.FC = () => {
   };
 
   const isComplete = otp.every((digit) => digit !== '');
-  const isPending = isOAuthFlow ? oauthVerifyMutation.isPending : verifyMutation.isPending;
-  const isResending = isOAuthFlow ? oauthResendMutation.isPending : resendMutation.isPending;
+  const isPending = mockAuth
+    ? false
+    : isOAuthFlow
+      ? oauthVerifyMutation.isPending
+      : verifyMutation.isPending;
+  const isResending = mockAuth
+    ? false
+    : isOAuthFlow
+      ? oauthResendMutation.isPending
+      : resendMutation.isPending;
   const buttonLoading = isPending || isResending;
   const showFullPage = useFullPageLoading(isPending || isResending, buttonLoading);
 
@@ -82,6 +110,14 @@ const VerifyOTP: React.FC = () => {
 
     setFormError('');
     const code = otp.join('');
+
+    if (mockAuth) {
+      if (roleSlug) saveRoleApplySlug(roleSlug);
+      navigate('/onboarding/talent?step=1', {
+        state: { email, accountType: accountType ?? 'Talent', roleSlug },
+      });
+      return;
+    }
 
     try {
       if (isOAuthFlow) {
@@ -117,6 +153,13 @@ const VerifyOTP: React.FC = () => {
     if (timer > 0) return;
     setFormError('');
 
+    if (mockAuth) {
+      setTimer(60);
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+      return;
+    }
+
     try {
       if (isOAuthFlow) {
         await oauthResendMutation.mutateAsync();
@@ -132,14 +175,14 @@ const VerifyOTP: React.FC = () => {
     }
   };
 
-  return (
-    <AuthPageShell loading={showFullPage}>
+  const formContent = (
+    <>
       <AuthPageHeader
         title="Verify your email"
         subtitle={
           <>
             We&apos;ve sent a 6-digit verification code to{' '}
-            <span className="break-all font-medium text-gray-900">
+            <span className="break-all font-semibold text-[#1A1A1A]">
               {email || 'your email'}
             </span>
             . Enter the code below to verify your email.
@@ -147,7 +190,7 @@ const VerifyOTP: React.FC = () => {
         }
       />
 
-      <AuthFormCard>
+      <AuthFormCard className={isRoleFlow ? 'max-w-[470px]' : undefined}>
         {formError ? <AuthErrorBanner message={formError} /> : null}
 
         <form onSubmit={handleVerify} className="space-y-8 sm:space-y-10" autoComplete="off">
@@ -160,9 +203,9 @@ const VerifyOTP: React.FC = () => {
 
           <div className="text-center">
             {timer > 0 ? (
-              <p className="text-sm font-medium text-[#6B7280]">
-                Resend a new otp in{' '}
-                <span className="font-medium text-[#0047CC]">{timer} secs</span>
+              <p className="text-sm font-medium text-[#808080]">
+                Resend a new OTP in{' '}
+                <span className="font-semibold text-[#0047CC]">{timer} secs</span>
               </p>
             ) : (
               <Button
@@ -185,10 +228,33 @@ const VerifyOTP: React.FC = () => {
           >
             Verify email
           </Button>
+
+          {isRoleFlow && roleSlug ? (
+            <p className="text-center text-[13px] text-[#808080] font-medium">
+              Wrong email?{' '}
+              <Link to={getRoleSignupPath(roleSlug)} className={authFooterLinkClass}>
+                Change it here
+              </Link>
+            </p>
+          ) : null}
         </form>
       </AuthFormCard>
-    </AuthPageShell>
+    </>
   );
+
+  if (isRoleFlow && role) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <AuthCenterLogoNav />
+        <RoleVerifyContextBanner role={role} />
+        <AuthPageShell loading={showFullPage} centered={false} className="flex-1 !min-h-0 !py-10 sm:!py-16">
+          {formContent}
+        </AuthPageShell>
+      </div>
+    );
+  }
+
+  return <AuthPageShell loading={showFullPage}>{formContent}</AuthPageShell>;
 };
 
 export default VerifyOTP;

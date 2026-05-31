@@ -32,8 +32,12 @@ export type OAuthRole = 'TALENT' | 'EMPLOYER' | 'MENTOR';
 
 export interface VerifyLocationState {
   email?: string;
+  accountType?: string;
   oauth?: boolean;
   otpExpiresInMinutes?: number;
+  roleSlug?: string;
+  /** UI-only flow: skip auth API calls until backend endpoints are wired. */
+  mockAuth?: boolean;
 }
 
 export interface SelectTypeLocationState {

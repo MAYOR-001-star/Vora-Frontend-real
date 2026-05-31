@@ -61,17 +61,8 @@ interface PostJobPreviewStepProps {
   fmt: (value: number, currency: string) => string;
 }
 
-function PreviewTagList({
-  items,
-  variant = 'blue',
-}: {
-  items: string[];
-  variant?: 'blue' | 'green';
-}) {
+function PreviewTagList({ items }: { items: string[] }) {
   if (!items.length) return <span className="text-[13px] text-[#808080]">—</span>;
-  const tagVariant = variant === 'green' ? 'green' : 'blue';
-  const borderClass =
-    variant === 'green' ? 'border border-[#85E585]' : 'border border-[#BDD9FF]';
 
   return (
     <div className="flex flex-wrap gap-1.5 mt-1">
@@ -79,8 +70,8 @@ function PreviewTagList({
         <Tag
           key={item}
           label={item}
-          variant={tagVariant}
-          className={`px-2.5 py-0.5 text-[11px] ${borderClass}`}
+          variant="blue"
+          className="px-2.5 py-0.5 text-[11px] border border-[#BDD9FF]"
         />
       ))}
     </div>
@@ -211,19 +202,19 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-[#E6E6E6]">
             <div>
               <FieldLabel>Technical skills</FieldLabel>
-              <PreviewTagList items={technicalSkills} variant="blue" />
+              <PreviewTagList items={technicalSkills} />
             </div>
             <div>
               <FieldLabel>Tools / software</FieldLabel>
-              <PreviewTagList items={tools} variant="blue" />
+              <PreviewTagList items={tools} />
             </div>
             <div>
               <FieldLabel>Language requirements</FieldLabel>
-              <PreviewTagList items={languages} variant="blue" />
+              <PreviewTagList items={languages} />
             </div>
             <div>
               <FieldLabel>Pre-assessment submission</FieldLabel>
-              <PreviewTagList items={preAssessments} variant="blue" />
+              <PreviewTagList items={preAssessments} />
             </div>
           </div>
         </div>
@@ -254,7 +245,7 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <div>
             <FieldLabel>Preferred working style</FieldLabel>
-            <PreviewTagList items={preferredWorkingStyle} variant="green" />
+            <PreviewTagList items={preferredWorkingStyle} />
           </div>
           <PreviewField
             label="Check-in rhythm"
@@ -263,11 +254,11 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
           <PreviewField label="Working language" value={primaryLanguage || '—'} />
           <div>
             <FieldLabel>Personality traits</FieldLabel>
-            <PreviewTagList items={personalityTraits} variant="green" />
+            <PreviewTagList items={personalityTraits} />
           </div>
           <div className="sm:col-span-2 lg:col-span-3">
             <FieldLabel>Work environment</FieldLabel>
-            <PreviewTagList items={workEnvironment} variant="green" />
+            <PreviewTagList items={workEnvironment} />
           </div>
         </div>
       </PreviewSectionCard>

@@ -4,8 +4,6 @@ import { SAMPLE_TALENTS } from '../../constants/mockData';
 import { TALENTS_TABS } from '../../constants/tabs';
 import {
   UsersIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   MoreVerticalIcon,
   SearchIcon
 } from '../../components/common/Icons';
@@ -13,7 +11,7 @@ import ApplicantDetailsModal from '../../components/employer/ApplicantDetailsMod
 import PostHireTrackingView from '../../components/talent/PostHireTrackingView';
 import TabSlider from '../../components/common/TabSlider';
 import Input from '../../components/common/Input';
-import Button from '../../components/common/Button';
+import PaginationControls from '../../components/common/PaginationControls';
 import Tag from '../../components/common/Tag';
 
 const Talents: React.FC = () => {
@@ -215,26 +213,12 @@ const Talents: React.FC = () => {
           {/* Pagination Footer */}
           <div className="border-t border-gray-50 px-6 py-6 flex items-center justify-between mt-auto">
             <p className="text-[13px] text-gray-400 font-medium tracking-tight">Showing 1 - {talents.length} of 30 applicant</p>
-            <div className="flex items-center gap-8">
-              <Button 
-                variant="outline" 
-                fullWidth={false} 
-                disabled={true} 
-                className="min-h-[40px] px-6 text-[13px]"
-              >
-                <ChevronLeftIcon size={16} strokeWidth={3} />
-                Previous
-              </Button>
-              <div className="w-px h-4 bg-gray-100" />
-              <Button 
-                variant="outline" 
-                fullWidth={false} 
-                className="min-h-[40px] px-6 text-[13px] border-[#0047CC] text-[#0047CC] hover:bg-blue-50"
-              >
-                Next
-                <ChevronRightIcon size={16} strokeWidth={3} className="group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </div>
+            <PaginationControls
+              currentPage={0} // Dummy for now since logic not implemented
+              disablePrev={true}
+              disableNext={false}
+              onPageChange={() => {}}
+            />
           </div>
         </div>
       )}

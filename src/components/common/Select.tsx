@@ -90,7 +90,7 @@ const Select: React.FC<SelectProps> = ({
         key={option.value}
         type="button"
         onClick={() => handleSelect(option.value)}
-        className={`w-full text-left px-4 py-3 text-sm rounded-lg transition-colors cursor-pointer mb-0.5 last:mb-0 ${
+        className={`w-full text-left px-3 py-2 text-[13px] rounded-lg transition-colors cursor-pointer mb-0.5 last:mb-0 whitespace-nowrap ${
           isSelected
             ? 'bg-[#0047CC] text-white font-medium'
             : option.italic
@@ -118,7 +118,7 @@ const Select: React.FC<SelectProps> = ({
       onMouseDown={isInline ? (e) => e.stopPropagation() : undefined}
     >
       {!hideLabel && label !== '' && (
-        <label className="block text-sm font-medium text-text-secondary mb-2.5">
+        <label className="block text-sm font-medium text-text-secondary mt-1 mb-3">
           {label}
         </label>
       )}

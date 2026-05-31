@@ -86,6 +86,10 @@ import {
 } from '../../constants/jobWizard';
 import { buildVaultConfirmationData, saveVaultConfirmation } from '../../utils/vaultConfirmation';
 import {
+  buildJobPostedConfirmationData,
+  saveJobPostedConfirmation,
+} from '../../utils/jobPostedConfirmation';
+import {
   clearRolePostingDraft,
   saveRolePostingDraft,
   updateRolePostingDraftStep,
@@ -1078,19 +1082,27 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
         return;
       }
 
+      saveJobPostedConfirmation(
+        buildJobPostedConfirmationData({
+          jobId: rolePostingId,
+          roleTitle,
+          workFormat,
+          location,
+          positions,
+          summary,
+          roleGoal,
+          coreResponsibilities,
+        }),
+      );
+
       clearRolePostingDraft();
       setIsCheckoutOpen(false);
-      const jobId = rolePostingId;
       setIsClosing(true);
       setTimeout(() => {
         onClose();
         setIsClosing(false);
         setRolePostingId(null);
-        if (jobId) {
-          navigate(`/jobs/${jobId}`);
-        } else {
-          navigate('/jobs');
-        }
+        navigate('/jobs/posted/confirmation');
       }, 400);
     } finally {
       setIsProceeding(false);
@@ -2132,7 +2144,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                   {/* UNPAID PANEL */}
                   {compType === 'unp' && (
                     <div className="space-y-4.5 mt-6 animate-in slide-in-from-top-2 duration-300">
-                      <AlertBanner variant="green" className="!text-xs">
+                      <AlertBanner variant="blue" className="!text-xs">
                         <strong>Flat listing fee applies.</strong> For unpaid placements, volunteer roles, academic observerships, and similar arrangements, VORA charges a flat listing and matching fee â€” <strong>USD 50 for LMIC employers</strong> or <strong>USD 500 for other regions</strong>. No escrow is held. Payment is processed on go-live. This covers the full matching and assessment process regardless of outcome.
                       </AlertBanner>
 
