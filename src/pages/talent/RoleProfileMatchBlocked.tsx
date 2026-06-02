@@ -10,7 +10,7 @@ import { MOCK_MATCHED_ROLES } from '../../constants/talentRolesFound';
 import { useAuth } from '../../context/AuthContext';
 import { getRoleLandingForSlug } from '../../utils/roleLanding';
 import { loadRoleApplySlug } from '../../utils/roleSignup';
-import { getPostMatchPath, resolveProfileMatchScan } from '../../utils/profileMatchResult';
+import { resolveProfileMatchScan } from '../../utils/profileMatchResult';
 
 const RoleProfileMatchBlocked: React.FC = () => {
   const navigate = useNavigate();
