@@ -173,7 +173,7 @@ export type MentorOnboardingSavedFields = Partial<
 >;
 
 export interface MentorOnboardingStateResponse {
-  /** Current step (1–5); API may use `onboardingStep` instead of `step`. */
+  /** Current step (1,5); API may use `onboardingStep` instead of `step`. */
   step?: number;
   onboardingStep?: number;
   onboardingCompleted?: boolean;

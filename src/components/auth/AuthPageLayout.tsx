@@ -11,7 +11,7 @@ type AuthPageShellProps = {
   loading?: boolean;
 };
 
-/** Full-viewport auth wrapper — prevents horizontal overflow on small screens. */
+/** Full-viewport auth wrapper, prevents horizontal overflow on small screens. */
 export function AuthPageShell({
   children,
   className = '',
@@ -120,7 +120,7 @@ type AuthErrorBannerProps = {
 
 export function AuthErrorBanner({ message }: AuthErrorBannerProps) {
   return (
-    <div className="mb-6 rounded-lg border border-red-100 bg-red-50 p-4">
+    <div className="mb-6 rounded-lg border border-red-100 bg-white p-4">
       <p className="text-center text-sm font-medium text-red-600 sm:text-left">
         {message}
       </p>

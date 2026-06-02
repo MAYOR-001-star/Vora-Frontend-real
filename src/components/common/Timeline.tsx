@@ -11,7 +11,7 @@ interface TimelineProps {
 
 const dotStyles: Record<TimelineStepStatus, string> = {
   done: 'bg-[#EEFBEE] text-[#135813] border-[#85E585]',
-  pending: 'bg-[#EBF6FF] text-[#0047CC] border-[#BDD9FF]',
+  pending: 'bg-white text-[#0047CC] border-[#BDD9FF]',
   future: 'bg-[#F7F7F7] text-[#ADADAD] border-[#E6E6E6]',
 };
 

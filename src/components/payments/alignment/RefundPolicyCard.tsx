@@ -8,12 +8,12 @@ const REFUND_POLICY_ITEMS = [
     icon: 'check' as const,
   },
   {
-    title: 'Reject – valid, documented',
+    title: 'Reject, valid, documented',
     description: 'VORA reviews within 2 days · Refund if valid',
     icon: 'check' as const,
   },
   {
-    title: 'Reject – no valid reason',
+    title: 'Reject, no valid reason',
     description: 'Fee forfeited · Account warning issued',
     icon: 'close' as const,
   },

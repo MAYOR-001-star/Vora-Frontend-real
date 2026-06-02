@@ -30,18 +30,16 @@ const RoleHeroCard: React.FC<RoleHeroCardProps> = ({ role }) => (
       </div>
     </div>
 
-    <div className="flex flex-wrap items-center gap-2.5 mb-1">
-      <SectionTitle as="h1" className="text-2xl sm:text-[28px] mb-0">
+    <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <SectionTitle as="h1" className="text-2xl sm:text-[28px]">
         {role.roleTitle}
       </SectionTitle>
       <Tag
-        label={role.formatLocationLabel}
+        label={role.compensationLine}
         variant="blue"
-        className="!rounded-full !px-3 !py-1 !text-xs !font-medium gap-1 !border !border-[#387DFF]"
+        className="!rounded-full !px-3.5 !py-1 !text-xs !font-medium shrink-0"
       />
     </div>
-
-    <p className="text-sm text-[#808080] font-medium">{role.compensationLine}</p>
 
     <div className="flex flex-wrap gap-4 mt-3.5">
       {role.metaItems.map((item) => (

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import { ModalTitle, Subheading } from '../common/Typography';
+import { CloseIcon, LockIcon, FileIcon, FilePlusIcon } from '../common/Icons';
 import ScrollArea from '../common/ScrollArea';
 import { toISODate } from '../../utils/date';
 import { useAuth } from '../../context/AuthContext';
@@ -228,10 +229,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
             onClick={resetModal} 
             className="p-1 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <CloseIcon size={18} strokeWidth={2.5} />
           </button>
         </div>
 
@@ -253,7 +251,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                   setDocumentLink('');
                 }}
                 className={`border-2 rounded-xl p-4 cursor-pointer transition-all bg-white hover:border-gray-300 ${
-                  hireMode === 'live' ? 'border-[#0047CC] bg-[#EBF6FF]/30' : 'border-gray-200'
+                  hireMode === 'live' ? 'border-[#0047CC] bg-white' : 'border-gray-200'
                 }`}
               >
                 <div className="flex gap-3 items-start">
@@ -280,7 +278,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                   setDocumentLink('');
                 }}
                 className={`border-2 rounded-xl p-4 cursor-pointer transition-all bg-white hover:border-gray-300 ${
-                  hireMode === 'vault' ? 'border-[#0047CC] bg-[#EBF6FF]/30' : 'border-gray-200'
+                  hireMode === 'vault' ? 'border-[#0047CC] bg-white' : 'border-gray-200'
                 }`}
               >
                 <div className="flex gap-3 items-start">
@@ -291,14 +289,11 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                   </div>
                   <div className="flex-1">
                     <Subheading className="flex items-center gap-1.5">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2.5">
-                        <rect x="3" y="11" width="18" height="11" rx="2" />
-                        <path d="M7 11V7a5 5 0 0110 0v4" />
-                      </svg>
-                      Schedule for later — Vault mode
+                      <LockIcon size={13} strokeWidth={2.5} className="text-[#0047CC]" />
+                      Schedule for later, Vault mode
                     </Subheading>
                     <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
-                      Not hiring right now? Set a future go-live date. Your fee rate locks in today. The role stays completely invisible — but VORA silently matches every new candidate who joins against your specification. On go-live day, qualified candidates are notified instantly.
+                      Not hiring right now? Set a future go-live date. Your fee rate locks in today. The role stays completely invisible, but VORA silently matches every new candidate who joins against your specification. On go-live day, qualified candidates are notified instantly.
                     </p>
                   </div>
                 </div>
@@ -329,10 +324,10 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                       helperText={fieldErrors.goLiveDate}
                     />
                     <p className="text-[11px] text-[#1e3a8a] mt-3.5 leading-relaxed">
-                      Role stays completely invisible until this exact date. No candidate knows it exists. During the vault period, every new candidate who joins VORA and completes onboarding is silently matched against your specification. Those who score 80% or above are pre-qualified internally — they are not told, not contacted. On go-live day, matching fires publicly for the first time and pre-qualified candidates are notified instantly. You can see how many VORA candidates currently qualify at any time.
+                      Role stays completely invisible until this exact date. No candidate knows it exists. During the vault period, every new candidate who joins VORA and completes onboarding is silently matched against your specification. Those who score 80% or above are pre-qualified internally, they are not told, not contacted. On go-live day, matching fires publicly for the first time and pre-qualified candidates are notified instantly. You can see how many VORA candidates currently qualify at any time.
                     </p>
                     <div className="mt-3 text-[11px] text-[#1e3a8a] leading-relaxed bg-[#F7F7F7] border border-[#E6E6E6] rounded-lg p-3 space-y-1">
-                      <div>① Complete the full role posting form below — same as a live role.</div>
+                      <div>① Complete the full role posting form below, same as a live role.</div>
                       <div>② On the preview screen you confirm your go-live date and pay escrow.</div>
                       <div>③ Role enters Vault. Fee rate locked at today's rate regardless of future repricing.</div>
                       <div>④ Edit the spec up to 3 times before go-live (48hr review per edit).</div>
@@ -368,7 +363,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                     <div className="flex-1">
                       <Subheading>Upload job document</Subheading>
                       <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
-                        Upload your existing JD — VORA extracts and pre-fills all role details for you to review step by step.
+                        Upload your existing JD, VORA extracts and pre-fills all role details for you to review step by step.
                       </p>
                     </div>
                   </div>
@@ -394,28 +389,20 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                         }`}
                       >
                         <div className="flex flex-col items-center justify-center">
-                          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="1.8">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="12" y1="18" x2="12" y2="12" />
-                            <line x1="9" y1="15" x2="15" y2="15" />
-                          </svg>
+                          <FilePlusIcon size={26} strokeWidth={1.8} className="text-[#0047CC]" />
                           <div className="text-[13px] font-bold text-gray-700 mt-2">
                             Drop PDF or DOCX here, or click to browse
                           </div>
                           <div className="text-[11px] text-gray-400 mt-1">
-                            PDF, DOCX only — Max 10 MB
+                            PDF, DOCX only, Max 10 MB
                           </div>
                         </div>
                       </div>
 
                       {/* File item preview */}
                       {uploadedFile && (
-                        <div className="flex items-center gap-2 bg-[#EBF6FF] border border-[#BDD9FF] rounded-lg p-2.5 mt-2">
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2.5" className="shrink-0">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                          </svg>
+                        <div className="flex items-center gap-2 bg-white border border-[#BDD9FF] rounded-lg p-2.5 mt-2">
+                          <FileIcon size={15} strokeWidth={2.5} className="text-[#0047CC] shrink-0" />
                           <span className="text-[13px] font-bold text-[#0047CC] flex-1 truncate">
                             {uploadedFile.name}
                           </span>
@@ -426,10 +413,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                             onClick={handleRemoveFile}
                             className="p-1 hover:bg-blue-100 rounded text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
                           >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
+                            <CloseIcon size={13} strokeWidth={2.5} />
                           </button>
                         </div>
                       )}

@@ -13,7 +13,7 @@ interface KeyValueBannerProps {
 
 const KeyValueBanner: React.FC<KeyValueBannerProps> = ({ items, className = '' }) => (
   <div
-    className={`bg-[#EBF6FF] border-[1.5px] border-[#BDD9FF] rounded-xl px-5 py-4 mb-6 flex items-center justify-between flex-wrap gap-3 ${className}`}
+    className={`bg-white border-[1.5px] border-[#BDD9FF] rounded-xl px-5 py-4 mb-6 flex items-center justify-between flex-wrap gap-3 ${className}`}
   >
     {items.map((item) => (
       <div key={item.label}>

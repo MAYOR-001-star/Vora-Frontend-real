@@ -52,7 +52,7 @@ const PaymentsMethods: React.FC = () => {
         <div>
           <PageTitle className="!text-2xl !font-bold tracking-tight">Payment Methods</PageTitle>
           <SectionDescription className="mt-1">
-            Manage how you fund your VORA wallet — cards, African payment gateways, and bank transfers
+            Manage how you fund your VORA wallet, cards, African payment gateways, and bank transfers
           </SectionDescription>
         </div>
         <Button

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 type BlockBrowserAutofillOptions = {
-  /** Use on password fields — Chrome ignores "off" but respects "new-password". */
+  /** Use on password fields, Chrome ignores "off" but respects "new-password". */
   forPassword?: boolean;
 };
 

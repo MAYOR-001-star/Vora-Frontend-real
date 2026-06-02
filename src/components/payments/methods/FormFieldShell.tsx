@@ -8,7 +8,7 @@ interface FormFieldShellProps {
   children: React.ReactNode;
 }
 
-const inputErrorClass = 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/20';
+const inputErrorClass = 'border-red-500 bg-white focus:border-red-500 focus:ring-red-500/20';
 const inputOkClass =
   'border-border-default bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue';
 

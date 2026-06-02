@@ -21,7 +21,7 @@ const BankTransferTopUpPanel: React.FC<BankTransferTopUpPanelProps> = ({
 }) => (
   <div>
     <AlertBanner variant="blue" className="!text-xs mb-5">
-      Transfer directly from your bank. Funds appear within 1–3 business days. No processing fees on bank
+      Transfer directly from your bank. Funds appear within 1,3 business days. No processing fees on bank
       transfers.
     </AlertBanner>
 
@@ -47,7 +47,7 @@ const BankTransferTopUpPanel: React.FC<BankTransferTopUpPanelProps> = ({
       variant="primary"
       pill={false}
       className="!rounded-lg !text-sm mt-2"
-      onClick={() => toast.success('Transfer noted. Funds will appear within 1–3 business days.')}
+      onClick={() => toast.success('Transfer noted. Funds will appear within 1,3 business days.')}
     >
       I&apos;ve Made the Transfer
     </Button>

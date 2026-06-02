@@ -25,9 +25,9 @@ const ProcessingTimeline: React.FC<ProcessingTimelineProps> = ({
           <div
             className={`relative z-[1] w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 bg-white ${
               step.status === 'done'
-                ? 'border-[#0047CC] bg-[#EBF6FF]'
+                ? 'border-[#0047CC] bg-white'
                 : step.status === 'active'
-                  ? 'border-[#0047CC] bg-[#EBF6FF]'
+                  ? 'border-[#0047CC] bg-white'
                   : 'border-[#E6E6E6]'
             }`}
           >

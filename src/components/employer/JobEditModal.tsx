@@ -14,7 +14,7 @@ interface JobEditModalProps {
 
 const JobEditModal: React.FC<JobEditModalProps> = ({ isOpen, onClose, section, data }) => {
   // Details Section State
-  const [roleTitle, setRoleTitle] = useState(data?.title || 'Senior Epidemiologist – Field Operations');
+  const [roleTitle, setRoleTitle] = useState(data?.title || 'Senior Epidemiologist, Field Operations');
   const [roleType, setRoleType] = useState(data?.roleDetails?.type || 'Full-time employment');
   const [level, setLevel] = useState(data?.roleDetails?.level || 'Senior level');
   const [positions, setPositions] = useState(data?.roleDetails?.positions?.replace(/\D/g, '') || '2');
@@ -431,7 +431,7 @@ const JobEditModal: React.FC<JobEditModalProps> = ({ isOpen, onClose, section, d
               />
             </div>
 
-            <div className="bg-[#EBF6FF] border border-[#BDD9FF] rounded-xl p-4 text-[13px] text-[#1e3a8a] leading-relaxed font-medium">
+            <div className="bg-white border border-[#BDD9FF] rounded-xl p-4 text-[13px] text-[#1e3a8a] leading-relaxed font-medium">
               <strong>Escrow note:</strong> Changing the salary band triggers an automatic escrow recalculation. Any top-up or refund will fire to your payment method within 24 hours of this edit being confirmed.
             </div>
 

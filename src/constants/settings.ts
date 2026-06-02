@@ -42,14 +42,14 @@ export const MULTIPLIERS = {
 export const TIER_INFO = {
   t1: {
     cls: 'bg-[#EBF6FF] text-[#0047CC] border-[#BFDBFE]',
-    msg: 'You are in a Tier 1 (HIC) market. Your local rate is the global baseline — VORA scales it down for T2/T3 mentees using PPP, expanding your reach to 2.3M+ candidates worldwide.'
+    msg: 'You are in a Tier 1 (HIC) market. Your local rate is the global baseline, VORA scales it down for T2/T3 mentees using PPP, expanding your reach to 2.3M+ candidates worldwide.'
   },
   t2: {
     cls: 'bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]',
-    msg: 'You are in a Tier 2 (UMIC) market. VORA scales your rate up for T1 mentees and down for T3 mentees — maximising both your income and your global accessibility.'
+    msg: 'You are in a Tier 2 (UMIC) market. VORA scales your rate up for T1 mentees and down for T3 mentees, maximising both your income and your global accessibility.'
   },
   t3: {
     cls: 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]',
-    msg: 'You are in a Tier 3 (LMIC) market. Your local rate anchors global pricing — VORA scales it up for T1/T2 mentees so you earn globally competitive rates while remaining accessible locally.'
+    msg: 'You are in a Tier 3 (LMIC) market. Your local rate anchors global pricing, VORA scales it up for T1/T2 mentees so you earn globally competitive rates while remaining accessible locally.'
   }
 };

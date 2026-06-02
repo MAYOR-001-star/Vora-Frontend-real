@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import Button from '../../common/Button';
 import ScrollArea from '../../common/ScrollArea';
+import { CloseIcon, CheckIcon } from '../../common/Icons';
 import PaymentMethodTabs from '../PaymentMethodTabs';
 import AddStripeMethodForm from './AddStripeMethodForm';
 import AddPaystackMethodForm from './AddPaystackMethodForm';
@@ -79,10 +80,7 @@ const AddPaymentMethodModal: React.FC<AddPaymentMethodModalProps> = ({ open, onC
             className="text-[#808080] p-1 hover:text-[#1A1A1A] cursor-pointer bg-transparent border-none"
             aria-label="Close"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <CloseIcon size={18} strokeWidth={2} aria-hidden />
           </button>
         </div>
 
@@ -101,9 +99,7 @@ const AddPaymentMethodModal: React.FC<AddPaymentMethodModalProps> = ({ open, onC
             Cancel
           </Button>
           <Button variant="primary" size="sm" pill={false} fullWidth={false} className="!rounded-lg !text-sm gap-1.5" onClick={handleSave}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+            <CheckIcon size={14} strokeWidth={2.5} aria-hidden />
             Save Method
           </Button>
         </div>

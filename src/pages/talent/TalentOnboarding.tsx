@@ -161,14 +161,14 @@ const TalentOnboarding: React.FC = () => {
     lastName: '',
   });
 
-  // Step 2 state — Profile
+  // Step 2 state, Profile
   const [professionalTitle, setProfessionalTitle] = useState('');
   const [areasOfInterest, setAreasOfInterest] = useState<string[]>([]);
   const otherInterest = ''; // Set to empty string if not used
   const [experienceLevel, setExperienceLevel] = useState('');
   const [country, setCountry] = useState('');
 
-  // Step 2 state — Work Authorisation
+  // Step 2 state, Work Authorisation
   const [nationalities, setNationalities] = useState<string[]>([]);
   const [residence, setResidence] = useState('');
   const [city, setCity] = useState('');
@@ -828,7 +828,7 @@ const TalentOnboarding: React.FC = () => {
 
             {/* PR override callout */}
             {showPRPanel && (
-              <div className="flex gap-2.5 items-start bg-[#EBF6FF] border border-[#BDD9FF] rounded-lg p-3.5">
+              <div className="flex gap-2.5 items-start bg-white border border-[#BDD9FF] rounded-lg p-3.5">
                 <InfoIcon className="flex-shrink-0 mt-0.5" stroke="#0047CC" />
                 <p className="text-[13px] text-[#4A4A4A] leading-relaxed">
                   <strong className="text-[#182348]">Permanent Residence Override applies.</strong> VORA will treat you as fully eligible for roles in the country of your permanent status, equivalent to any other local resident.
@@ -879,7 +879,7 @@ const TalentOnboarding: React.FC = () => {
             />
 
             {/* Integrity declaration */}
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3 items-start">
+            <div className="bg-white border border-red-200 rounded-lg p-4 flex gap-3 items-start">
               <input
                 type="checkbox"
                 autoComplete="off"

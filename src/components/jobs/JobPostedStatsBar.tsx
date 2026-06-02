@@ -17,9 +17,8 @@ const JobPostedStatsBar: React.FC<JobPostedStatsBarProps> = ({
       <p className="text-[11px] text-[#808080] mt-2 leading-snug">Positions open</p>
     </div>
     <div className="px-4 py-5 text-center">
-      <div className="flex items-center justify-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-[#2CA62C]" aria-hidden />
-        <span className="text-[18px] font-bold text-[#2CA62C] leading-none">Live</span>
+      <div className="flex items-center justify-center">
+        <span className="text-[28px] font-bold text-[#0047CC] leading-none">Live</span>
       </div>
       <p className="text-[11px] text-[#808080] mt-2 leading-snug">Role status</p>
     </div>

@@ -9,7 +9,7 @@ const ProfileWaitlistNextSteps: React.FC = () => (
           key={step.title}
           className="flex items-start gap-3.5 py-2.5 border-b border-[#F7F7F7] last:border-0"
         >
-          <span className="w-7 h-7 rounded-full bg-[#EBF6FF] border border-[#387DFF] text-[#0047CC] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+          <span className="w-7 h-7 rounded-full bg-white border border-[#387DFF] text-[#0047CC] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
             {index + 1}
           </span>
           <p className="text-sm text-[#4A4A4A] leading-relaxed [&_strong]:text-[#1A1A1A] [&_strong]:font-bold">

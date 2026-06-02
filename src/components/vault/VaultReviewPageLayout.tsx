@@ -10,7 +10,7 @@ interface VaultReviewPageLayoutProps {
 }
 
 /**
- * Vault confirmation / review screens — full-bleed top bar like Post Job,
+ * Vault confirmation / review screens, full-bleed top bar like Post Job,
  * scrollable content column below.
  */
 const VaultReviewPageLayout: React.FC<VaultReviewPageLayoutProps> = ({

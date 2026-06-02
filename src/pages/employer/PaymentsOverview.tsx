@@ -39,7 +39,7 @@ const PaymentsOverview: React.FC = () => {
 
   const handleWalletTile = (id: string) => {
     if (id === 'balance') {
-      toast.success('Available balance: $3,240.00 — ready for escrow, true-ups, or withdrawal.');
+      toast.success('Available balance: $3,240.00, ready for escrow, true-ups, or withdrawal.');
     } else if (id === 'escrow') {
       openEscrowDetail('esc1');
     } else if (id === 'alignment') {
@@ -66,7 +66,7 @@ const PaymentsOverview: React.FC = () => {
       <div className="mb-7 space-y-0">
         <PendingAlert
           title="True-up required: Global Health Research role confirmed at $75,000"
-          description="Midpoint escrow was calculated on $70,000 (range $60k–$80k). Actual salary $75,000 means a $750 true-up is owed. Click to review & pay."
+          description="Midpoint escrow was calculated on $70,000 (range $60k,$80k). Actual salary $75,000 means a $750 true-up is owed. Click to review & pay."
           actionLabel="Review True-Up"
           onAction={() => setTrueUpOpen(true)}
         />

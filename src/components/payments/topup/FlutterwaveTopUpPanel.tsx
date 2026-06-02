@@ -63,7 +63,7 @@ const FlutterwaveTopUpPanel: React.FC<FlutterwaveTopUpPanelProps> = ({
   return (
     <div>
       <AlertBanner variant="blue" className="!text-xs mb-5">
-        <strong>Flutterwave</strong> — recommended for Uganda, Tanzania, Zambia, Senegal and Cameroon. Also
+        <strong>Flutterwave</strong>, recommended for Uganda, Tanzania, Zambia, Senegal and Cameroon. Also
         works in Kenya, Ghana, Nigeria and 30+ African countries.
         <p className="mt-1 text-[11px] opacity-90">
           M-Pesa · MTN MoMo · Airtel Money · Cards · Bank Transfer · 150+ currencies
@@ -120,7 +120,7 @@ const FlutterwaveTopUpPanel: React.FC<FlutterwaveTopUpPanelProps> = ({
             value={form.values.phone}
             onChange={(e) => form.setField('phone', e.target.value)}
             onBlur={() => form.markTouched('phone')}
-            className={`flex-1 min-w-0 px-4 py-3 rounded-r-lg border text-sm ${form.fieldError('phone') ? 'border-red-500 bg-red-50' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue`}
+            className={`flex-1 min-w-0 px-4 py-3 rounded-r-lg border text-sm ${form.fieldError('phone') ? 'border-red-500 bg-white' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue`}
           />
         </div>
       </FormFieldShell>

@@ -26,7 +26,7 @@ const RoleSignup: React.FC = () => {
       <AuthPageShell loading={showFullPage} centered={false} className="flex-1 !min-h-0">
         <AuthPageHeader
           title="Start your journey in global health"
-          subtitle="Create your free account. VORA builds your profile from your CV and onboarding details, then instantly checks if you match this role — and hundreds of others."
+          subtitle="Create your free account. VORA builds your profile from your CV and onboarding details, then instantly checks if you match this role, and hundreds of others."
           className="!mb-7"
         />
 

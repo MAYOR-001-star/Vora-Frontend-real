@@ -8,14 +8,14 @@ const RoleMatchCtaBanner: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[#EBF6FF] border border-[#BDD9FF] rounded-[10px] px-5 py-6 sm:px-8 sm:py-7 mb-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+    <div className="bg-white border border-[#BDD9FF] rounded-[10px] px-5 py-6 sm:px-8 sm:py-7 mb-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
       <div className="flex-1 min-w-0">
         <SectionTitle as="h2" className="text-lg text-[#1A1A1A] mb-1.5">
           Think you&apos;re a fit? Let VORA decide in minutes.
         </SectionTitle>
         <p className="text-[13px] font-normal text-[#4A4A4A] leading-relaxed mb-4">
           Sign up, complete your onboarding, upload your CV, and VORA instantly checks if your
-          profile matches this role — and hundreds of others. Your profile = your CV + what you
+          profile matches this role, and hundreds of others. Your profile = your CV + what you
           told us about yourself. Together, they&apos;re your match score.
         </p>
         <div className="flex flex-wrap gap-2">

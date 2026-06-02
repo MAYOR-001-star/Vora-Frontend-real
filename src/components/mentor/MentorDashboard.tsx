@@ -129,7 +129,7 @@ const MentorDashboard: React.FC = () => {
         </div>
 
         <div className="flex-1 space-y-1 relative z-10 text-center lg:text-left">
-          <p className="text-[10px] lg:text-[11px] font-medium text-green-100/70 uppercase tracking-widest">Next Session — Live in 42 minutes</p>
+          <p className="text-[10px] lg:text-[11px] font-medium text-green-100/70 uppercase tracking-widest">Next Session, Live in 42 minutes</p>
           <h2 className="text-[20px] lg:text-[24px] font-medium text-white">Chiamaka Obi</h2>
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 lg:gap-3 pt-1">
             <span className="text-[12px] lg:text-[13px] font-medium text-white/80">Today · 14:00 WAT · 60 min</span>
@@ -239,12 +239,12 @@ const MentorDashboard: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl flex items-center gap-3">
+            <div className="mt-6 p-4 bg-white border border-blue-200 rounded-2xl flex items-center gap-3">
               <div className="bg-[#0047CC] p-1.5 rounded-lg text-white">
                 <InfoIcon size={14} />
               </div>
               <p className="text-[12px] font-medium text-blue-800">
-                2 drafts waiting to be published — <span className="underline cursor-pointer">review now</span>
+                2 drafts waiting to be published, <span className="underline cursor-pointer">review now</span>
               </p>
             </div>
           </div>
@@ -255,7 +255,7 @@ const MentorDashboard: React.FC = () => {
             
             <div className="space-y-5">
               {PENDING_REQUESTS.map((req, i) => (
-                <div key={i} className={`p-6 rounded-[20px] border transition-all ${req.isCritical ? 'bg-blue-50/50 border-blue-200' : 'bg-white border-gray-100'}`}>
+                <div key={i} className={`p-6 rounded-[20px] border transition-all ${req.isCritical ? 'bg-white border-blue-200' : 'bg-white border-gray-100'}`}>
                   <div className="flex items-start gap-4 mb-4">
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${req.color} flex items-center justify-center text-white font-medium text-sm shrink-0 shadow-sm`}>
                       {req.initial}
@@ -427,7 +427,7 @@ const MentorDashboard: React.FC = () => {
             <div className="columns-2 gap-3 space-y-3">
               <Button
                 variant="outline"
-                className="w-full h-auto p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-[#0047CC] hover:bg-blue-50 group shadow-sm min-h-0"
+                className="w-full h-auto p-5 bg-white border border-gray-100 rounded-[20px] flex flex-col items-center gap-3 hover:border-[#0047CC] hover:bg-white group shadow-sm min-h-0"
               >
                 <div className="p-3 bg-blue-50 rounded-xl text-[#0047CC] group-hover:scale-110 transition-transform">
                   <CalendarIcon size={20} />

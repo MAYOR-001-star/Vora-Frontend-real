@@ -28,7 +28,7 @@ const RoleProfileRolesFound: React.FC = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
 
   const roleSlug =
-    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || '';
+    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || 'junior-global-health-researcher';
   const firstName =
     (location.state as { firstName?: string } | null)?.firstName || user?.firstName || '';
   const lastName =
@@ -58,6 +58,8 @@ const RoleProfileRolesFound: React.FC = () => {
   );
 
   useEffect(() => {
+    // UI DEV: Commenting out redirects so pages can be accessed directly
+    /*
     if (!roleSlug) {
       navigate('/onboarding/talent?step=1', { replace: true });
       return;
@@ -69,9 +71,10 @@ const RoleProfileRolesFound: React.FC = () => {
         state: { firstName, lastName, roleSlug, matchScan, matchScore: matchScan.originalRoleScore },
       });
     }
+    */
   }, [roleSlug, careerReadinessPassing, matchScan, navigate, firstName, lastName]);
 
-  if (!roleSlug || !appliedRole || careerReadinessPassing) {
+  if (!roleSlug || !appliedRole) {
     return null;
   }
 
@@ -79,17 +82,17 @@ const RoleProfileRolesFound: React.FC = () => {
   const welcomeName = firstName.trim() || displayName.split(' ')[0] || 'there';
 
   const handleGoToAssessment = (_roleId: string) => {
-    // Assessment flow TBD — mock no-op for now
+    // Assessment flow TBD, mock no-op for now
   };
 
   return (
     <DashboardLayout>
       <div className="-mx-4 lg:-mx-8 -mt-6 mb-6">
-        <header className="bg-white border-b border-[#E6E6E6] px-4 sm:px-8 py-4 sm:py-[18px]">
-          <h1 className="text-xl sm:text-[22px] font-bold text-[#1A1A1A] tracking-tight">
+        <header className="bg-transparent px-4 sm:px-8 pt-4 pb-2 sm:pt-6 sm:pb-3">
+          <h1 className="text-[24px] sm:text-[28px] font-extrabold text-[#0D1B36] tracking-tight">
             Welcome, {welcomeName}.
           </h1>
-          <p className="text-sm text-[#808080] mt-1">
+          <p className="text-[15px] text-[#4A5568] mt-1.5 font-medium">
             Your profile has been built and scanned. Here&apos;s where you stand.
           </p>
         </header>
@@ -99,10 +102,10 @@ const RoleProfileRolesFound: React.FC = () => {
         <RolesFoundResultBanner summary={summary} />
         <RolesFoundStatsGrid summary={summary} />
 
-        <h2 className="text-lg font-bold text-[#1A1A1A] tracking-tight mb-1">
+        <h2 className="text-[20px] font-extrabold text-[#0D1B36] tracking-tight mb-1.5">
           Roles your profile matches right now
         </h2>
-        <p className="text-sm text-[#808080] mb-[18px]">
+        <p className="text-[14px] font-medium text-[#4A5568] mb-6">
           Your profile matched these at {summary.matchThreshold}%+. View the JD, then go straight
           to assessment.
         </p>

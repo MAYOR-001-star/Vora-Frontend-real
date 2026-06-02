@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { BellIcon, CheckIcon } from '../../common/Icons';
+import { BellIcon, CheckIcon, ClockIcon } from '../../common/Icons';
 import Button from '../../common/Button';
+import Tag from '../../common/Tag';
 import toast from 'react-hot-toast';
 
 interface PathwayStep {
   number: number;
   title: string;
   description: string;
-  tags: { text: string; color: string }[];
+  tags: { text: string; color: string; iconName?: string }[];
 }
 
 interface MatchBlockedGapAnalysisCardProps {
@@ -26,45 +27,36 @@ const MatchBlockedGapAnalysisCard: React.FC<MatchBlockedGapAnalysisCardProps> = 
   return (
     <div className="mb-[18px]">
       <div
-        className={`bg-[#EBF6FF] border border-[#387DFF] p-6 sm:p-[26px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 transition-all ${
-          isOpen ? 'rounded-t-xl border-b-0' : 'rounded-xl'
-        }`}
+        className={`bg-white border border-[#E6E6E6] p-6 sm:p-[26px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 transition-all ${isOpen ? 'rounded-t-xl border-b-0' : 'rounded-xl'
+          }`}
       >
         <div className="flex-1">
-          <h2 className="text-[18px] font-bold text-[#0047CC] mb-1.5">
+          <h2 className="text-[18px] font-bold text-[#1A1A1A] mb-1.5">
             Want to work in Sweden eventually? Here is your path.
           </h2>
-          <p className="text-[13px] text-[#0047CC] leading-[1.5] mb-3.5">
-            EU/EEA work rights are achievable — through postgraduate study in the EU, employer
+          <p className="text-[13px] text-[#808080] leading-[1.5] mb-3.5">
+            EU/EEA work rights are achievable, through postgraduate study in the EU, employer
             sponsorship from a different company, or building your track record through remote
             global health roles first. VORA can map the most realistic route based on your current
             profile.
           </p>
           <div className="flex flex-wrap gap-2">
-            <span className="bg-white border border-[#387DFF] rounded-full px-[13px] py-[5px] text-[12px] font-bold text-[#0047CC]">
-              EU postgrad pathway
-            </span>
-            <span className="bg-white border border-[#387DFF] rounded-full px-[13px] py-[5px] text-[12px] font-bold text-[#0047CC]">
-              Remote roles first
-            </span>
-            <span className="bg-white border border-[#387DFF] rounded-full px-[13px] py-[5px] text-[12px] font-bold text-[#0047CC]">
-              STTA contracts
-            </span>
-            <span className="bg-white border border-[#387DFF] rounded-full px-[13px] py-[5px] text-[12px] font-bold text-[#0047CC]">
-              Career gap analysis
-            </span>
+            <Tag variant="gray" label="EU postgrad pathway" />
+            <Tag variant="gray" label="Remote roles first" />
+            <Tag variant="gray" label="STTA contracts" />
+            <Tag variant="gray" label="Career gap analysis" />
           </div>
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="inline-flex items-center justify-center gap-1.5 px-6 py-[11px] bg-[#0047CC] text-white rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#0038A8] transition-colors shrink-0"
         >
-          {isOpen ? 'Hide pathway ↑' : 'Show me my path →'}
+          {isOpen ? 'Hide pathway' : 'Show me my path'}
         </button>
       </div>
 
       {isOpen && (
-        <div className="bg-white border border-[#387DFF] border-t-0 rounded-b-xl p-6 sm:p-[26px]">
+        <div className="bg-white border border-[#E6E6E6] border-t-0 rounded-b-xl p-6 sm:p-[26px]">
           <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-3.5">
             Your realistic path to EU/EEA-eligible global health roles
           </h3>
@@ -74,7 +66,7 @@ const MatchBlockedGapAnalysisCard: React.FC<MatchBlockedGapAnalysisCardProps> = 
                 key={step.number}
                 className="flex gap-3.5 py-3.5 border-b border-[#F7F7F7] last:border-b-0"
               >
-                <div className="w-8 h-8 rounded-full bg-[#EBF6FF] border-2 border-[#387DFF] text-[#0047CC] flex items-center justify-center text-[13px] font-bold shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-full bg-white border-2 border-[#E6E6E6] text-[#808080] flex items-center justify-center text-[13px] font-bold shrink-0 mt-0.5">
                   {step.number}
                 </div>
                 <div>
@@ -84,18 +76,20 @@ const MatchBlockedGapAnalysisCard: React.FC<MatchBlockedGapAnalysisCardProps> = 
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {step.tags.map((tag, tIndex) => (
-                      <span
+                      <Tag
                         key={tIndex}
-                        className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
-                          tag.color === 'blue'
-                            ? 'bg-[#EBF6FF] text-[#0047CC]'
-                            : tag.color === 'green'
-                            ? 'bg-[#EEFBEE] text-[#135813]'
-                            : 'bg-[#F7F7F7] text-[#4A4A4A]'
-                        }`}
-                      >
-                        {tag.text}
-                      </span>
+                        variant={tag.color === 'blue' ? 'blue-light' : tag.color === 'green' ? 'green-light' : 'gray'}
+                        label={
+                          tag.iconName === 'clock' ? (
+                            <span className="flex items-center gap-1">
+                              <ClockIcon size={12} strokeWidth={2.5} />
+                              {tag.text}
+                            </span>
+                          ) : (
+                            tag.text
+                          )
+                        }
+                      />
                     ))}
                   </div>
                 </div>
@@ -103,21 +97,22 @@ const MatchBlockedGapAnalysisCard: React.FC<MatchBlockedGapAnalysisCardProps> = 
             ))}
 
             <div className="flex gap-3.5 pt-3.5 mt-2">
-              <div className="w-8 h-8 rounded-full bg-[#EEFBEE] border-2 border-[#85E585] text-[#135813] flex items-center justify-center text-[13px] font-bold shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-full bg-[#EBF6FF] border-2 border-[#387DFF] text-[#0047CC] flex items-center justify-center text-[13px] font-bold shrink-0 mt-0.5">
                 <CheckIcon size={14} strokeWidth={3} />
               </div>
               <div>
-                <div className="text-sm font-bold text-[#135813] mb-1">
-                  Re-apply when your eligibility changes — VORA will alert you
+                <div className="text-sm font-bold text-[#0047CC] mb-1">
+                  Re-apply when your eligibility changes, VORA will alert you
                 </div>
-                <div className="text-[13px] text-[#1D871D] leading-relaxed mb-2">
+                <div className="text-[13px] text-gray-600 leading-relaxed mb-2">
                   Once you hold EU/EEA work rights, Swedish residency, or a valid work permit,
                   update your work authorisation in your VORA profile. VORA will immediately re-run
-                  your eligibility check and notify you of roles you are now cleared for — including
+                  your eligibility check and notify you of roles you are now cleared for, including
                   roles like this one.
                 </div>
                 <Button
                   variant="primary"
+                  size="sm"
                   fullWidth={false}
                   onClick={handleAlert}
                   disabled={alertSet}

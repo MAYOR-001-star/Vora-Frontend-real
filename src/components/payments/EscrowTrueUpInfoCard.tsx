@@ -7,7 +7,7 @@ const EscrowTrueUpInfoCard: React.FC = () => (
       <p>
         <strong className="text-[#4A4A4A] font-semibold">How escrow is calculated:</strong> When you post a
         role with a salary range, VORA locks your fee on the <strong>midpoint</strong> of that range.
-        Example: range $60k–$80k → midpoint $70k → fee locked = 15% × $70k ={' '}
+        Example: range $60k,$80k → midpoint $70k → fee locked = 15% × $70k ={' '}
         <strong>$10,500</strong>.
       </p>
       <p>

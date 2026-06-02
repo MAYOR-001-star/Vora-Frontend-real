@@ -6,7 +6,7 @@ export const SCORE_BAR_FILL: Record<ScoreBarColor, string> = {
 };
 
 export const INTERPRETATION_BOX: Record<'blue' | 'green' | 'purple', string> = {
-  blue: 'bg-[#EBF6FF] border-[#387DFF]/20 text-[#1e40af]',
+  blue: 'bg-white border-[#387DFF]/20 text-[#1e40af]',
   green: 'bg-[#EEFBEE] border-[#2CA62C]/20 text-[#135813]',
   purple: 'bg-[#F5F3FF] border-[#7C3AED]/20 text-[#5b21b6]',
 };

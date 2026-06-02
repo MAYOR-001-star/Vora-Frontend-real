@@ -275,7 +275,7 @@ export const STUDY_HOURS: StudyHoursMap = {
   'Germany':           { term: '120 full days or 240 half-days per year', holidays: 'Included in annual limit' },
   'France':            { term: '964 hrs/year (~20 hrs/week)', holidays: 'Included in annual limit' },
   'Netherlands':       { term: '16 hrs/week during term', holidays: 'Full-time during summer break' },
-  'Ireland':           { term: '20 hrs/week during term', holidays: 'Full-time during summer (June–Sept)' },
+  'Ireland':           { term: '20 hrs/week during term', holidays: 'Full-time during summer (June,Sept)' },
   'Sweden':            { term: 'No statutory cap (check visa)', holidays: 'No statutory cap' },
   'Denmark':           { term: '20 hrs/week during academic year', holidays: 'Full-time during breaks' },
   'Norway':            { term: '20 hrs/week during term', holidays: 'Full-time during holidays' },

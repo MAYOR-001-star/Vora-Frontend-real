@@ -120,7 +120,7 @@ export function resolveOAuthNavigation(
 
   switch (data.nextStep) {
     case 'VERIFY_EMAIL':
-      // Non-Gmail / work email on Google — OTP required before role selection
+      // Non-Gmail / work email on Google, OTP required before role selection
       return {
         route: '/verify-email',
         state: {
@@ -130,7 +130,7 @@ export function resolveOAuthNavigation(
         },
       };
     case 'SELECT_ROLE':
-      // Gmail (and Yahoo on Google) — auto-verified, pick TALENT or MENTOR only
+      // Gmail (and Yahoo on Google), auto-verified, pick TALENT or MENTOR only
       return {
         route: '/select-type',
         state: {

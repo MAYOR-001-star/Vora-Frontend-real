@@ -1,5 +1,6 @@
 import React from 'react';
 import { BriefcaseIcon, LocationIcon } from '../common/Icons';
+import Tag from '../common/Tag';
 
 interface RoleSummaryPillProps {
   roleTitle: string;
@@ -17,10 +18,16 @@ const RoleSummaryPill: React.FC<RoleSummaryPillProps> = ({ roleTitle, formatLoca
         <span className="text-[15px] font-bold text-[#1A1A1A]">{roleTitle}</span>
       </div>
     </div>
-    <span className="inline-flex items-center gap-1.5 bg-[#0047CC] text-white text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0">
-      <LocationIcon size={11} strokeWidth={2.5} />
-      {formatLocationLabel}
-    </span>
+    <Tag
+      label={
+        <span className="flex items-center gap-1.5">
+          <LocationIcon size={11} strokeWidth={2.5} />
+          {formatLocationLabel}
+        </span>
+      }
+      variant="blue"
+      className="shrink-0"
+    />
   </div>
 );
 

@@ -19,7 +19,7 @@ const DURING_REVIEW_ITEMS = [
   'Your go-live date is unchanged',
   'You can still cancel the vault entirely for a full refund during this window',
   'After review confirms, silent matching recalibrates and pre-qualified candidates are re-scored',
-  'The escrow top-up charges automatically — no action required from you',
+  'The escrow top-up charges automatically, no action required from you',
 ];
 
 const VaultEditReview: React.FC = () => {

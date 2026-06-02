@@ -51,8 +51,8 @@ const TopUpAmountField: React.FC<TopUpAmountFieldProps> = ({
           onClick={() => onPresetSelect(preset)}
           className={`px-3.5 py-1.5 rounded-lg border text-[13px] font-semibold cursor-pointer transition-colors ${
             activePreset === preset
-              ? 'border-[#0047CC] bg-[#EBF6FF] text-[#0047CC]'
-              : 'border-[#E6E6E6] bg-white text-[#4A4A4A] hover:border-[#0047CC] hover:bg-[#EBF6FF] hover:text-[#0047CC]'
+              ? 'border-[#0047CC] bg-white text-[#0047CC]'
+              : 'border-[#E6E6E6] bg-white text-[#4A4A4A] hover:border-[#0047CC] hover:bg-white hover:text-[#0047CC]'
           }`}
         >
           {formatPresetLabel(preset)}

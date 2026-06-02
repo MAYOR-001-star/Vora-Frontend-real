@@ -50,12 +50,12 @@ export const DEFAULT_PUBLIC_ROLE_LANDING: PublicRoleLandingData = {
     { label: 'Positions', value: '2 available' },
   ],
   eligibilityRows: [
-    { label: 'International applicants', value: 'Welcome to apply', valueClassName: 'text-[#0047CC]' },
-    { label: 'Visa sponsorship', value: 'Not provided', valueClassName: 'text-[#DC2626]' },
+    { label: 'International applicants', value: 'Welcome to apply' },
+    { label: 'Visa sponsorship', value: 'Not provided' },
     { label: 'Work rights required', value: 'EU/EEA or valid Swedish work permit' },
   ],
   eligibilityNote:
-    'Candidates must hold the legal right to work in Sweden or an EU/EEA country. VORA will note this during your profile match — if you do not meet this criterion, you will still be matched to roles where your eligibility is confirmed.',
+    'Candidates must hold the legal right to work in Sweden or an EU/EEA country. VORA will note this during your profile match, if you do not meet this criterion, you will still be matched to roles where your eligibility is confirmed.',
   assessmentItems: [
     'Profile match score (CV + onboarding info vs JD)',
     'Psychometric test (30 questions)',

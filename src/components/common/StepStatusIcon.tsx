@@ -21,7 +21,7 @@ const sizeStyles = {
 } as const;
 
 const statusStyles: Record<Exclude<StepStatus, 'completed'>, string> = {
-  current: 'border-[#0047CC] bg-[#EBF6FF]',
+  current: 'border-[#0047CC] bg-white',
   upcoming: 'border-[#E6E6E6] bg-white',
 };
 

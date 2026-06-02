@@ -184,7 +184,7 @@ const PaymentsAlignment: React.FC = () => {
 
       <AlignmentVideoModal
         open={videoModal.open}
-        title={`${videoModal.candidate?.name ?? ''} – Video Interview`}
+        title={`${videoModal.candidate?.name ?? ''}, Video Interview`}
         sessionLabel={videoModal.candidate?.video.videoCaption ?? ''}
         onClose={() => setVideoModal({ open: false, candidate: null })}
       />

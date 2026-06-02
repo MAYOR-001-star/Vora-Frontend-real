@@ -20,7 +20,7 @@ export const PROFILE_MATCH_STEPS: ProfileMatchStepDefinition[] = [
   {
     id: 'eligibility',
     title: 'Checking work eligibility against each role',
-    subtitle: 'Filtering out roles you cannot legally access — before computing any score',
+    subtitle: 'Filtering out roles you cannot legally access, before computing any score',
   },
   {
     id: 'matching',
@@ -30,7 +30,7 @@ export const PROFILE_MATCH_STEPS: ProfileMatchStepDefinition[] = [
   {
     id: 'scanning',
     title: 'Scanning all live roles for additional matches',
-    subtitle: '200+ roles checked — eligibility-filtered first',
+    subtitle: '200+ roles checked, eligibility-filtered first',
   },
   {
     id: 'score',

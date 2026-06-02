@@ -70,7 +70,7 @@ const DateInput: React.FC<DateInputProps> = ({
           aria-controls={open ? listboxId : undefined}
           className={`w-full flex items-center gap-3 pl-12 pr-4 py-3 sm:py-3.5 rounded-lg border text-left transition-all cursor-pointer ${
             error
-              ? 'border-red-500 bg-red-50'
+              ? 'border-red-500 bg-white'
               : 'border-border-default bg-white hover:border-[#0047CC]'
           } focus:outline-none focus:ring-2 ${
             error ? 'focus:ring-red-500/20 focus:border-red-500' : 'focus:ring-brand-blue/20 focus:border-brand-blue'

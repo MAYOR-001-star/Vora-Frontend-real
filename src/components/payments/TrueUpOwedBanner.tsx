@@ -19,7 +19,7 @@ const TrueUpOwedBanner: React.FC<TrueUpOwedBannerProps> = ({
   <AlertBanner variant="blue" className="!text-[13px] mb-5">
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
       <p className="flex-1 min-w-0 leading-relaxed">
-        <strong>True-up owed: {amount}</strong> — {roleName} role confirmed at $75k. True-up must be
+        <strong>True-up owed: {amount}</strong>, {roleName} role confirmed at $75k. True-up must be
         settled before the offer letter is released. You can still withdraw from your available balance,
         but we recommend settling the true-up first.
       </p>

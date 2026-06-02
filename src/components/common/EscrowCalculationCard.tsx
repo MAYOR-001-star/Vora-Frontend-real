@@ -23,7 +23,7 @@ const EscrowCalculationCard: React.FC<EscrowCalculationCardProps> = ({
   className = '',
 }) => (
   <div
-    className={`bg-[#EBF6FF] border border-[#BDD9FF] rounded-xl p-4.5 mt-4 ${className}`}
+    className={`bg-white border border-[#BDD9FF] rounded-xl p-4.5 mt-4 ${className}`}
   >
     <div className="text-[13px] font-medium text-[#182348] mb-2.5 flex items-center gap-1.5">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#182348" strokeWidth="2" aria-hidden>

@@ -58,7 +58,7 @@ const ApplicantDetailsModal: React.FC<ApplicantDetailsModalProps> = ({
         <div className="flex-1 overflow-y-auto custom-scrollbar px-10 py-10 space-y-10">
           {/* Top Stats Section */}
           <div className="grid grid-cols-2 gap-5">
-            <div className="bg-[#EBF6FF] p-6 rounded-[20px] space-y-2 border border-blue-100/20">
+            <div className="bg-white p-6 rounded-[20px] space-y-2 border border-blue-100/20">
               <div className="flex items-center justify-between">
                 <p className="text-[13px] font-medium text-[#0047CC] uppercase tracking-wide">Psychometric Test</p>
                 <span className="text-[11px] font-medium text-[#2CA62C] bg-white/50 px-2 py-0.5 rounded-full border border-green-100/30">↑ 5%</span>
@@ -111,11 +111,11 @@ const ApplicantDetailsModal: React.FC<ApplicantDetailsModalProps> = ({
           <div className="space-y-6">
             <h3 className="text-[16px] font-medium text-gray-900 uppercase tracking-wider border-l-4 border-[#0047CC] pl-4">Skills</h3>
             <div className="flex flex-wrap gap-3">
-              <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-red-50 text-red-600 border border-red-100">Research Analysis</span>
+              <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-white text-red-600 border border-red-100">Research Analysis</span>
               <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-yellow-50 text-yellow-600 border border-yellow-100">Research Analysis</span>
-              <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-blue-50 text-blue-600 border border-blue-100">Research Analysis</span>
+              <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-white text-blue-600 border border-blue-100">Research Analysis</span>
               <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-green-50 text-green-600 border border-green-100">Research Analysis</span>
-              <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-red-50 text-red-600 border border-red-100">Research Analysis</span>
+              <span className="px-4 py-2 rounded-full text-[12px] font-medium bg-white text-red-600 border border-red-100">Research Analysis</span>
             </div>
           </div>
 

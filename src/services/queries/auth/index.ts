@@ -155,7 +155,7 @@ export const useOAuthSelectRoleMutation = () => {
   });
 };
 
-/** OAuth OTP verify — work/custom domain Google emails only (Gmail skips this step). */
+/** OAuth OTP verify, work/custom domain Google emails only (Gmail skips this step). */
 export const useOAuthVerifyMutation = () => {
   const { setSetupToken } = useAuth();
   const queryClient = useQueryClient();

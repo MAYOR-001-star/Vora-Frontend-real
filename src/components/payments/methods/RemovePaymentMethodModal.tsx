@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../common/Button';
+import { TrashIcon } from '../../common/Icons';
 
 interface RemovePaymentMethodModalProps {
   open: boolean;
@@ -30,10 +31,7 @@ const RemovePaymentMethodModal: React.FC<RemovePaymentMethodModalProps> = ({
         aria-labelledby="remove-method-title"
       >
         <div className="w-12 h-12 rounded-full bg-[#FEF2F2] flex items-center justify-center mx-auto mb-4">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" aria-hidden>
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-          </svg>
+          <TrashIcon size={22} strokeWidth={2} className="text-[#DC2626]" aria-hidden />
         </div>
         <h2 id="remove-method-title" className="text-lg font-bold text-[#1A1A1A] mb-2">
           Remove Payment Method?

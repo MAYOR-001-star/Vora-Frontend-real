@@ -53,7 +53,7 @@ const FinalAlignmentSession: React.FC = () => {
       </div>
 
       {/* Candidate Chip */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 bg-[#EBF6FF] border border-[#387DFF] rounded-2xl p-5">
+      <div className="flex flex-col sm:flex-row items-center gap-4 bg-white border border-[#387DFF] rounded-2xl p-5">
         <div className="w-10 h-10 rounded-full bg-[#0047CC] text-white flex items-center justify-center font-medium text-[14px] shrink-0">
           1
         </div>
@@ -70,13 +70,13 @@ const FinalAlignmentSession: React.FC = () => {
         <div className="bg-white border border-gray-100 rounded-[24px] p-8 shadow-sm">
           <h2 className="text-[20px] font-medium text-gray-900 mb-2 ">Request a Final Alignment Session</h2>
           <p className="text-[14px] font-medium text-gray-400 mb-8 leading-relaxed max-w-2xl">
-            This is a structured session to confirm logistics, cultural alignment, and onboarding readiness — not a reassessment of competency already verified. Select your preferred format.
+            This is a structured session to confirm logistics, cultural alignment, and onboarding readiness, not a reassessment of competency already verified. Select your preferred format.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <button 
               onClick={() => setSessionType('video')}
-              className={`p-6 rounded-2xl border-2 text-left transition-all group ${sessionType === 'video' ? 'bg-blue-50 border-[#0047CC]' : 'bg-white border-gray-100 hover:border-gray-200'}`}
+              className={`p-6 rounded-2xl border-2 text-left transition-all group ${sessionType === 'video' ? 'bg-white border-[#0047CC]' : 'bg-white border-gray-100 hover:border-gray-200'}`}
             >
               <div className={`p-3 rounded-xl mb-4 inline-block ${sessionType === 'video' ? 'bg-[#0047CC] text-white' : 'bg-gray-50 text-gray-400'}`}>
                 <VideoIcon size={24} />
@@ -89,7 +89,7 @@ const FinalAlignmentSession: React.FC = () => {
 
             <button 
               onClick={() => setSessionType('inperson')}
-              className={`p-6 rounded-2xl border-2 text-left transition-all group ${sessionType === 'inperson' ? 'bg-blue-50 border-[#0047CC]' : 'bg-white border-gray-100 hover:border-gray-200'}`}
+              className={`p-6 rounded-2xl border-2 text-left transition-all group ${sessionType === 'inperson' ? 'bg-white border-[#0047CC]' : 'bg-white border-gray-100 hover:border-gray-200'}`}
             >
               <div className={`p-3 rounded-xl mb-4 inline-block ${sessionType === 'inperson' ? 'bg-[#0047CC] text-white' : 'bg-gray-50 text-gray-400'}`}>
                 <LocationIcon size={24} />
@@ -102,7 +102,7 @@ const FinalAlignmentSession: React.FC = () => {
           </div>
 
           {sessionType === 'inperson' && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4 mb-8">
+            <div className="bg-white border border-blue-200 rounded-xl p-5 flex gap-4 mb-8">
               <AlertTriangleIcon size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-[13px] font-medium text-blue-900 mb-1">Note on travel costs:</p>
@@ -167,7 +167,7 @@ const FinalAlignmentSession: React.FC = () => {
           </div>
 
           {step === 'video-setup' ? (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4 mb-8">
+            <div className="bg-white border border-blue-200 rounded-xl p-5 flex gap-4 mb-8">
               <AlertTriangleIcon size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-[13px] font-medium text-blue-900 mb-1">Note on travel costs:</p>
@@ -177,7 +177,7 @@ const FinalAlignmentSession: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+            <div className="bg-white border border-blue-200 rounded-xl p-5">
               <p className="text-[13px] font-medium text-gray-800 leading-relaxed">
                 The employer has <span className="font-medium">5 business days</span> after the visit to confirm hire or submit a documented rejection. If no decision is received, VORA will intervene and the candidate will be notified.
               </p>
@@ -205,7 +205,7 @@ const FinalAlignmentSession: React.FC = () => {
             Your Final Alignment Session request has been sent to {candidate.code}. They have been informed that you have declared provisional hire intent. A decision is required within 48 hours of the session concluding.
           </p>
 
-          <div className="bg-blue-50/50 border border-blue-100 rounded-[24px] p-8 text-left space-y-4 mb-10">
+          <div className="bg-white border border-blue-100 rounded-[24px] p-8 text-left space-y-4 mb-10">
             <p className="text-[13px] font-medium text-[#0047CC] uppercase tracking-widest">What happens next</p>
             <ul className="space-y-4">
               {[

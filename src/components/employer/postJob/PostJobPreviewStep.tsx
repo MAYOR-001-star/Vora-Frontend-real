@@ -5,6 +5,7 @@ import PreviewField from '../../common/PreviewField';
 import PreviewSectionCard from '../../common/PreviewSectionCard';
 import Tag from '../../common/Tag';
 import { FieldLabel } from '../../common/Typography';
+import { LockIcon } from '../../common/Icons';
 
 export interface EscrowPreviewSummary {
   total: number;
@@ -62,7 +63,7 @@ interface PostJobPreviewStepProps {
 }
 
 function PreviewTagList({ items }: { items: string[] }) {
-  if (!items.length) return <span className="text-[13px] text-[#808080]">—</span>;
+  if (!items.length) return <span className="text-[13px] text-[#808080]">,</span>;
 
   return (
     <div className="flex flex-wrap gap-1.5 mt-1">
@@ -80,7 +81,7 @@ function PreviewTagList({ items }: { items: string[] }) {
 
 function LongText({ text }: { text: string }) {
   const [expanded, setExpanded] = useState(false);
-  if (!text?.trim()) return <span className="text-[13px] text-[#808080]">—</span>;
+  if (!text?.trim()) return <span className="text-[13px] text-[#808080]">,</span>;
   const short = text.length > 180 && !expanded;
   return (
     <p className="text-[13px] text-[#4A4A4A] leading-relaxed mt-1">
@@ -140,8 +141,8 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
   expenses,
   fmt,
 }) => {
-  const locationLabel = [location, ...additionalLocations].filter(Boolean).join('; ') || '—';
-  const timezoneLabel = selectedTimezones.length ? selectedTimezones.join(', ') : '—';
+  const locationLabel = [location, ...additionalLocations].filter(Boolean).join('; ') || ',';
+  const timezoneLabel = selectedTimezones.length ? selectedTimezones.join(', ') : ',';
 
   return (
     <div className="w-full space-y-4 animate-in fade-in duration-300">
@@ -152,35 +153,32 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
       </AlertBanner>
 
       {isScheduled && (
-        <div className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[#BDD9FF] bg-[#EBF6FF] px-4 py-1.5 text-[13px] font-semibold text-[#0047CC]">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0110 0v4" />
-          </svg>
-          Scheduled Hiring — role enters Vault on submission, goes live{' '}
-          <span className="font-bold">{goLiveDate ? formatDate(goLiveDate) : '—'}</span>
+        <div className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[#BDD9FF] bg-white px-4 py-1.5 text-[13px] font-semibold text-[#0047CC]">
+          <LockIcon size={13} strokeWidth={2.3} />
+          Scheduled Hiring, role enters Vault on submission, goes live{' '}
+          <span className="font-bold">{goLiveDate ? formatDate(goLiveDate) : ','}</span>
         </div>
       )}
 
       <PreviewSectionCard title="Role details" onEdit={() => onEditStep(1)}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          <PreviewField label="Role type" value={roleType || '—'} />
-          <PreviewField label="Role title" value={roleTitle || '—'} />
+          <PreviewField label="Role type" value={roleType || ','} />
+          <PreviewField label="Role title" value={roleTitle || ','} />
           <PreviewField
             label="Employment level"
-            value={level ? level.charAt(0).toUpperCase() + level.slice(1) : '—'}
+            value={level ? level.charAt(0).toUpperCase() + level.slice(1) : ','}
           />
           <PreviewField
             label="Available positions"
-            value={positions ? `${positions} position${parseInt(positions, 10) > 1 ? 's' : ''}` : '—'}
+            value={positions ? `${positions} position${parseInt(positions, 10) > 1 ? 's' : ''}` : ','}
           />
-          <PreviewField label="Work format" value={workFormat || '—'} />
+          <PreviewField label="Work format" value={workFormat || ','} />
           <PreviewField label="Timezone requirement" value={timezoneLabel} />
           <PreviewField label="Work location" value={locationLabel} />
-          <PreviewField label="Start date" value={startDate ? formatDate(startDate) : '—'} />
+          <PreviewField label="Start date" value={startDate ? formatDate(startDate) : ','} />
           {endDate && <PreviewField label="End date" value={formatDate(endDate)} />}
-          <PreviewField label="International policy" value={internationalPolicy || '—'} />
-          <PreviewField label="Security clearance" value={securityClearance || '—'} />
+          <PreviewField label="International policy" value={internationalPolicy || ','} />
+          <PreviewField label="Security clearance" value={securityClearance || ','} />
           {timeCommitment && <PreviewField label="Time commitment" value={timeCommitment} />}
         </div>
         <div className="border-t border-[#E6E6E6] mt-4 pt-4">
@@ -222,22 +220,22 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
 
       <PreviewSectionCard title="Experience & background" onEdit={() => onEditStep(3)}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          <PreviewField label="Minimum qualification" value={minQualification || '—'} />
+          <PreviewField label="Minimum qualification" value={minQualification || ','} />
           <PreviewField
             label="Relevant field(s)"
-            value={experienceTypes.length ? experienceTypes.join(', ') : '—'}
+            value={experienceTypes.length ? experienceTypes.join(', ') : ','}
           />
-          <PreviewField label="Years of experience" value={experienceYears || '—'} />
+          <PreviewField label="Years of experience" value={experienceYears || ','} />
           <PreviewField
             label="Sector background"
-            value={sectorBackground.length ? sectorBackground.join(', ') : '—'}
+            value={sectorBackground.length ? sectorBackground.join(', ') : ','}
           />
           <PreviewField
             label="Geographic experience"
-            value={geographicExperience.length ? geographicExperience.join(', ') : '—'}
+            value={geographicExperience.length ? geographicExperience.join(', ') : ','}
           />
-          <PreviewField label="Publications" value={publicationsRequired || '—'} />
-          <PreviewField label="Budget management" value={budgetManagement || '—'} />
+          <PreviewField label="Publications" value={publicationsRequired || ','} />
+          <PreviewField label="Budget management" value={budgetManagement || ','} />
         </div>
       </PreviewSectionCard>
 
@@ -249,9 +247,9 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
           </div>
           <PreviewField
             label="Check-in rhythm"
-            value={communicationRhythm.length ? communicationRhythm.join(', ') : '—'}
+            value={communicationRhythm.length ? communicationRhythm.join(', ') : ','}
           />
-          <PreviewField label="Working language" value={primaryLanguage || '—'} />
+          <PreviewField label="Working language" value={primaryLanguage || ','} />
           <div>
             <FieldLabel>Personality traits</FieldLabel>
             <PreviewTagList items={personalityTraits} />

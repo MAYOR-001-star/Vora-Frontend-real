@@ -27,7 +27,7 @@ const TopUpSummaryPanel: React.FC<TopUpSummaryPanelProps> = ({ amount, fee, tota
     <div className="mt-3.5 text-xs text-[#808080] leading-relaxed space-y-1.5">
       <p>
         <strong className="text-[#4A4A4A] font-semibold">Funds available:</strong> Instantly (Stripe /
-        Paystack / Flutterwave) or 1–3 days (bank transfer)
+        Paystack / Flutterwave) or 1,3 days (bank transfer)
       </p>
       <p>
         <strong className="text-[#4A4A4A] font-semibold">Card fee:</strong> 1.4% + $0.30 (Stripe) · varies

@@ -52,7 +52,7 @@ const AddFlutterwaveMethodForm = forwardRef<PaymentMethodFormHandle>((_, ref) =>
   return (
     <div>
       <AlertBanner variant="blue" className="!text-xs mb-5">
-        <strong>Flutterwave</strong> — recommended for East Africa (Uganda, Tanzania, Zambia) and broader
+        <strong>Flutterwave</strong>, recommended for East Africa (Uganda, Tanzania, Zambia) and broader
         West Africa (Senegal, Cameroon). Also available in Kenya, Ghana, Nigeria and 30+ African countries.
         <p className="mt-1.5 text-[11px] opacity-90">
           Supports M-Pesa, MTN MoMo, Airtel Money, cards, and bank transfers across 150+ currencies.
@@ -100,7 +100,7 @@ const AddFlutterwaveMethodForm = forwardRef<PaymentMethodFormHandle>((_, ref) =>
               value={form.values.phone}
               onChange={(e) => form.setField('phone', e.target.value)}
               onBlur={() => form.markTouched('phone')}
-              className={`flex-1 min-w-0 px-4 py-3 rounded-r-lg border text-sm ${form.fieldError('phone') ? 'border-red-500 bg-red-50' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue`}
+              className={`flex-1 min-w-0 px-4 py-3 rounded-r-lg border text-sm ${form.fieldError('phone') ? 'border-red-500 bg-white' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue`}
             />
           </div>
         </FormFieldShell>

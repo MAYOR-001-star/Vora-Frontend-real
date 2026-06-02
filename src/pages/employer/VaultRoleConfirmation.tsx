@@ -33,7 +33,7 @@ const VaultRoleConfirmation: React.FC = () => {
       <ConfirmationHeader
         icon={<LockIcon size={34} className="text-[#1D871D]" strokeWidth={2.5} />}
         title="Your role is in the Vault"
-        subtitle="Submission confirmed. Your platform fee is locked in escrow at today's rate. The role is completely invisible — no candidate knows it exists. During the vault period, VORA silently matches every new candidate who joins against your specification. Pre-qualified candidates are ready the moment your role goes live."
+        subtitle="Submission confirmed. Your platform fee is locked in escrow at today's rate. The role is completely invisible, no candidate knows it exists. During the vault period, VORA silently matches every new candidate who joins against your specification. Pre-qualified candidates are ready the moment your role goes live."
       />
 
       <KeyValueBanner
@@ -71,7 +71,7 @@ const VaultRoleConfirmation: React.FC = () => {
             },
             {
               value: String(data.daysUntilGoLive),
-              label: 'Days until go-live — time for the pool to grow',
+              label: 'Days until go-live, time for the pool to grow',
               valueClassName: 'text-[#2CA62C]',
             },
             {
@@ -84,10 +84,10 @@ const VaultRoleConfirmation: React.FC = () => {
 
         <div className="bg-[#EBF6FF] rounded-lg px-3.5 py-3">
           <p className="text-xs text-[#182348] leading-relaxed">
-            The counter above shows the real number — right now it may be zero, and that is honest. Every day, new
+            The counter above shows the real number, right now it may be zero, and that is honest. Every day, new
             candidates join VORA and complete their onboarding. Each one is silently matched against your specification.
             Those who score 80% or above join your pre-qualified list. They are not told. They are not contacted. On
-            your go-live date, they are notified instantly — because matching already ran.{' '}
+            your go-live date, they are notified instantly, because matching already ran.{' '}
             <strong className="text-[#0047CC] font-bold">
               The value of scheduling further out is that it gives the pool more time to work in your favour.
             </strong>{' '}

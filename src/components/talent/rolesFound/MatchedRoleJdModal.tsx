@@ -15,16 +15,16 @@ interface MatchedRoleJdModalProps {
 
 const matchBoxStyles = {
   green: {
-    box: 'bg-[#EBF6FF] border-[#387DFF]',
-    title: 'text-[#182348]',
-    sub: 'text-[#0047CC]',
-    icon: 'text-[#0047CC]',
+    box: 'bg-white border-[#E6E6E6]',
+    title: 'text-[#1A1A1A]',
+    sub: 'text-gray-600',
+    icon: 'text-[#1A1A1A]',
   },
   blue: {
-    box: 'bg-[#EBF6FF] border-[#387DFF]',
-    title: 'text-[#182348]',
-    sub: 'text-[#0047CC]',
-    icon: 'text-[#0047CC]',
+    box: 'bg-white border-[#E6E6E6]',
+    title: 'text-[#1A1A1A]',
+    sub: 'text-gray-600',
+    icon: 'text-[#1A1A1A]',
   },
 } as const;
 
@@ -58,8 +58,8 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
             <p className="text-[13px] text-[#808080] font-semibold mt-0.5">{role.companyName}</p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-lg font-black text-[#0047CC]">{salaryLabel}</p>
-            <p className="text-xs font-bold mt-1 text-[#0047CC]">
+            <p className="text-lg font-black text-[#1A1A1A]">{salaryLabel}</p>
+            <p className="text-xs font-bold mt-1 text-gray-600">
               ✓ {role.matchPercent}% profile match
             </p>
           </div>
@@ -84,7 +84,7 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
 
           <div className="flex flex-wrap gap-1.5 mb-[18px]">
             {role.tags.map((tag) => (
-              <Tag key={tag} label={tag} variant="blue" />
+              <Tag key={tag} label={tag} variant="gray" />
             ))}
           </div>
 
@@ -94,7 +94,7 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
             <CheckIcon size={16} strokeWidth={2.5} className={`shrink-0 ${matchStyle.icon}`} />
             <div>
               <p className={`text-[13px] font-bold ${matchStyle.title}`}>
-                {role.matchPercent}% profile match — your profile qualifies. Your next step is
+                {role.matchPercent}% profile match, your profile qualifies. Your next step is
                 assessment.
               </p>
               <p className={`text-xs mt-0.5 ${matchStyle.sub}`}>
@@ -108,7 +108,7 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
               <ShieldIcon size={14} strokeWidth={2.5} />
               Location, eligibility &amp; right to work
             </h3>
-            <span className="inline-block bg-[#EBF6FF] border border-[#387DFF] rounded px-3 py-1 text-[13px] font-bold text-[#0047CC] mb-2.5">
+            <span className="inline-block bg-[#F7F7F7] border border-[#E6E6E6] rounded px-3 py-1 text-[13px] font-bold text-[#4A4A4A] mb-2.5">
               ✓ Eligibility verified
             </span>
             <div className="bg-[#F7F7F7] rounded-lg overflow-hidden">

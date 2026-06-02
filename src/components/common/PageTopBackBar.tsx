@@ -13,7 +13,7 @@ interface PageTopBackBarProps {
 const backControlClass =
   'flex items-center gap-1.5 text-sm font-bold text-[#4A4A4A] hover:text-[#0047CC] transition-colors cursor-pointer py-4';
 
-/** Full-width white header bar with chevron back — matches Post Job wizard. */
+/** Full-width white header bar with chevron back, matches Post Job wizard. */
 const PageTopBackBar: React.FC<PageTopBackBarProps> = ({
   label,
   to,

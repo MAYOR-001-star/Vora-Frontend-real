@@ -434,7 +434,7 @@ const Settings: React.FC = () => {
             <div>
               <SectionHeading className="mb-1">Availability & Pricing</SectionHeading>
               <p className="text-xs text-gray-500">
-                Set exactly when you're available, how long each slot is, and what it costs — PPP-adjusted automatically worldwide.
+                Set exactly when you're available, how long each slot is, and what it costs, PPP-adjusted automatically worldwide.
               </p>
             </div>
             <Button variant="primary" fullWidth={false} onClick={() => handleSave('Availability & Pricing')}>
@@ -451,7 +451,7 @@ const Settings: React.FC = () => {
               <div>
                 <Subheading>Your Primary Operating Market</Subheading>
                 <p className="text-xs text-gray-500">
-                  This tells VORA where your economic reality lives — it anchors the entire global pricing engine.
+                  This tells VORA where your economic reality lives, it anchors the entire global pricing engine.
                 </p>
               </div>
             </div>
@@ -471,14 +471,14 @@ const Settings: React.FC = () => {
               />
             </div>
 
-            {/* Market tier banner — auto-updates */}
+            {/* Market tier banner, auto-updates */}
             <div className={`flex items-start gap-2.5 p-3 rounded-lg text-xs font-bold border ${marketInfo.cls} mb-3`}>
               <InfoIcon className="shrink-0 mt-0.5" size={14} />
               <span>{marketInfo.msg}</span>
             </div>
 
             <div className="text-xs text-gray-600 leading-relaxed p-2.5 bg-gray-50 rounded-lg">
-              <strong className="text-gray-900">Why this matters:</strong> A mentor in Lagos charging ₦150,000 locally gets ~$1,100 from a US mentee and ~$450 from a Brazilian mentee — all automatically. A mentor in Switzerland charging CHF 900 gets ~$140 from a Nigerian mentee. VORA handles the maths so you set one rate and reach the world.
+              <strong className="text-gray-900">Why this matters:</strong> A mentor in Lagos charging ₦150,000 locally gets ~$1,100 from a US mentee and ~$450 from a Brazilian mentee, all automatically. A mentor in Switzerland charging CHF 900 gets ~$140 from a Nigerian mentee. VORA handles the maths so you set one rate and reach the world.
             </div>
           </div>
 
@@ -582,7 +582,7 @@ const Settings: React.FC = () => {
                                     </div>
                                     <button 
                                       onClick={() => removeSlot(dayKey, slot.id)}
-                                      className="p-2 border border-red-200 bg-red-50 text-[#DC2626] rounded-lg hover:bg-red-100 transition-colors shrink-0 mb-[1px] cursor-pointer"
+                                      className="p-2 border border-red-200 bg-white text-[#DC2626] rounded-lg hover:bg-red-100 transition-colors shrink-0 mb-[1px] cursor-pointer"
                                     >
                                       <TrashIcon size={16} />
                                     </button>
@@ -593,13 +593,13 @@ const Settings: React.FC = () => {
                                       <div className="flex items-center gap-1.5 text-xs font-bold text-gray-900 mb-2">
                                         <VideoIcon size={14} className="text-[#0047CC]" />
                                         <span>
-                                          Global PPP Pricing — {slot.duration} min slot · {slot.startTime}{' '}
+                                          Global PPP Pricing, {slot.duration} min slot · {slot.startTime}{' '}
                                           {dayName}
                                         </span>
                                       </div>
                                       <p className="text-[12px] text-[#5C5C5C] mb-3 leading-relaxed">
                                         Your ${slot.rate} local rate auto-scales globally. Mentees are billed the
-                                        amount below — you keep 80% after platform fee.
+                                        amount below, you keep 80% after platform fee.
                                       </p>
                                       <div className="grid grid-cols-3 gap-2 text-center">
                                         <div className="p-2 bg-white/70 border border-[#BFDBFE] rounded-lg">
@@ -946,7 +946,7 @@ const Settings: React.FC = () => {
                       onChange={() => setMentorshipStatus('paused')} 
                       className="accent-[#0047CC] w-4 h-4 mt-0.5" 
                     />
-                    Paused — not accepting new requests
+                    Paused, not accepting new requests
                   </label>
                 </div>
               </div>
@@ -1037,7 +1037,7 @@ const Settings: React.FC = () => {
                         onChange={() => setGeoReach('global')} 
                         className="accent-[#0047CC] w-4 h-4 mt-0.5" 
                       />
-                      Globally (recommended — maximises your PPP revenue)
+                      Globally (recommended, maximises your PPP revenue)
                     </label>
                     <label className="flex items-start gap-2.5 cursor-pointer text-xs font-bold text-gray-800">
                       <input autoComplete="off" 
@@ -1278,7 +1278,7 @@ const Settings: React.FC = () => {
                 </div>
                 <button 
                   onClick={() => toast.success('All other sessions signed out')}
-                  className="text-xs font-bold text-[#DC2626] hover:bg-red-50 py-1.5 px-3 rounded-lg border border-red-200 transition-colors cursor-pointer"
+                  className="text-xs font-bold text-[#DC2626] hover:bg-white py-1.5 px-3 rounded-lg border border-red-200 transition-colors cursor-pointer"
                 >
                   Sign out all other sessions
                 </button>

@@ -156,7 +156,7 @@ const EditVaultRole: React.FC = () => {
           <FormSectionCard title="Role details" changed={detailsChanged}>
             <TrackedField
               changed={changed('roleType')}
-              changeMessage="Changed — matching will recalibrate after 48hr review"
+              changeMessage="Changed, matching will recalibrate after 48hr review"
             >
               <Select
                 label="Role type"
@@ -196,7 +196,7 @@ const EditVaultRole: React.FC = () => {
             </TrackedField>
             <TrackedField
               changed={changed('positions')}
-              changeMessage="Changed — escrow will recalculate"
+              changeMessage="Changed, escrow will recalculate"
             >
               <Input
                 label="Available positions"
@@ -208,7 +208,7 @@ const EditVaultRole: React.FC = () => {
             </TrackedField>
             <TrackedField
               changed={changed('goLiveDate')}
-              changeMessage="Changed — silent matching criteria updates after 48hr review"
+              changeMessage="Changed, silent matching criteria updates after 48hr review"
             >
               <Input
                 label="Go-live date"
@@ -249,7 +249,7 @@ const EditVaultRole: React.FC = () => {
             </TrackedField>
             <TrackedField
               changed={changed('responsibilities')}
-              changeMessage="Changed — matching engine will recalibrate after 48hr review"
+              changeMessage="Changed, matching engine will recalibrate after 48hr review"
             >
               <Textarea
                 label="Core responsibilities"
@@ -259,7 +259,7 @@ const EditVaultRole: React.FC = () => {
                 rows={5}
               />
             </TrackedField>
-            <TrackedField changed={changed('skills')} changeMessage="Changed — matching will recalibrate">
+            <TrackedField changed={changed('skills')} changeMessage="Changed, matching will recalibrate">
               <Input
                 label="Technical skills required"
                 value={form.skills}
@@ -306,7 +306,7 @@ const EditVaultRole: React.FC = () => {
           <FormSectionCard title="Experience & background" changed={expChanged}>
             <TrackedField
               changed={changed('experienceYears')}
-              changeMessage="Changed — matching re-scores affected candidates after review"
+              changeMessage="Changed, matching re-scores affected candidates after review"
             >
               <Select
                 label="Years of experience required"
@@ -327,7 +327,7 @@ const EditVaultRole: React.FC = () => {
             </TrackedField>
             <TrackedField
               changed={changed('intPolicy')}
-              changeMessage="Changed — geopolitical eligibility will be re-run"
+              changeMessage="Changed, geopolitical eligibility will be re-run"
             >
               <Select
                 label="International candidate policy"
@@ -337,7 +337,7 @@ const EditVaultRole: React.FC = () => {
                 className={changedInputClass(changed('intPolicy'))}
               />
               <p className="text-xs text-[#808080] mt-1">
-                Changing this may affect the eligible candidate pool — VORA updates geopolitical
+                Changing this may affect the eligible candidate pool, VORA updates geopolitical
                 eligibility after the 48hr review window.
               </p>
             </TrackedField>
@@ -401,11 +401,11 @@ const EditVaultRole: React.FC = () => {
           <FormSectionCard
             title="Compensation"
             changed={compChanged}
-            changedLabel={showEscrowRecalc ? 'Changed — escrow recalculation triggered' : 'Changed'}
+            changedLabel={showEscrowRecalc ? 'Changed, escrow recalculation triggered' : 'Changed'}
           >
             <TrackedField
               changed={changed('compType')}
-              changeMessage="Changed — escrow will be fully recalculated"
+              changeMessage="Changed, escrow will be fully recalculated"
             >
               <Select
                 label="Compensation structure type"
@@ -421,12 +421,12 @@ const EditVaultRole: React.FC = () => {
             </TrackedField>
             <TrackedField
               changed={changed('salMin') || changed('salMax')}
-              changeMessage="Salary band changed — escrow adjustment will be calculated"
+              changeMessage="Salary band changed, escrow adjustment will be calculated"
             >
               <p className="text-sm font-bold text-[#1A1A1A] mb-2">
                 Salary range{' '}
                 <span className="text-[11px] text-[#808080] font-normal">
-                  (current: USD 60,000 to 80,000 — midpoint USD 70,000)
+                  (current: USD 60,000 to 80,000, midpoint USD 70,000)
                 </span>
               </p>
               <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center max-w-md">

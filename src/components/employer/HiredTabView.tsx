@@ -93,7 +93,7 @@ const HiredTabView: React.FC = () => {
       </div>
 
       {/* Set benchmarks prompt for unhired slot */}
-      <div className="bg-[#EBF6FF] border-2 border-dashed border-[#387DFF]/30 rounded-[18px] p-6 flex flex-col sm:flex-row items-center gap-6">
+      <div className="bg-white border-2 border-dashed border-[#387DFF]/30 rounded-[18px] p-6 flex flex-col sm:flex-row items-center gap-6">
         <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#0047CC] shadow-sm">
           <PlusIcon size={20} strokeWidth={2.5} />
         </div>

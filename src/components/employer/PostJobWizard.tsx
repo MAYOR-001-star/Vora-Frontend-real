@@ -393,7 +393,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
           ]}
           totalLabel="Total escrow to lock"
           totalValue={fmt(total, cur)}
-          footnote="Escrow is based on daily rate Ã— working days Ã— positions Ã— your applicable fee rate (10% LMIC / 15% other regions). True-up fires at hire. Escrow minus search fee returned to wallet if no hire occurs."
+          footnote="Escrow is based on daily rate Ã, working days Ã, positions Ã, your applicable fee rate (10% LMIC / 15% other regions). True-up fires at hire. Escrow minus search fee returned to wallet if no hire occurs."
         />
       );
     }
@@ -1233,7 +1233,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
           />
         </div>
 
-        {/* Form Body Area — scrollable content + fixed footer */}
+        {/* Form Body Area, scrollable content + fixed footer */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden bg-[#F7F7F7]">
         <div ref={contentRef} className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
           {/* Mobile Step Nav Dropdown */}
@@ -1243,7 +1243,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
           >
             <span>
               Step {currentStep} of {WIZARD_STEP_COUNT}: {getWizardStepTitle(currentStep)}
-              {currentStep < WIZARD_STEP_COUNT ? ' — tap a completed step to edit' : ''}
+              {currentStep < WIZARD_STEP_COUNT ? ', tap a completed step to edit' : ''}
             </span>
             <svg 
               width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -1363,7 +1363,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                         </span>
                       </>
                     }
-                    placeholder="e.g. Lagos State, Nigeria — or 'Multiple locations'"
+                    placeholder="e.g. Lagos State, Nigeria, or 'Multiple locations'"
                     searchMode="state"
                     value={location}
                     onChange={setLocation}
@@ -1760,7 +1760,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                       onChange={setPreAssessments}
                       placeholder="Select document type(s) to request"
                     />
-                    <div className="p-3 bg-[#EBF6FF] border border-[#BDD9FF] rounded-lg mt-2">
+                    <div className="p-3 bg-white border border-[#BDD9FF] rounded-lg mt-2">
                       <p className="text-xs text-[#1e3a8a] leading-relaxed">
                         <strong>How this works:</strong> After a candidate clears the geopolitical and match threshold filter, but before their assessment begins, VORA prompts them to upload the material(s) you specify here. VORA's assessment engine then generates deep, role-specific questions drawn directly from what they submitted. A candidate who did not produce the work cannot answer convincingly. Any significant gap between the sophistication of the submission and the quality of the answers is flagged in their report. Leave blank if you do not require pre-assessment submissions.
                       </p>
@@ -1952,7 +1952,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                     <span className="text-xs text-[#808080] font-normal mt-1">This is shared verbatim with VORA's matching engine. Keep it factual and role-specific.</span>
                   </div>
 
-                  <div className="flex items-start gap-2.5 p-3.5 bg-[#EBF6FF] border-[1.5px] border-[#BDD9FF] rounded-lg mt-2">
+                  <div className="flex items-start gap-2.5 p-3.5 bg-white border-[1.5px] border-[#BDD9FF] rounded-lg mt-2">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2" className="shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                     </svg>
@@ -2405,7 +2405,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2.5 bg-[#EBF6FF] border border-[#BDD9FF] rounded-lg p-3 animate-in fade-in duration-200">
+                        <div className="flex items-center gap-2.5 bg-white border border-[#BDD9FF] rounded-lg p-3 animate-in fade-in duration-200">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0047CC" strokeWidth="2" className="shrink-0">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
@@ -2493,7 +2493,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
           </div>
         </div>
 
-          {/* Bottom actions — always visible; form scrolls above */}
+          {/* Bottom actions, always visible; form scrolls above */}
           <div className="min-h-[64px] bg-white border-t border-[#E6E6E6] px-6 md:px-8 py-4 flex items-center justify-between shrink-0 z-[5]">
             {currentStep > 1 ? (
               <Button 

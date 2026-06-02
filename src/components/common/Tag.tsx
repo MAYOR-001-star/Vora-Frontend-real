@@ -10,15 +10,15 @@ interface TagProps {
 
 const Tag: React.FC<TagProps> = ({ label, onRemove, className = '', variant = 'blue' }) => {
   const styles: Record<string, string> = {
-    blue: 'bg-[#EBF6FF] text-[#0047CC] border-transparent',
-    green: 'bg-[#EEFBEE] text-[#2CA62C] border-transparent',
-    red: 'bg-[#FEF2F2] text-[#DC2626] border-transparent',
-    yellow: 'bg-[#FFFBEB] text-[#D97706] border-transparent',
-    gray: 'bg-[#F9FAFB] text-gray-600 border-gray-100',
-    'blue-light': 'bg-[#F0F7FF] text-[#0047CC] border-transparent',
-    'green-light': 'bg-[#F0FFF4] text-[#38A169] border-[#C6F6D5]',
+    blue: 'bg-white text-[#0047CC] border-[#0047CC]',
+    green: 'bg-white text-[#2CA62C] border-[#2CA62C]',
+    red: 'bg-white text-[#DC2626] border-[#DC2626]',
+    yellow: 'bg-white text-[#D97706] border-[#D97706]',
+    gray: 'bg-white text-gray-600 border-gray-200',
+    'blue-light': 'bg-white text-[#0047CC] border-[#0047CC]',
+    'green-light': 'bg-white text-[#38A169] border-[#38A169]',
     outline: 'bg-white border border-[#0047CC] text-[#0047CC]',
-    purple: 'bg-purple-50 text-purple-700 border-transparent',
+    purple: 'bg-white text-purple-700 border-purple-700',
   };
 
   return (

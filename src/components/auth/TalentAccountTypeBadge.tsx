@@ -13,7 +13,7 @@ const TalentAccountTypeBadge: React.FC = () => (
       />
     </div>
     <p className="text-xs text-[#494848] font-medium mt-2">
-      You arrived via a role link — set automatically
+      You arrived via a role link, set automatically
     </p>
     <p className="text-xs text-[#494848] font-medium mt-1">
       Posting a role instead?{' '}

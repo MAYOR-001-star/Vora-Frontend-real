@@ -7,15 +7,15 @@ interface MatchPercentBadgeProps {
 }
 
 const styles: Record<MatchPercentVariant, string> = {
-  green: 'bg-[#EBF6FF] border-[#387DFF] text-[#0047CC]',
-  blue: 'bg-[#EBF6FF] border-[#387DFF] text-[#182348]',
+  green: 'bg-white text-[#4A5568]',
+  blue: 'bg-white text-[#4A5568]',
 };
 
 const MatchPercentBadge: React.FC<MatchPercentBadgeProps> = ({ percent, variant = 'green' }) => (
   <span
-    className={`inline-flex items-center gap-1.5 border rounded-full px-3 py-1 text-[13px] font-bold ${styles[variant]}`}
+    className={`inline-flex items-center gap-1.5 px-0 py-0.5 text-xs font-medium ${styles[variant]}`}
   >
-    <CheckIcon size={12} strokeWidth={2.5} />
+    <CheckIcon size={14} strokeWidth={3} />
     {percent}% profile match
   </span>
 );

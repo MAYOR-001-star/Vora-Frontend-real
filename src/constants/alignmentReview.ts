@@ -44,7 +44,7 @@ export const REJECTION_REASON_OPTIONS: RejectionReasonOption[] = [
   {
     value: 'other',
     title: 'Other (requires detailed written justification)',
-    description: 'High bar — VORA will review closely',
+    description: 'High bar, VORA will review closely',
   },
 ];
 
@@ -67,12 +67,12 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
       value: '$150.00 · Ref #ALN-2025-0015',
       valueClassName: 'text-[#D97706]',
     },
-    { label: 'Job role', value: 'Public Health Advisor – Medics Without Limits' },
+    { label: 'Job role', value: 'Public Health Advisor, Medics Without Limits' },
     { label: 'Location', value: 'Accra, Ghana · On-site · Global South' },
     { label: 'VORA reviewer', value: 'Dr. Kwame Asante (Global Health Lead)' },
     {
       label: 'Escrow held (role)',
-      value: '$4,500 · Contract 6–12mo · Min. tenure deposit',
+      value: '$4,500 · Contract 6,12mo · Min. tenure deposit',
     },
     {
       label: 'Refund on hire',
@@ -185,7 +185,7 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
         label: 'Stakeholder & Donor Management',
         value: 78,
         description:
-          'Sound baseline responses. Slightly over-deferred to donor preference vs. community need in PEPFAR funding conflict scenario — noted area for development.',
+          'Sound baseline responses. Slightly over-deferred to donor preference vs. community need in PEPFAR funding conflict scenario, noted area for development.',
         barColor: 'success',
       },
       {
@@ -205,7 +205,7 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
     ],
     interpretation: {
       title: 'SJT interpretation:',
-      body: 'Dr. Osei demonstrates strong ethical reasoning and cross-cultural capability — the two highest-weight domains for Public Health Advisor roles. Her stakeholder management and delegation scores are within acceptable range but represent genuine development opportunities. Overall SJT result is a clear pass at 83/100.',
+      body: 'Dr. Osei demonstrates strong ethical reasoning and cross-cultural capability, the two highest-weight domains for Public Health Advisor roles. Her stakeholder management and delegation scores are within acceptable range but represent genuine development opportunities. Overall SJT result is a clear pass at 83/100.',
       variant: 'green',
     },
   },
@@ -220,7 +220,7 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
       'AI + human review · Recorded: HD, auto-captioned',
     ],
     breakdownTitle: 'Question-by-Question Scores',
-    videoCaption: 'Dr. Amara Osei – Full Session · 28:14 · Mar 3, 2025',
+    videoCaption: 'Dr. Amara Osei, Full Session · 28:14 · Mar 3, 2025',
     videoScoreLabel: 'Score: 81/100',
     domains: [
       {
@@ -234,7 +234,7 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
         label: 'Q2: How do you manage conflicting ministry and NGO priorities?',
         value: 79,
         description:
-          'Good structural answer using alignment-first framework. Slightly abstract — could have grounded in specific institutional example.',
+          'Good structural answer using alignment-first framework. Slightly abstract, could have grounded in specific institutional example.',
         barColor: 'success',
       },
       {
@@ -248,7 +248,7 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
         label: 'Q4: Describe a time you led change in a resistant health system',
         value: 77,
         description:
-          'Competent STAR response. Story was compelling but change management framework somewhat implicit — could strengthen change vocabulary.',
+          'Competent STAR response. Story was compelling but change management framework somewhat implicit, could strengthen change vocabulary.',
         barColor: 'success',
       },
       {
@@ -279,7 +279,7 @@ export const AMARA_CANDIDATE: AlignmentCandidateData = {
         scoreColorClass: 'text-[#0047CC]',
         tagLabel: 'Pass',
         tagVariant: 'blue',
-        cardClassName: 'bg-[#EBF6FF] border-[#387DFF]/20',
+        cardClassName: 'bg-white border-[#387DFF]/20',
       },
       {
         label: 'SJT',
@@ -334,11 +334,11 @@ export const PRIYA_CANDIDATE: AlignmentCandidateData = {
       value: '$150.00 · Ref #ALN-2025-0014',
       valueClassName: 'text-[#D97706]',
     },
-    { label: 'Job role', value: 'Senior Epidemiologist – GlobalHealth Corp' },
+    { label: 'Job role', value: 'Senior Epidemiologist, GlobalHealth Corp' },
     { label: 'Location', value: 'Nairobi, Kenya · Remote eligible · Global South' },
     {
       label: 'Escrow held (role)',
-      value: '$10,500 · Range $60k–$80k · Midpoint $70k',
+      value: '$10,500 · Range $60k,$80k · Midpoint $70k',
     },
   ],
   psychometric: {
@@ -357,7 +357,7 @@ export const PRIYA_CANDIDATE: AlignmentCandidateData = {
         label: 'Abstract Reasoning',
         value: 95,
         description:
-          'Top 4% globally. Flawless performance on matrix pattern completion and inductive series — critical for epidemiological pattern recognition.',
+          'Top 4% globally. Flawless performance on matrix pattern completion and inductive series, critical for epidemiological pattern recognition.',
         barColor: 'primary',
       },
       {
@@ -443,14 +443,14 @@ export const PRIYA_CANDIDATE: AlignmentCandidateData = {
     testInfoTitle: 'Session Info',
     testInfoLines: ['Mar 4, 2025 · 32 min · 5 questions', 'AI + human review · HD recorded'],
     breakdownTitle: 'Question-by-Question',
-    videoCaption: 'Priya Sharma – Full Session · 32:07 · Mar 4, 2025',
+    videoCaption: 'Priya Sharma, Full Session · 32:07 · Mar 4, 2025',
     videoScoreLabel: 'Score: 84/100',
     domains: [
       {
         label: 'Q1: Describe your most significant epidemiological investigation',
         value: 91,
         description:
-          'Outstanding. Described Rift Valley Fever cluster investigation in Nakuru County — specific, detailed, methodologically sound.',
+          'Outstanding. Described Rift Valley Fever cluster investigation in Nakuru County, specific, detailed, methodologically sound.',
         barColor: 'primary',
       },
       {
@@ -490,7 +490,7 @@ export const PRIYA_CANDIDATE: AlignmentCandidateData = {
         scoreColorClass: 'text-[#0047CC]',
         tagLabel: 'Exceptional',
         tagVariant: 'blue',
-        cardClassName: 'bg-[#EBF6FF] border-[#387DFF]/20',
+        cardClassName: 'bg-white border-[#387DFF]/20',
       },
       {
         label: 'SJT',
@@ -512,7 +512,7 @@ export const PRIYA_CANDIDATE: AlignmentCandidateData = {
     compositeScore: 88,
     weightingNote: 'Weighted: Psychometric 35% · SJT 40% · Video 25%',
     recommendation: {
-      body: 'Priya Sharma is an exceptional candidate — composite 88/100, ranking in the top 8% of all epidemiologists assessed on VORA. Her psychometric scores reflect rare analytical capacity.',
+      body: 'Priya Sharma is an exceptional candidate, composite 88/100, ranking in the top 8% of all epidemiologists assessed on VORA. Her psychometric scores reflect rare analytical capacity.',
       variant: 'green',
     },
   },
@@ -584,11 +584,11 @@ export const HISTORICAL_ALIGNMENT_SESSIONS: HistoricalAlignmentSession[] = [
     paragraphs: [
       {
         label: 'Assessment result:',
-        text: 'Psychometric 83/100 — passed. SJT 77/100 — below threshold. Video 74/100 — below threshold. Rejection on undocumented "personal fit" grounds was reviewed as invalid.',
+        text: 'Psychometric 83/100, passed. SJT 77/100, below threshold. Video 74/100, below threshold. Rejection on undocumented "personal fit" grounds was reviewed as invalid.',
       },
       {
         label: 'Employer rejection reason:',
-        text: '"Personal fit — not the right cultural match for our team."',
+        text: '"Personal fit, not the right cultural match for our team."',
       },
       {
         label: 'VORA review:',
@@ -607,7 +607,7 @@ export const HISTORICAL_ALIGNMENT_SESSIONS: HistoricalAlignmentSession[] = [
     statusTag: { label: 'Rejected · Refunded', variant: 'gray' },
     borderClassName: 'border-[#2CA62C]/30',
     determination: {
-      body: "Rejection accepted as valid. Documented evidence confirmed the candidate's salary expectation ($72,000) exceeded the budgeted ceiling ($64,000) — a factual mismatch. $150 refunded.",
+      body: "Rejection accepted as valid. Documented evidence confirmed the candidate's salary expectation ($72,000) exceeded the budgeted ceiling ($64,000), a factual mismatch. $150 refunded.",
       variant: 'green',
     },
     scores: [

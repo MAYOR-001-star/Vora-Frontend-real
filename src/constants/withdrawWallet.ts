@@ -9,7 +9,7 @@ export const WITHDRAW_METHODS: WithdrawMethodOption[] = [
   {
     id: 'bank',
     name: 'Bank Transfer',
-    subtitle: 'Direct to any bank worldwide · 1–3 business days · No fee',
+    subtitle: 'Direct to any bank worldwide · 1,3 business days · No fee',
   },
   {
     id: 'stripe',
@@ -43,7 +43,7 @@ export const WITHDRAW_PROCESSING_TIMELINE: TimelineStep[] = [
   },
   {
     title: 'Funds arrive',
-    meta: '1–3 business days (bank) · Next business day (Stripe)',
+    meta: '1,3 business days (bank) · Next business day (Stripe)',
     status: 'pending',
   },
 ];

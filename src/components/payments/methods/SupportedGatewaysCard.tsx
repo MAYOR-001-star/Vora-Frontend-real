@@ -1,35 +1,13 @@
 import React from 'react';
 import PaymentCard from '../PaymentCard';
+import { PhoneIcon, PaperPlaneIcon, BankIcon, CreditCardIcon } from '../../common/Icons';
 import { SUPPORTED_GATEWAYS } from '../../../constants/paymentMethods';
 
 const GatewayIcon: React.FC<{ id: string; stroke: string }> = ({ id, stroke }) => {
-  if (id === 'paystack') {
-    return (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" aria-hidden>
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.09h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-      </svg>
-    );
-  }
-  if (id === 'flutterwave') {
-    return (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" aria-hidden>
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-      </svg>
-    );
-  }
-  if (id === 'bank') {
-    return (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" aria-hidden>
-        <rect x="3" y="4" width="18" height="14" rx="2" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" aria-hidden>
-      <rect x="1" y="4" width="22" height="16" rx="2" />
-      <line x1="1" y1="10" x2="23" y2="10" />
-    </svg>
-  );
+  if (id === 'paystack') return <PhoneIcon size={16} stroke={stroke} aria-hidden />;
+  if (id === 'flutterwave') return <PaperPlaneIcon size={16} stroke={stroke} aria-hidden />;
+  if (id === 'bank') return <BankIcon size={16} stroke={stroke} aria-hidden />;
+  return <CreditCardIcon size={16} stroke={stroke} aria-hidden />;
 };
 
 const SupportedGatewaysCard: React.FC = () => (

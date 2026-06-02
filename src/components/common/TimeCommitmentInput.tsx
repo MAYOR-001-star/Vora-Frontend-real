@@ -36,7 +36,7 @@ const TimeCommitmentInput: React.FC<TimeCommitmentInputProps> = ({
       </label>
       <div
         className={`group flex items-center w-full px-4 py-3 sm:py-3.5 rounded-lg border ${
-          error ? 'border-red-500 bg-red-50' : 'border-border-default bg-white'
+          error ? 'border-red-500 bg-white' : 'border-border-default bg-white'
         } focus-within:outline-none focus-within:ring-2 ${
           error
             ? 'focus-within:ring-red-500/20 focus-within:border-red-500'

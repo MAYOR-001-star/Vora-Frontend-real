@@ -26,7 +26,7 @@ const AlignmentCandidateFooter: React.FC<AlignmentCandidateFooterProps> = ({ onR
       className="font-bold shrink-0 text-xs px-4"
     >
       <CheckIcon size={12} className="mr-1" strokeWidth={3} />
-      Hire – Trigger Full Refund
+      Hire, Trigger Full Refund
     </Button>
   </div>
 );

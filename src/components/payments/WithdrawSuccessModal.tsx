@@ -31,7 +31,7 @@ const WithdrawSuccessModal: React.FC<WithdrawSuccessModalProps> = ({ open, amoun
         <h2 className="text-xl font-bold text-[#1A1A1A] mb-1.5">Withdrawal Initiated!</h2>
         <p className="text-sm text-[#808080] mb-1.5">{formatUsd(amount)} withdrawal submitted</p>
         <p className="text-xs text-[#ADADAD] mb-6">
-          Reference: #WD-2025-0042 · Funds arrive within 1–3 business days
+          Reference: #WD-2025-0042 · Funds arrive within 1,3 business days
         </p>
         <div className="flex flex-wrap gap-2.5 justify-center">
           <Button variant="outline" fullWidth={false} size="sm" pill={false} onClick={onClose}>

@@ -10,7 +10,7 @@ const RateInfoCard: React.FC<RateInfoCardProps> = ({
   title = 'Escrow & True-Up Model',
   rows,
 }) => (
-  <div className="bg-[#EBF6FF] border border-[#387DFF] rounded-xl px-5 py-4 mb-3.5">
+  <div className="bg-white border border-[#387DFF] rounded-xl px-5 py-4 mb-3.5">
     <p className="text-[11px] font-semibold text-[#0047CC] uppercase tracking-wide mb-3">{title}</p>
     {rows.map((row) => (
       <div

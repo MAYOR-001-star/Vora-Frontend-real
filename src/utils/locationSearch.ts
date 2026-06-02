@@ -26,7 +26,7 @@ function normalizeQuery(query: string): string {
   return query.trim().toLowerCase();
 }
 
-/** Display name for states/regions — drops redundant suffixes like "State" or "District". */
+/** Display name for states/regions, drops redundant suffixes like "State" or "District". */
 export function normalizeRegionName(name: string): string {
   return name
     .trim()
@@ -138,7 +138,7 @@ export async function searchStatesRegionsLocal(
   return results.slice(0, MAX_LOCAL_RESULTS);
 }
 
-/** States/regions only — excludes city-level Nominatim results. */
+/** States/regions only, excludes city-level Nominatim results. */
 export async function searchStatesRegions(
   query: string,
   signal?: AbortSignal

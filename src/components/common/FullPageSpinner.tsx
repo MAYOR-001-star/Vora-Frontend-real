@@ -1,6 +1,6 @@
 import React from 'react';
 
-/** Full-screen blue spinner — use for background fetches, not button-triggered requests. */
+/** Full-screen blue spinner, use for background fetches, not button-triggered requests. */
 const FullPageSpinner: React.FC = () => (
   <div
     className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"

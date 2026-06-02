@@ -11,7 +11,7 @@ const ProfileMatchProgressBar: React.FC<ProfileMatchProgressBarProps> = ({ progr
       />
     </div>
     <p className="text-[13px] font-semibold text-[#0047CC] mb-2.5">{progress}%</p>
-    <p className="text-xs text-[#ADADAD]">Please don&apos;t close this tab — we&apos;re almost there.</p>
+    <p className="text-xs text-[#ADADAD]">Please don&apos;t close this tab, we&apos;re almost there.</p>
   </div>
 );
 

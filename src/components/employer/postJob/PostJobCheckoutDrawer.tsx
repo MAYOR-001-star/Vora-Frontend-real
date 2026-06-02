@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AlertBanner from '../../common/AlertBanner';
 import { CardTitle, DrawerTitle } from '../../common/Typography';
+import { CloseIcon } from '../../common/Icons';
 import type { EscrowPreviewSummary } from './PostJobPreviewStep';
 
 interface PostJobCheckoutDrawerProps {
@@ -47,7 +48,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
       >
         <div className="flex items-center justify-between px-7 py-5 border-b border-[#E6E6E6] shrink-0">
           <DrawerTitle id="checkout-title">
-            {isScheduled ? 'Checkout — Vault Submission' : 'Checkout'}
+            {isScheduled ? 'Checkout, Vault Submission' : 'Checkout'}
           </DrawerTitle>
           <button
             type="button"
@@ -55,10 +56,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
             className="p-1.5 rounded-lg text-[#808080] hover:bg-[#F7F7F7] hover:text-[#1A1A1A] cursor-pointer"
             aria-label="Close checkout"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <CloseIcon size={18} strokeWidth={2.5} />
           </button>
         </div>
 
@@ -68,7 +66,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
             <div className="bg-[#F7F7F7] rounded-[10px] px-4 py-3 space-y-0">
               <div className="flex justify-between gap-4 py-2 border-b border-[#E6E6E6] text-[13px]">
                 <span className="text-[#808080]">Role</span>
-                <span className="font-medium text-[#1A1A1A] text-right max-w-[240px]">{roleTitle || '—'}</span>
+                <span className="font-medium text-[#1A1A1A] text-right max-w-[240px]">{roleTitle || ','}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-[#E6E6E6] text-[13px]">
                 <span className="text-[#808080]">Available positions</span>
@@ -102,7 +100,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
 
           {isScheduled ? (
             <AlertBanner variant="blue" className="mb-5 !text-[12px]">
-              <strong>Vault mode — fee locked at today&apos;s rate.</strong> Your role is invisible until
+              <strong>Vault mode, fee locked at today&apos;s rate.</strong> Your role is invisible until
               go-live. VORA silently matches new candidates during the vault period.
             </AlertBanner>
           ) : (
@@ -129,7 +127,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
                   onClick={() => setPaymentMethod(m.id)}
                   className={`rounded-[10px] border-2 py-3 px-2 text-[11px] font-bold transition-colors cursor-pointer ${
                     paymentMethod === m.id
-                      ? 'border-[#0047CC] bg-[#EBF6FF] text-[#0047CC]'
+                      ? 'border-[#0047CC] bg-white text-[#0047CC]'
                       : 'border-[#E6E6E6] text-[#4A4A4A] hover:border-[#387DFF]'
                   }`}
                 >
@@ -182,7 +180,7 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
             {isSubmitting
               ? 'Processing…'
               : isScheduled
-                ? `Lock in Escrow — ${totalLabel}`
+                ? `Lock in Escrow, ${totalLabel}`
                 : `Pay ${totalLabel}`}
           </button>
         </div>

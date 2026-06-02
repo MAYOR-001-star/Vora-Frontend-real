@@ -47,7 +47,7 @@ export const useRoleAlertPreferences = (
 
   const setAlert = useCallback(() => {
     setAlertSet(true);
-    toast.success('Alert set — we will notify you the moment your role goes live.', {
+    toast.success('Alert set, we will notify you the moment your role goes live.', {
       duration: 4000,
     });
   }, []);

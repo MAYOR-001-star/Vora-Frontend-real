@@ -30,9 +30,9 @@ const ProfileMatchStepRow: React.FC<ProfileMatchStepRowProps> = ({
       <div
         className={`w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0 border-2 ${
           status === 'done'
-            ? 'bg-[#EBF6FF] border-[#387DFF]'
+            ? 'bg-white border-[#387DFF]'
             : status === 'running'
-              ? 'bg-[#EBF6FF] border-[#387DFF]'
+              ? 'bg-white border-[#387DFF]'
               : 'bg-[#F7F7F7] border-[#E6E6E6]'
         }`}
       >

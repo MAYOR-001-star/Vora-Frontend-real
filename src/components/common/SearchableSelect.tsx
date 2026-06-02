@@ -61,7 +61,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className={`w-full px-4 pr-10 py-3 sm:py-3.5 rounded-lg border ${error ? 'border-red-500 bg-red-50' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-500/20 focus:border-red-500' : 'focus:ring-blue-500/20 focus:border-blue-500'} transition-all placeholder:text-gray-400`}
+          className={`w-full px-4 pr-10 py-3 sm:py-3.5 rounded-lg border ${error ? 'border-red-500 bg-white' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-500/20 focus:border-red-500' : 'focus:ring-blue-500/20 focus:border-blue-500'} transition-all placeholder:text-gray-400`}
           autoComplete="off"
         />
         <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">

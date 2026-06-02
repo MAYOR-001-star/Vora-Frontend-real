@@ -103,7 +103,7 @@ const TimezoneMultiSelect: React.FC<TimezoneMultiSelectProps> = ({
             key={reg}
             type="button"
             onClick={() => onAddRegion(reg)}
-            className="px-3 py-[5px] rounded-full border-[1.5px] border-[#E6E6E6] bg-white text-[11px] font-medium text-[#4A4A4A] cursor-pointer transition-all duration-150 hover:border-[#0047CC] hover:text-[#0047CC] hover:bg-[#EBF6FF]"
+            className="px-3 py-[5px] rounded-full border-[1.5px] border-[#E6E6E6] bg-white text-[11px] font-medium text-[#4A4A4A] cursor-pointer transition-all duration-150 hover:border-[#0047CC] hover:text-[#0047CC] hover:bg-white"
           >
             {REGION_LABELS[reg]}
           </button>
@@ -111,14 +111,14 @@ const TimezoneMultiSelect: React.FC<TimezoneMultiSelectProps> = ({
         <button
           type="button"
           onClick={() => onAddRegion('ALL')}
-          className="px-3 py-[5px] rounded-full border-[1.5px] border-[#0047CC] bg-white text-[11px] font-medium text-[#0047CC] cursor-pointer transition-all duration-150 hover:bg-[#EBF6FF]"
+          className="px-3 py-[5px] rounded-full border-[1.5px] border-[#0047CC] bg-white text-[11px] font-medium text-[#0047CC] cursor-pointer transition-all duration-150 hover:bg-white"
         >
           All regions
         </button>
         <button
           type="button"
           onClick={onClear}
-          className="px-3 py-[5px] rounded-full border-[1.5px] border-[#FECACA] bg-white text-[11px] font-medium text-[#DC2626] cursor-pointer transition-all duration-150 hover:bg-red-50"
+          className="px-3 py-[5px] rounded-full border-[1.5px] border-[#FECACA] bg-white text-[11px] font-medium text-[#DC2626] cursor-pointer transition-all duration-150 hover:bg-white"
         >
           Clear all
         </button>

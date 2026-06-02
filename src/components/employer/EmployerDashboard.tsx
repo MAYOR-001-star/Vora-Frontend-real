@@ -78,22 +78,22 @@ const EmployerDashboard: React.FC = () => {
 
   // Mock data based on provided HTML
   const activeJobs = [
-    { title: 'Global Health Policy Analyst Intern – Malaria Program', id: 'JOB-001', loc: 'Addis Ababa', date: 'Jan 8', applicants: 42, status: 'Live', variant: 'green' },
-    { title: 'Senior Epidemiologist – TB Response Unit', id: 'JOB-002', loc: 'Nairobi', date: 'Jan 12', applicants: 18, status: 'Alignment', variant: 'blue' },
-    { title: 'Community Health Nurse – Kano State Programme', id: 'JOB-003', loc: 'Kano', date: 'Jan 15', applicants: 31, status: 'Live', variant: 'green' },
-    { title: 'M&E Officer – Nutrition Programme', id: 'JOB-004', loc: 'Accra', date: 'Jan 18', applicants: 27, status: 'Live', variant: 'green' },
-    { title: 'Research Fellow – One Health Initiative', id: 'JOB-005', loc: 'Remote', date: 'Draft', applicants: 0, status: 'Draft', variant: 'yellow' }
+    { title: 'Global Health Policy Analyst Intern, Malaria Program', id: 'JOB-001', loc: 'Addis Ababa', date: 'Jan 8', applicants: 42, status: 'Live', variant: 'green' },
+    { title: 'Senior Epidemiologist, TB Response Unit', id: 'JOB-002', loc: 'Nairobi', date: 'Jan 12', applicants: 18, status: 'Alignment', variant: 'blue' },
+    { title: 'Community Health Nurse, Kano State Programme', id: 'JOB-003', loc: 'Kano', date: 'Jan 15', applicants: 31, status: 'Live', variant: 'green' },
+    { title: 'M&E Officer, Nutrition Programme', id: 'JOB-004', loc: 'Accra', date: 'Jan 18', applicants: 27, status: 'Live', variant: 'green' },
+    { title: 'Research Fellow, One Health Initiative', id: 'JOB-005', loc: 'Remote', date: 'Draft', applicants: 0, status: 'Draft', variant: 'yellow' }
   ];
 
   const recentActivity = [
     { title: 'True-up #TU-2025-0008 awaiting payment', sub: '$750.00 due · Dr. Kofi Mensah hire confirmed', time: '2h ago', icon: AlertTriangleIcon, iconBg: 'bg-blue-50', iconColor: 'text-[#0047CC]' },
-    { title: 'Dr. Yusuf Ibrahim — Hire confirmed', sub: 'Public Health Advisor · $150 alignment fee refunded', time: 'Yesterday', icon: CheckIcon, iconBg: 'bg-green-50', iconColor: 'text-green-600' },
-    { title: 'Alignment session scheduled — Priya Sharma', sub: 'Senior Epidemiologist · Session #ALN-2025-0014', time: 'Yesterday', icon: BellIcon, iconBg: 'bg-purple-50', iconColor: 'text-purple-600' },
-    { title: 'New job posted — Senior Epidemiologist', sub: 'JOB-002 · TB Response Unit · 18 applicants', time: 'Jan 12', icon: BriefcaseIcon, iconBg: 'bg-blue-50', iconColor: 'text-[#0047CC]' }
+    { title: 'Dr. Yusuf Ibrahim, Hire confirmed', sub: 'Public Health Advisor · $150 alignment fee refunded', time: 'Yesterday', icon: CheckIcon, iconBg: 'bg-green-50', iconColor: 'text-green-600' },
+    { title: 'Alignment session scheduled, Priya Sharma', sub: 'Senior Epidemiologist · Session #ALN-2025-0014', time: 'Yesterday', icon: BellIcon, iconBg: 'bg-purple-50', iconColor: 'text-purple-600' },
+    { title: 'New job posted, Senior Epidemiologist', sub: 'JOB-002 · TB Response Unit · 18 applicants', time: 'Jan 12', icon: BriefcaseIcon, iconBg: 'bg-blue-50', iconColor: 'text-[#0047CC]' }
   ];
 
   const alignmentSessions = [
-    { name: 'Priya Sharma', role: 'Senior Epidemiologist', id: '#ALN-2025-0014', status: 'Scheduled – Jan 22', variant: 'blue', initial: 'PS', initialBg: 'bg-blue-500' },
+    { name: 'Priya Sharma', role: 'Senior Epidemiologist', id: '#ALN-2025-0014', status: 'Scheduled, Jan 22', variant: 'blue', initial: 'PS', initialBg: 'bg-blue-500' },
     { name: 'Dr. Amara Osei', role: 'Public Health Advisor', id: '#ALN-2025-0015', status: 'Awaiting confirmation', variant: 'gray', initial: 'AO', initialBg: 'bg-purple-500' },
     { name: 'Dr. Kofi Mensah', role: 'Field Epidemiologist', id: '#ALN-2025-0013', status: 'Completed', variant: 'green', initial: 'KM', initialBg: 'bg-blue-500' }
   ];
@@ -144,27 +144,27 @@ const EmployerDashboard: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <KPICard 
               label="Active Jobs" value="12" delta="3 this month" deltaType="up" 
-              icon={BriefcaseIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" 
+              icon={BriefcaseIcon} bgColor="bg-white" iconColor="text-[#0047CC]" 
             />
             <KPICard 
               label="Total Applicants" value="247" delta="34 new this week" deltaType="up" 
-              icon={UsersIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" 
+              icon={UsersIcon} bgColor="bg-white" iconColor="text-[#0047CC]" 
             />
             <KPICard 
               label="Alignment Sessions" value="5" delta="2 awaiting confirmation" deltaType="warn" 
-              icon={ClockIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" 
+              icon={ClockIcon} bgColor="bg-white" iconColor="text-[#0047CC]" 
             />
             <KPICard 
               label="Wallet Balance" value="$3,240" delta="$750 true-up due" deltaType="warn" 
-              icon={WalletIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" 
+              icon={WalletIcon} bgColor="bg-white" iconColor="text-[#0047CC]" 
             />
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <QuickActionBtn label="Post a Job" sub="Create a new listing" icon={PlusIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" onClick={() => setIsPostModalOpen(true)} />
-            <QuickActionBtn label="Confirm Hire" sub="Send offer & lock escrow" icon={CheckIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" />
-            <QuickActionBtn label="Bulk Hire" sub="Confirm multiple hires" icon={UsersIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" />
-            <QuickActionBtn label="Top Up Wallet" sub="Add funds for escrow" icon={TrendingUpIcon} bgColor="bg-blue-50" iconColor="text-[#0047CC]" />
+            <QuickActionBtn label="Post a Job" sub="Create a new listing" icon={PlusIcon} bgColor="bg-white" iconColor="text-[#0047CC]" onClick={() => setIsPostModalOpen(true)} />
+            <QuickActionBtn label="Confirm Hire" sub="Send offer & lock escrow" icon={CheckIcon} bgColor="bg-white" iconColor="text-[#0047CC]" />
+            <QuickActionBtn label="Bulk Hire" sub="Confirm multiple hires" icon={UsersIcon} bgColor="bg-white" iconColor="text-[#0047CC]" />
+            <QuickActionBtn label="Top Up Wallet" sub="Add funds for escrow" icon={TrendingUpIcon} bgColor="bg-white" iconColor="text-[#0047CC]" />
           </div>
 
           {/* Active Jobs Card */}
@@ -245,7 +245,7 @@ const EmployerDashboard: React.FC = () => {
               </div>
 
               {/* Pending */}
-              <div className="p-4 rounded-[14px] bg-blue-50 border border-blue-100">
+              <div className="p-4 rounded-[14px] bg-white border border-blue-100">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-8 h-8 rounded-full bg-[#0047CC] text-white flex items-center justify-center text-[11px] font-medium shrink-0">FC</div>
                   <div className="flex-1 min-w-0">
@@ -354,7 +354,7 @@ const EmployerDashboard: React.FC = () => {
                 <div 
                   key={i} 
                   onClick={() => tile.label === 'Post Job' && setIsPostModalOpen(true)}
-                  className="break-inside-avoid p-4 bg-gray-50/50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-xl transition-all cursor-pointer group"
+                  className="break-inside-avoid p-4 bg-gray-50/50 hover:bg-white border border-transparent hover:border-blue-100 rounded-xl transition-all cursor-pointer group"
                 >
                   <tile.icon size={16} className="text-[#0047CC] mb-3" />
                   <p className="text-[12px] font-medium text-gray-900 leading-tight">{tile.label}</p>

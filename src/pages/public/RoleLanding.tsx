@@ -22,7 +22,7 @@ const RoleLanding: React.FC = () => {
         <RoleHeroCard role={role} />
         <RoleMatchCtaBanner />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_310px] gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
           <div className="space-y-5">
             <RoleDetailCard title="About this role">
               <p className="text-sm text-[#4A4A4A] leading-relaxed">{role.aboutRole}</p>

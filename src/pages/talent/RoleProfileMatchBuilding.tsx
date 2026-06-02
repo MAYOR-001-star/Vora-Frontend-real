@@ -48,7 +48,7 @@ const RoleProfileMatchBuilding: React.FC = () => {
     }, 1500);
   }, [navigate, firstName, lastName, roleSlug]);
 
-  const { statuses, progress, headline } = useProfileMatchProgress({
+  const { statuses, progress, headline, isComplete } = useProfileMatchProgress({
     onComplete: handleComplete,
   });
 
@@ -75,7 +75,7 @@ const RoleProfileMatchBuilding: React.FC = () => {
 
           <h1 className="text-2xl font-semibold text-[#1A1A1A] tracking-tight mb-2">{headline}</h1>
           <p className="text-sm text-[#808080] leading-relaxed mb-7 max-w-[380px] mx-auto">
-            Hang tight — we&apos;re combining your CV and onboarding details into a full profile
+            Hang tight, we&apos;re combining your CV and onboarding details into a full profile
             and checking your match for{' '}
             <strong className="text-[#0047CC] font-semibold">{role.roleTitle}</strong> and 200+
             other live roles simultaneously.
@@ -87,7 +87,7 @@ const RoleProfileMatchBuilding: React.FC = () => {
                 key={step.id}
                 title={step.title}
                 subtitle={step.subtitle}
-                status={statuses[index]}
+                status={progress === 100 || isComplete ? 'done' : statuses[index]}
                 isLast={index === PROFILE_MATCH_STEPS.length - 1}
               />
             ))}

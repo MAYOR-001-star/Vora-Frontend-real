@@ -51,6 +51,7 @@ const RoleProfileMatchWaitlist: React.FC = () => {
   const preferencesState = useRoleAlertPreferences();
 
   useEffect(() => {
+    /*
     if (!roleSlug) {
       navigate('/onboarding/talent?step=1', { replace: true });
       return;
@@ -63,9 +64,10 @@ const RoleProfileMatchWaitlist: React.FC = () => {
         state: { firstName, lastName, roleSlug, matchScan, matchScore: matchScan.originalRoleScore },
       });
     }
+    */
   }, [roleSlug, matchScan, navigate, firstName, lastName]);
 
-  if (!roleSlug || !appliedRole || getPostMatchPath(matchScan) !== '/onboarding/talent/match/waitlist') {
+  if (!roleSlug || !appliedRole) {
     return null;
   }
 

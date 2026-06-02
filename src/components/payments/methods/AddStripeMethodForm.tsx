@@ -41,7 +41,7 @@ const AddStripeMethodForm = forwardRef<PaymentMethodFormHandle>((_, ref) => {
   return (
     <div>
       <AlertBanner variant="blue" className="!text-xs mb-5">
-        <strong>Stripe</strong> — recommended for UK, EU, US and Canada. Card data is encrypted and
+        <strong>Stripe</strong>, recommended for UK, EU, US and Canada. Card data is encrypted and
         tokenised, never stored on VORA servers.
         <p className="mt-1.5 text-[11px] opacity-90">Best for: Global North employers · Instant settlement</p>
       </AlertBanner>

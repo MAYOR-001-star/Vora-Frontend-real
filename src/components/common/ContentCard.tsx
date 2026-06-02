@@ -8,7 +8,7 @@ interface ContentCardProps {
   bodyClassName?: string;
 }
 
-/** White bordered card shell — shared by vault review, settings sections, etc. */
+/** White bordered card shell, shared by vault review, settings sections, etc. */
 const ContentCard: React.FC<ContentCardProps> = ({
   title,
   children,

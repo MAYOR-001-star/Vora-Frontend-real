@@ -16,18 +16,18 @@ const RoleApplyContextBanner: React.FC<RoleApplyContextBannerProps> = ({ role })
   const locationShort = role.formatLocationLabel.split('·').pop()?.trim() ?? role.formatLocationLabel;
 
   return (
-    <div className="bg-[#EBF6FF] border-b border-[#BDD9FF] px-4 sm:px-10 py-2.5 flex flex-wrap items-center gap-2.5 sm:gap-3">
+    <div className="bg-white border-b border-[#BDD9FF] px-4 sm:px-10 py-2.5 flex flex-wrap items-center gap-2.5 sm:gap-3">
       <div
-        className="w-8 h-8 rounded-lg bg-[#0047CC] flex items-center justify-center shrink-0"
+        className="w-8 h-8 rounded-lg bg-[#EBF6FF] border border-[#E6E6E6] flex items-center justify-center shrink-0"
         aria-hidden
       >
-        <BriefcaseIcon size={16} className="text-white" strokeWidth={2.5} />
+        <BriefcaseIcon size={16} className="text-[#0047CC]" strokeWidth={2.5} />
       </div>
       <div className="flex-1 min-w-[180px]">
-        <p className="text-[11px] font-semibold text-[#387DFF] uppercase tracking-wide">
+        <p className="text-[11px] font-semibold text-[#182348] uppercase tracking-wide">
           You&apos;re applying for
         </p>
-        <p className="text-sm font-semibold text-[#182348] leading-tight">{role.roleTitle}</p>
+        <p className="text-sm font-semibold text-[#0047CC] leading-tight">{role.roleTitle}</p>
         <p className="text-xs text-[#808080] font-medium">
           {role.companyName}
           {locationShort ? ` · ${locationShort}` : ''}
@@ -35,15 +35,9 @@ const RoleApplyContextBanner: React.FC<RoleApplyContextBannerProps> = ({ role })
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0 ml-auto">
         <Tag
-          label={role.formatLocationLabel}
+          label={salaryShort ? `${role.formatLocationLabel} · ${salaryShort}` : role.formatLocationLabel}
           variant="blue"
-          className="!bg-[#0047CC] !text-white !text-xs !font-medium !px-3 !py-1 !rounded-full"
         />
-        {salaryShort ? (
-          <span className="inline-flex rounded-full bg-[#283979] text-white text-[11px] font-medium px-2.5 py-0.5">
-            {salaryShort}
-          </span>
-        ) : null}
       </div>
     </div>
   );

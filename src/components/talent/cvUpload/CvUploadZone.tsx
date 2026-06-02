@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckIcon } from '../../common/Icons';
+import { CheckIcon, UploadSimpleIcon } from '../../common/Icons';
 import { CV_ACCEPT_MIME, isAcceptedCvFile } from '../../../utils/cvUpload';
 
 interface CvUploadZoneProps {
@@ -52,29 +52,15 @@ const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect }) => {
           hasFile
             ? 'border-[#0047CC] bg-[#EEFBEE]'
             : isDragging
-              ? 'border-[#0047CC] bg-[#EBF6FF]'
-              : 'border-[#E6E6E6] hover:border-[#0047CC] hover:bg-[#EBF6FF]'
+              ? 'border-[#0047CC] bg-white'
+              : 'border-[#E6E6E6] hover:border-[#0047CC] hover:bg-white'
         }`}
       >
         <div className="mb-3.5 flex items-center justify-center">
           {hasFile ? (
             <CheckIcon size={34} className="text-[#0047CC]" strokeWidth={2.5} />
           ) : (
-            <svg
-              width="34"
-              height="34"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#808080"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
+            <UploadSimpleIcon size={34} stroke="#808080" aria-hidden />
           )}
         </div>
         <p className="text-base font-semibold text-[#1A1A1A] mb-1 text-center">

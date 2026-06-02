@@ -1,5 +1,5 @@
 import Button from '../../common/Button';
-import { BellIcon, CheckIcon, EditIcon, InfoIcon } from '../../common/Icons';
+import { BellIcon, CheckIcon, EditIcon, InfoIcon, AlertTriangleIcon } from '../../common/Icons';
 import Input from '../../common/Input';
 import Textarea from '../../common/Textarea';
 import AlertBanner from '../../common/AlertBanner';
@@ -62,13 +62,13 @@ const RoleAlertPreferencesCard: React.FC<RoleAlertPreferencesCardProps> = ({
     </h3>
     <p className="text-sm text-[#4A4A4A] leading-relaxed mb-2.5">
       Tell us what you are looking for. The moment a role is posted that matches your full profile at
-      80% or above, you will be notified instantly and can go straight into assessment — no
+      80% or above, you will be notified instantly and can go straight into assessment, no
       re-uploading, no re-onboarding.
     </p>
 
-    <div className="text-[13px] text-[#0047CC] font-bold bg-[#EBF6FF] rounded-md px-3.5 py-2.5 mb-[18px] flex items-center gap-2">
+    <div className="text-[13px] text-[#0047CC] font-bold mb-[18px] flex items-center gap-2">
       <InfoIcon size={14} strokeWidth={2.5} className="shrink-0" />
-      You are already signed up — your profile is live and working for you 24/7.
+      You are already signed up, your profile is live and working for you 24/7.
     </div>
 
     {!isEditing ? (
@@ -83,25 +83,21 @@ const RoleAlertPreferencesCard: React.FC<RoleAlertPreferencesCardProps> = ({
             <p className="text-[11px] font-bold text-[#808080] uppercase tracking-wide mb-1">
               {field.label}
             </p>
-            <p className="text-sm font-bold text-[#1A1A1A] leading-snug">{preferences[field.key]}</p>
+            <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">{preferences[field.key]}</p>
           </div>
         ))}
       </div>
     ) : (
       <>
         <AlertBanner variant="amber" showIcon={false} className="mb-4 !rounded-lg !px-4 !py-3.5">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.5" className="shrink-0 mt-0.5">
-            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            <line x1="12" y1="9" x2="12" y2="13" />
-            <line x1="12" y1="17" x2="12.01" y2="17" />
-          </svg>
+          <AlertTriangleIcon size={16} strokeWidth={2.5} className="shrink-0 mt-0.5 text-[#D97706]" />
           <div>
             <p className="text-sm font-bold text-[#92400E] mb-1.5">
               Your current profile is why VORA flagged you as a strong fit
             </p>
             <p className="text-[13px] text-[#78350F] leading-relaxed [&_strong]:font-bold [&_strong]:text-[#92400E]">
               Changing these preferences updates the criteria VORA uses to match you.{' '}
-              <strong>We will still alert you</strong> — but we will re-run the matching process from
+              <strong>We will still alert you</strong>, but we will re-run the matching process from
               scratch against your updated profile. This means a fresh scan, a new match score, and
               potentially a different outcome. <strong>Your current profile data stays on file either way.</strong>
             </p>

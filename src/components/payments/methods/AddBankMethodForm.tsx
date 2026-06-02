@@ -34,7 +34,7 @@ const AddBankMethodForm = forwardRef<PaymentMethodFormHandle>((_, ref) => {
     <div>
       <AlertBanner variant="blue" className="!text-xs mb-5">
         Bank transfers have <strong>no processing fee</strong> and work from any bank globally. Funds arrive
-        in 1–3 business days.
+        in 1,3 business days.
       </AlertBanner>
 
       <div className={PAYMENT_METHOD_FORM_FIELDS_CLASS}>

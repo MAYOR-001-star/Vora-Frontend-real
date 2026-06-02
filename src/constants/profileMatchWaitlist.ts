@@ -11,7 +11,7 @@ export const DEFAULT_ROLE_ALERT_PREFERENCES: RoleAlertPreferences = {
   roleType: 'Research & Analysis',
   experienceLevel: 'Student / Graduate',
   location: 'Open to remote, any region',
-  salaryExpectation: '$1,000 – $3,000 / month',
+  salaryExpectation: '$1,000, $3,000 / month',
   otherPreferences: 'No additional requirements',
 };
 
@@ -25,7 +25,7 @@ export const DEFAULT_PROFILE_WAITLIST_SUMMARY: ProfileWaitlistSummary = {
 export const PROFILE_WAITLIST_NEXT_STEPS = [
   {
     title: 'Your profile stays live.',
-    body: 'VORA holds your complete profile on file — CV, onboarding details, readiness score — ready to match the moment the right role appears.',
+    body: 'VORA holds your complete profile on file, CV, onboarding details, readiness score, ready to match the moment the right role appears.',
   },
   {
     title: 'Instant alert, instant access.',

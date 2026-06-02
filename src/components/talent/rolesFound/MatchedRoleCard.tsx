@@ -14,8 +14,8 @@ interface MatchedRoleCardProps {
 
 
 const MatchedRoleCard: React.FC<MatchedRoleCardProps> = ({ role, onViewJd, onGoToAssessment }) => (
-  <article className="bg-white border border-[#E6E6E6] rounded-lg px-5 py-5 mb-3.5 hover:border-[#387DFF] transition-colors">
-    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
+  <article className="bg-white border border-[#E6E6E6] rounded-2xl p-6 mb-5 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.04)] hover:border-[#387DFF] hover:shadow-[0_4px_16px_-4px_rgba(56,125,255,0.12)] transition-all duration-300 group">
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3">
       <div className="flex gap-3 items-start flex-1 min-w-0">
         <div className="w-[42px] h-[42px] rounded-lg bg-[#EBF6FF] border border-[#E6E6E6] flex items-center justify-center text-[9px] font-extrabold text-[#0047CC] shrink-0">
           {role.companyInitials}
@@ -25,64 +25,78 @@ const MatchedRoleCard: React.FC<MatchedRoleCardProps> = ({ role, onViewJd, onGoT
           <p className="text-[13px] text-[#808080] font-semibold">{role.companyName}</p>
         </div>
       </div>
-      <div className="text-left sm:text-right shrink-0">
-        <p className="text-base font-extrabold text-[#0047CC] whitespace-nowrap">{role.salaryAmount}</p>
-        <p className="text-[11px] text-[#808080]">{role.salaryPeriod}</p>
+      <div className="text-left sm:text-right shrink-0 flex items-baseline gap-0.5">
+        <p className="whitespace-nowrap">
+          <span className="text-[22px] font-bold text-[#0047CC] tracking-tight">{role.salaryAmount}/</span>
+          <span className="text-[15px] font-medium text-[#808080]">{role.salaryPeriod?.replace('ly', '') || ''}</span>
+        </p>
       </div>
     </div>
 
-    <div className="flex flex-wrap items-center gap-1.5 mb-2 text-xs font-bold text-[#4A4A4A]">
-      <span className="inline-flex items-center gap-1">
-        <LocationIcon size={11} className="text-[#808080]" />
-        {role.locationLine}
+    <div className="flex flex-nowrap items-center gap-1.5 mb-2 text-[11px] sm:text-xs text-[#718096] overflow-hidden whitespace-nowrap">
+      <span className="inline-flex items-center gap-1 shrink-0">
+        <LocationIcon size={11} className="text-[#A0AEC0]" />
+        <span className="font-medium">{role.locationLine}</span>
       </span>
-      <span className="text-[#ADADAD]">·</span>
-      <Tag
-        variant="blue"
-        label={role.formatPill}
-      />
-      <span className="text-[#ADADAD]">·</span>
-      <span className="text-[#808080] font-normal">{role.postedLine}</span>
+      <span className="text-[#CBD5E0] shrink-0">·</span>
+      <div className="shrink-0">
+        <Tag
+          variant="gray"
+          label={role.formatPill}
+        />
+      </div>
+      <span className="text-[#CBD5E0] shrink-0">·</span>
+      <span className="text-[#718096] font-normal truncate">{role.postedLine}</span>
     </div>
 
-    <div className="flex flex-wrap items-center gap-1.5 mb-2.5 text-xs text-[#808080]">
-      <Tag
-        variant="blue"
-        label={role.contractPill}
-      />
+    <div className="flex flex-nowrap items-center gap-1.5 mb-4 text-[11px] sm:text-xs text-[#718096] overflow-hidden whitespace-nowrap">
+      <div className="shrink-0">
+        <MatchPercentBadge percent={role.matchPercent} variant={role.matchVariant} />
+      </div>
+      <span className="text-[#CBD5E0] shrink-0 pl-1 pr-1">|</span>
+      <div className="shrink-0">
+        <Tag
+          variant="gray"
+          label={role.contractPill}
+        />
+      </div>
       {role.contractMeta.map((item, index) => (
-        <span key={item} className="inline-flex items-center gap-1.5">
-          {index === 0 ? null : <span className="text-[#ADADAD]">·</span>}
-          {item}
+        <span key={item} className="inline-flex items-center gap-1.5 shrink-0">
+          {index === 0 ? null : <span className="text-[#CBD5E0]">·</span>}
+          <span className="truncate">{item}</span>
         </span>
       ))}
-      <span className="text-[#ADADAD]">·</span>
-      <span className="inline-flex items-center gap-1">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#808080" strokeWidth="2">
+      <span className="text-[#CBD5E0] shrink-0">·</span>
+      <span className="inline-flex items-center gap-1 shrink-0">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#A0AEC0" strokeWidth="2">
           <circle cx="12" cy="12" r="10" />
           <polyline points="12 6 12 12 16 14" />
         </svg>
-        {role.timezone}
+        <span className="truncate">{role.timezone}</span>
       </span>
-    </div>
-
-    <div className="mb-2.5">
-      <MatchPercentBadge percent={role.matchPercent} variant={role.matchVariant} />
     </div>
 
     <MatchedRoleEligibilityNote eligibility={role.eligibility} />
 
-    <div className="flex flex-wrap gap-1.5 mb-3.5">
-      {role.tags.map((tag) => (
-        <Tag key={tag} label={tag} variant="blue" />
-      ))}
+    <div className="flex flex-wrap items-center gap-2 mb-3.5">
+      {role.tags.map((tag, index) => {
+        const isSkill = index >= 4;
+        return (
+          <Tag
+            key={tag}
+            label={tag}
+            variant={isSkill ? 'gray' : 'outline'}
+            className={isSkill ? '!bg-[#E2E8F0] !border-transparent !text-[#4A5568]' : ''}
+          />
+        );
+      })}
     </div>
 
     <div className="flex flex-col sm:flex-row gap-2.5 sm:justify-end items-stretch sm:items-center pt-3 border-t border-[#F7F7F7]">
       <button
         type="button"
         onClick={() => onViewJd(role.id)}
-        className="inline-flex items-center justify-center gap-1.5 px-[18px] py-2.5 bg-white text-[#0047CC] border-[1.5px] border-[#0047CC] rounded-full text-[13px] font-bold cursor-pointer hover:bg-[#EBF6FF] transition-colors"
+        className="inline-flex items-center justify-center gap-1.5 px-[18px] py-2.5 bg-white text-[#0047CC] border-[1.5px] border-[#0047CC] rounded-full text-[13px] font-bold cursor-pointer hover:bg-[#F0F7FF] hover:shadow-sm transition-all"
       >
         <FileIcon size={14} strokeWidth={2.5} />
         View full JD

@@ -23,7 +23,7 @@ const SelectableCard: React.FC<SelectableCardProps> = ({
     onClick={onClick}
     className={`w-full text-left p-4.5 rounded-xl border-2 transition-all cursor-pointer flex flex-col items-start ${
       selected
-        ? 'border-[#0047CC] bg-[#EBF6FF]'
+        ? 'border-[#0047CC] bg-white'
         : 'border-[#E6E6E6] bg-white hover:border-[#ADADAD]'
     } ${className}`}
   >

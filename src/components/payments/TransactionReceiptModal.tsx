@@ -46,7 +46,7 @@ const TransactionReceiptModal: React.FC<TransactionReceiptModalProps> = ({
         className="!text-[10px] !py-0.5 !px-2"
       />,
     ],
-    ['Job', item.job || '—'],
+    ['Job', item.job || ','],
   ];
 
   const detailRows = Object.entries(item.detail ?? {}).map(

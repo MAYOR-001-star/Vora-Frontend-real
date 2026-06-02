@@ -167,7 +167,7 @@ export const getDefaultVaultEditReview = (): VaultEditReviewData => {
     positions: '4',
     goLiveDate: '2025-10-01',
     responsibilities:
-      'Updated responsibilities — now includes sub-national health financing analysis and budget tracking',
+      'Updated responsibilities, now includes sub-national health financing analysis and budget tracking',
     minQualification: 'Doctoral degree (PhD or equivalent)',
     experienceYears: '8 to 12 years',
     salMin: '75000',

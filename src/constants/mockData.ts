@@ -141,7 +141,7 @@ export const TALENT_SAMPLE_JOBS = [
 
 export const SAMPLE_JOB_DETAILS = {
   id: '0',
-  title: 'Senior Epidemiologist – Field Operations',
+  title: 'Senior Epidemiologist, Field Operations',
   roleDetails: {
     type: 'Full-time employment',
     level: 'Senior level',
@@ -212,7 +212,7 @@ export const SAMPLE_TALENT_PROFILE = {
   role: 'Health Intern',
   location: 'Lagos, Nigeria',
   experienceYears: '2 years',
-  appliedJob: 'Global Health Policy Analyst Intern – Malaria Program',
+  appliedJob: 'Global Health Policy Analyst Intern, Malaria Program',
   appliedDate: 'Nov 21st, 2025',
   status: 'Pending',
   assessment: {
@@ -337,5 +337,5 @@ import { UserIcon, BookIcon, InfoIcon } from '../components/common/Icons';
 export const RECENT_ACTIVITY = [
   { text: 'James Okello rated your session ★★★★★ and left a review', time: '2 hours ago', icon: UserIcon, color: 'bg-green-50 text-green-600' },
   { text: '34 new enrollments in Epidemiology in Crisis Response', time: '5 hours ago', icon: BookIcon, color: 'bg-blue-50 text-blue-600' },
-  { text: 'Taiwo Adeyemi sent a new mentorship request — critical priority', time: '8 hours ago', icon: InfoIcon, color: 'bg-amber-50 text-amber-600' }
+  { text: 'Taiwo Adeyemi sent a new mentorship request, critical priority', time: '8 hours ago', icon: InfoIcon, color: 'bg-amber-50 text-amber-600' }
 ];

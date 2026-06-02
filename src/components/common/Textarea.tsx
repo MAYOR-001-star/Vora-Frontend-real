@@ -42,7 +42,7 @@ const Textarea: React.FC<TextareaProps> = ({
   const rowCount = typeof rows === 'number' ? rows : parseInt(String(rows), 10) || 4;
 
   const borderClass = error
-    ? 'border-red-500 bg-red-50'
+    ? 'border-red-500 bg-white'
     : 'border-border-default bg-white';
   const focusRingClass = error
     ? 'focus-within:ring-red-500/20 focus-within:border-red-500'

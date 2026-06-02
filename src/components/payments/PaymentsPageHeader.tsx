@@ -36,7 +36,7 @@ const PaymentsPageHeader: React.FC<PaymentsPageHeaderProps> = ({
         variant="outline"
         fullWidth={false}
         size="sm"
-        className="!min-h-[36px] !text-xs font-semibold border-[#0047CC] text-[#0047CC] hover:bg-[#EBF6FF]"
+        className="!min-h-[36px] !text-xs font-semibold border-[#0047CC] text-[#0047CC] hover:bg-white"
         onClick={onWithdraw}
       >
         Withdraw

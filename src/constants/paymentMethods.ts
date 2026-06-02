@@ -16,7 +16,7 @@ export const INITIAL_SAVED_PAYMENT_METHODS: SavedPaymentMethod[] = [
   {
     id: 'pm2',
     type: 'paystack',
-    name: 'Paystack – GTBank Nigeria',
+    name: 'Paystack, GTBank Nigeria',
     detail: 'payments@globalhealth.org · Nigeria (NGN) · West Africa',
     badge: { label: 'Active', variant: 'active' },
     isDefault: false,
@@ -24,7 +24,7 @@ export const INITIAL_SAVED_PAYMENT_METHODS: SavedPaymentMethod[] = [
   {
     id: 'pm4',
     type: 'flutterwave',
-    name: 'Flutterwave – Equity Bank Kenya',
+    name: 'Flutterwave, Equity Bank Kenya',
     detail: 'finance@globalhealth.org · Kenya (KES) · East Africa',
     badge: { label: 'Active', variant: 'active' },
     isDefault: false,
@@ -45,7 +45,7 @@ export const PAYMENT_SECURITY_NOTE =
 export const SUPPORTED_GATEWAYS: SupportedGateway[] = [
   {
     id: 'stripe',
-    title: 'Stripe – Cards',
+    title: 'Stripe, Cards',
     description: 'Visa, Mastercard, Amex · Global North · Instant',
     regions: 'UK · EU · US · Canada · Australia',
     iconBg: '#EBF6FF',
@@ -72,7 +72,7 @@ export const SUPPORTED_GATEWAYS: SupportedGateway[] = [
     id: 'bank',
     title: 'Bank Transfer',
     description: 'SWIFT/IBAN · Any bank worldwide · No processing fee',
-    regions: '1–3 business days · Universal fallback',
+    regions: '1,3 business days · Universal fallback',
     iconBg: '#F5F3FF',
     iconStroke: '#7C3AED',
   },

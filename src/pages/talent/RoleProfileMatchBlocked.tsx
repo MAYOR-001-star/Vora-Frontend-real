@@ -34,6 +34,7 @@ const RoleProfileMatchBlocked: React.FC = () => {
   );
 
   useEffect(() => {
+    /*
     if (!roleSlug) {
       navigate('/onboarding/talent?step=1', { replace: true });
       return;
@@ -46,9 +47,10 @@ const RoleProfileMatchBlocked: React.FC = () => {
         state: { firstName, lastName, roleSlug, matchScan, matchScore: matchScan.originalRoleScore },
       });
     }
+    */
   }, [roleSlug, matchScan, navigate, firstName, lastName]);
 
-  if (!roleSlug || !appliedRole || getPostMatchPath(matchScan) !== '/onboarding/talent/match/blocked') {
+  if (!roleSlug || !appliedRole) {
     return null;
   }
 

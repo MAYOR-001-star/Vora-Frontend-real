@@ -17,7 +17,7 @@ export interface LocationAutocompleteProps {
   className?: string;
   labelClassName?: string;
   searchMode?: 'all' | 'country' | 'city' | 'state';
-  /** Required when searchMode is "city" — limits suggestions to this country. */
+  /** Required when searchMode is "city", limits suggestions to this country. */
   countryName?: string;
   emptyMessage?: string;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
@@ -30,7 +30,7 @@ const inputClass = (error: boolean, focused: boolean) =>
   [
     'w-full px-3.5 py-[11px] rounded-lg border text-sm font-normal bg-white outline-none transition-[border-color] duration-150',
     'text-[#1A1A1A] placeholder:text-[#ADADAD] caret-[#1A1A1A]',
-    error ? 'border-red-500 bg-red-50' : 'border-[#E6E6E6]',
+    error ? 'border-red-500 bg-white' : 'border-[#E6E6E6]',
     !error && focused ? 'border-[#0047CC]' : '',
   ]
     .filter(Boolean)
@@ -40,7 +40,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   label,
   value,
   onChange,
-  placeholder = "e.g. Lagos, Nigeria — or 'Multiple locations'",
+  placeholder = "e.g. Lagos, Nigeria, or 'Multiple locations'",
   error = false,
   helperText = '',
   className = '',
@@ -54,12 +54,12 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   const noResultsText =
     emptyMessage ??
     (searchMode === 'country'
-      ? 'No countries found — try another spelling'
+      ? 'No countries found, try another spelling'
       : searchMode === 'city'
-        ? 'No cities found in this country — try another spelling'
+        ? 'No cities found in this country, try another spelling'
         : searchMode === 'state'
-          ? 'No states or regions found — try another spelling'
-          : 'No locations found — try a city or state name');
+          ? 'No states or regions found, try another spelling'
+          : 'No locations found, try a city or state name');
   const [query, setQuery] = useState(value);
   const [options, setOptions] = useState<LocationOption[]>([]);
   const [isOpen, setIsOpen] = useState(false);

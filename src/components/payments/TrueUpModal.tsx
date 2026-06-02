@@ -47,7 +47,7 @@ const TrueUpModal: React.FC<TrueUpModalProps> = ({ open, onClose }) => {
               True-Up Calculation Breakdown
             </p>
             {[
-              ['Salary range declared at upload', '$60,000 – $80,000'],
+              ['Salary range declared at upload', '$60,000, $80,000'],
               ['Midpoint used for escrow', '$70,000'],
               ['Escrow locked at upload', '$10,500 (15% × $70,000)'],
               ['Final salary declared at hire', '$75,000'],
@@ -68,7 +68,7 @@ const TrueUpModal: React.FC<TrueUpModalProps> = ({ open, onClose }) => {
           </div>
           {[
             ['Charged to', 'Mastercard ••••4242 (on file)'],
-            ['Salary within declared range?', '✓ Yes ($75k within $60k–$80k)'],
+            ['Salary within declared range?', '✓ Yes ($75k within $60k,$80k)'],
             ['Offer letter release', 'Held until true-up paid'],
           ].map(([label, value]) => (
             <div key={label} className="flex justify-between text-[13px] py-2 border-b border-[#F7F7F7]">

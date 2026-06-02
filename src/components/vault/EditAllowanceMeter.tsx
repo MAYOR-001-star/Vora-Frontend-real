@@ -20,7 +20,7 @@ const EditAllowanceMeter: React.FC<EditAllowanceMeterProps> = ({ used, total }) 
         ))}
       </div>
       <span className="text-[11px] text-[#808080]">
-        {used} of {total} used — {remaining} remaining
+        {used} of {total} used, {remaining} remaining
       </span>
     </div>
   );

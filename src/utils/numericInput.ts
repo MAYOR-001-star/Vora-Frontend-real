@@ -35,7 +35,7 @@ export function formatTimeCommitmentDisplay(digits: string): string {
   return `${digits} ${TIME_COMMITMENT_SUFFIX}`;
 }
 
-/** Max hours in a calendar week — used to cap time-commitment input. */
+/** Max hours in a calendar week, used to cap time-commitment input. */
 export const MAX_HOURS_PER_WEEK = 168;
 
 export function parseTimeCommitmentDigits(value: string): string {

@@ -72,7 +72,7 @@ const RejectAlignmentModal: React.FC<RejectAlignmentModalProps> = ({
             {REJECTION_REASON_OPTIONS.map((opt) => (
               <label
                 key={opt.value}
-                className="flex items-start gap-3 p-3 border border-[#E6E6E6] rounded-xl cursor-pointer hover:border-[#387DFF] hover:bg-[#EBF6FF]/40 transition-all"
+                className="flex items-start gap-3 p-3 border border-[#E6E6E6] rounded-xl cursor-pointer hover:border-[#387DFF] hover:bg-white transition-all"
               >
                 <input
                   type="radio"

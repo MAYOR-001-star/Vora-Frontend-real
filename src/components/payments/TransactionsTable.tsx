@@ -52,7 +52,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         <span className="text-xs text-[#808080]">
           {items.length === 0
             ? 'No results'
-            : `Showing ${start + 1}–${Math.min(start + TRANSACTIONS_PER_PAGE, items.length)} of ${items.length}`}
+            : `Showing ${start + 1},${Math.min(start + TRANSACTIONS_PER_PAGE, items.length)} of ${items.length}`}
         </span>
         <PaginationControls
           currentPage={page}

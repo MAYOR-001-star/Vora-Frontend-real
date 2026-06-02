@@ -40,10 +40,10 @@ const AddPaystackMethodForm = forwardRef<PaymentMethodFormHandle>((_, ref) => {
   return (
     <div>
       <AlertBanner variant="blue" className="!text-xs mb-5">
-        <strong>Paystack</strong> — best for Nigeria, Ghana, Kenya, Côte d&apos;Ivoire, Rwanda and South
+        <strong>Paystack</strong>, best for Nigeria, Ghana, Kenya, Côte d&apos;Ivoire, Rwanda and South
         Africa. Supports cards, USSD, bank transfer, and mobile money.
         <p className="mt-1.5 text-[11px] opacity-90">
-          Not available in Uganda, Tanzania, Zambia, Senegal, Cameroon — use Flutterwave for those.
+          Not available in Uganda, Tanzania, Zambia, Senegal, Cameroon, use Flutterwave for those.
         </p>
       </AlertBanner>
 
@@ -88,7 +88,7 @@ const AddPaystackMethodForm = forwardRef<PaymentMethodFormHandle>((_, ref) => {
               value={form.values.phone}
               onChange={(e) => form.setField('phone', e.target.value)}
               onBlur={() => form.markTouched('phone')}
-              className={`flex-1 min-w-0 px-4 py-3 rounded-r-lg border text-sm ${form.fieldError('phone') ? 'border-red-500 bg-red-50' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue`}
+              className={`flex-1 min-w-0 px-4 py-3 rounded-r-lg border text-sm ${form.fieldError('phone') ? 'border-red-500 bg-white' : 'border-border-default bg-white'} focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue`}
             />
           </div>
         </FormFieldShell>

@@ -58,7 +58,7 @@ const Rejection: React.FC = () => {
         </div>
         <div>
           <div className="text-[14px] font-medium text-gray-900">{applicantId || 'APP-008'}</div>
-          <div className="text-[12px] text-gray-500 font-medium">Global Health Policy Analyst Intern – Malaria Program</div>
+          <div className="text-[12px] text-gray-500 font-medium">Global Health Policy Analyst Intern, Malaria Program</div>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ const Rejection: React.FC = () => {
           <div className="space-y-2">
             <h2 className="text-xl font-medium text-gray-900 ">Document Rejection Reason</h2>
             <p className="text-[13px] text-gray-500 leading-relaxed font-medium">
-              A rejection reason is required. VORA reviews all rejections against the candidate's verified assessment record. Reasons that reference competency, communication ability, or professional judgment — already assessed and passed — will trigger an automatic review.
+              A rejection reason is required. VORA reviews all rejections against the candidate's verified assessment record. Reasons that reference competency, communication ability, or professional judgment, already assessed and passed, will trigger an automatic review.
             </p>
           </div>
 

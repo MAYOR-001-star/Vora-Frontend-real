@@ -318,7 +318,7 @@ const ApplicantsTabView: React.FC<ApplicantsTabViewProps> = ({ onHire }) => {
       </div>
 
       {/* Recommended Top Candidates */}
-      <div className="bg-[#EBF6FF]/50 border border-[#387DFF]/10 rounded-2xl p-8 space-y-6">
+      <div className="bg-white border border-[#387DFF]/10 rounded-2xl p-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-[18px] font-medium text-[#0047CC] tracking-tight">VORA AI Recommendation</h3>

@@ -37,12 +37,13 @@ const JobPostedConfirmation: React.FC = () => {
       />
 
       <ConfirmationHeader
-        icon={<CheckIcon size={34} className="text-[#2CA62C]" strokeWidth={3} />}
+        iconWrapperClassName="bg-[#EBF6FF] border-[#BDD9FF]"
+        icon={<CheckIcon size={34} className="text-[#0047CC]" strokeWidth={3} />}
         title="Your role is live. VORA is on it."
         subtitle={
           <>
             VORA&apos;s AI matching engine is already running against your specification. Share the
-            link below to reach candidates outside the pool — they still go through the same
+            link below to reach candidates outside the pool, they still go through the same
             three-stage assessment gate before you see them.
           </>
         }
@@ -60,11 +61,11 @@ const JobPostedConfirmation: React.FC = () => {
 
       <div className="bg-white border border-[#E6E6E6] rounded-xl p-5 mb-5">
         <h2 className="text-[15px] font-bold text-[#1A1A1A] mb-1">
-          Share this role — get matches faster
+          Share this role, get matches faster
         </h2>
         <p className="text-[13px] text-[#808080] leading-relaxed mb-4">
           Anyone with this link can view the role and apply through VORA. They complete onboarding
-          and assessment before appearing in your applicant list — same gate as pool candidates.
+          and assessment before appearing in your applicant list, same gate as pool candidates.
         </p>
 
         <RoleShareSection

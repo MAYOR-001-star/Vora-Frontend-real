@@ -10,7 +10,7 @@ const StepValidationAlert: React.FC<StepValidationAlertProps> = ({ errors }) => 
 
   return (
     <div
-      className="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl"
+      className="mb-5 p-4 bg-white border border-red-200 rounded-xl"
       role="alert"
     >
       <p className="text-sm font-bold text-red-800">Please fix the following before continuing:</p>

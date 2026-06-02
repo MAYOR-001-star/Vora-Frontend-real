@@ -9,7 +9,7 @@ const ProfileMatchPulseIcon: React.FC = () => (
         style={{ animationDelay: '0.75s' }}
         aria-hidden
       />
-    <div className="relative z-[2] w-[88px] h-[88px] rounded-full bg-[#EBF6FF] border-2 border-[#387DFF] flex items-center justify-center">
+    <div className="relative z-[2] w-[88px] h-[88px] rounded-full bg-white border-2 border-[#387DFF] flex items-center justify-center">
       <svg
         width="32"
         height="32"

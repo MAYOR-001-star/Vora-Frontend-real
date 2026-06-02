@@ -892,7 +892,7 @@ const MentorProfile: React.FC = () => {
                 </label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[#E5E7EB] rounded-xl p-8 text-center cursor-pointer hover:border-[#0047CC] hover:bg-blue-50/20 transition-all group"
+                  className="border-2 border-dashed border-[#E5E7EB] rounded-xl p-8 text-center cursor-pointer hover:border-[#0047CC] hover:bg-white/20 transition-all group"
                 >
                   <div className="flex flex-col items-center gap-2">
                     <UploadIcon className="w-8 h-8 text-gray-400 group-hover:text-[#0047CC] transition-colors" />

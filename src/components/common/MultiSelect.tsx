@@ -86,7 +86,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               setIsOpen(!isOpen);
             }
           }}
-          className={`w-full min-h-[48px] px-4 py-2.5 sm:py-3 rounded-lg border ${error ? 'border-red-500 bg-red-50' : 'border-border-default bg-white'} text-left focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-500/20 focus:border-red-500' : 'focus:ring-blue-500/20 focus:border-blue-500'} transition-all cursor-pointer flex items-center justify-between gap-2`}
+          className={`w-full min-h-[48px] px-4 py-2.5 sm:py-3 rounded-lg border ${error ? 'border-red-500 bg-white' : 'border-border-default bg-white'} text-left focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-500/20 focus:border-red-500' : 'focus:ring-blue-500/20 focus:border-blue-500'} transition-all cursor-pointer flex items-center justify-between gap-2`}
         >
           <div className="flex-1 flex flex-col gap-1.5">
             {selected.length > 0 ? (

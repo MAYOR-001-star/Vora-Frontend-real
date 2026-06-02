@@ -43,7 +43,7 @@ const PaymentsTransactions: React.FC = () => {
         <div>
           <PageTitle className="text-2xl tracking-tight">All Transactions</PageTitle>
           <SectionDescription className="text-[13px] mt-1 max-w-3xl">
-            Full audit trail — top-ups, escrow locks, true-ups, alignment fees, refunds, withdrawals ·
+            Full audit trail, top-ups, escrow locks, true-ups, alignment fees, refunds, withdrawals ·
             Click any row for full receipt
           </SectionDescription>
         </div>

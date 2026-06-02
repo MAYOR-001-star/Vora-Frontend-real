@@ -133,7 +133,7 @@ const Jobs: React.FC = () => {
                         <Tag label={job.status} variant={getJobStatusVariant(job.status)} />
                       </div>
                     </div>
-                    <p className="text-[12px] lg:text-[11px] font-medium text-gray-400 mt-1">{job.org} — {job.location}</p>
+                    <p className="text-[12px] lg:text-[11px] font-medium text-gray-400 mt-1">{job.org}, {job.location}</p>
                     {job.subStatus && (
                       <div className="flex flex-wrap gap-2 mt-3 lg:mt-2">
                         {job.subStatus.split(' · ').map((tag, i) => (

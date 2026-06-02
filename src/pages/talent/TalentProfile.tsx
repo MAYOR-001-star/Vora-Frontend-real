@@ -78,7 +78,7 @@ const TalentProfile: React.FC = () => {
               </p>
               <div className="flex items-center gap-2 pt-1">
                 <span className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Status:</span>
-                <span className="px-3 py-1 rounded-full bg-blue-50 text-[#0047CC] text-[11px] font-medium border border-blue-100">
+                <span className="px-3 py-1 rounded-full bg-white text-[#0047CC] text-[11px] font-medium border border-blue-100">
                   {data.status}
                 </span>
               </div>
@@ -92,7 +92,7 @@ const TalentProfile: React.FC = () => {
             <h3 className="text-[13px] font-medium text-gray-900 uppercase tracking-[0.15em] ml-2">Assessment overview</h3>
             
             <div className="grid grid-cols-1 gap-5">
-              <div className="bg-[#EBF6FF] p-8 rounded-[32px] space-y-4 relative overflow-hidden group border border-blue-100/20 shadow-sm">
+              <div className="bg-white p-8 rounded-[32px] space-y-4 relative overflow-hidden group border border-blue-100/20 shadow-sm">
                 <div className="flex items-center justify-between relative z-10">
                   <p className="text-[13px] font-medium text-[#0047CC] uppercase tracking-widest">Pyschometric Test</p>
                   <div className="flex items-center gap-1 text-[11px] font-medium text-[#2CA62C] bg-white/60 backdrop-blur-md px-3 py-1 rounded-full border border-green-100/30">

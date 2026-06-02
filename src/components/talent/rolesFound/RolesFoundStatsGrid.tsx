@@ -6,37 +6,39 @@ interface RolesFoundStatsGridProps {
 }
 
 const RolesFoundStatsGrid: React.FC<RolesFoundStatsGridProps> = ({ summary }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-3 border border-[#E6E6E6] rounded-lg overflow-hidden bg-[#E6E6E6] gap-px mb-6">
-    <div className="bg-white px-5 py-[18px] col-span-2 sm:col-span-1">
-      <p className="text-sm font-semibold text-[#1A1A1A] mb-2">Career Readiness Score</p>
-      <div className="relative w-20 h-[46px] overflow-hidden mt-2 mb-2 mx-auto mt-0 lg:mt-4">
+  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+    <div className="bg-white border border-[#E6E6E6] rounded-2xl p-5 col-span-2 sm:col-span-1 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.04)] flex flex-col items-center justify-center">
+      <p className="text-[13px] font-bold text-[#4A5568] mb-1">Career Readiness Score</p>
+      <div className="relative w-[72px] h-[40px] overflow-hidden mt-3 mb-1">
         <ProgressArc
-          size={80}
+          size={72}
           strokeWidth={8}
           percentage={summary.careerReadinessScore}
           color="#0047CC"
-          background="#E6E6E6"
+          background="#F0F4F8"
           className="absolute top-0 left-0"
         />
-        <div className="absolute bottom-0 left-0 right-0 text-center text-xl font-black text-[#1A1A1A]">
+        <div className="absolute bottom-0 left-0 right-0 text-center text-lg font-black text-[#1A1A1A] leading-none pb-0.5">
           {summary.careerReadinessScore}%
         </div>
       </div>
     </div>
 
-    <div className="bg-white px-5 py-[18px]">
-      <p className="text-sm font-semibold text-[#1A1A1A] mb-2">Assessment Grade</p>
-      <p className="text-xl font-black text-[#0047CC]">⚠ Grade {summary.assessmentGrade}</p>
-      <p className="text-xs text-[#808080] mt-1">Based on your profile</p>
-      <button type="button" className="text-xs text-[#0047CC] font-bold mt-1.5 cursor-pointer hover:underline">
-        See how grades work →
+    <div className="bg-white border border-[#E6E6E6] rounded-2xl p-5 flex flex-col justify-center shadow-[0_2px_8px_-4px_rgba(0,0,0,0.04)]">
+      <p className="text-[13px] font-bold text-[#4A5568] mb-1.5">Assessment Grade</p>
+      <div className="flex items-center gap-1.5 mb-1">
+        <span className="text-xl font-bold text-[#0047CC]">Grade {summary.assessmentGrade}</span>
+      </div>
+      <p className="text-[11px] font-medium text-[#718096] mb-1.5">Based on your profile</p>
+      <button type="button" className="text-[11px] text-[#387DFF] font-bold cursor-pointer hover:text-[#0047CC] text-left transition-colors">
+        See how grades work &rarr;
       </button>
     </div>
 
-    <div className="bg-white px-5 py-[18px]">
-      <p className="text-sm font-semibold text-[#1A1A1A] mb-2">Roles You Match</p>
-      <p className="text-[22px] font-black text-[#0047CC]">{summary.matchedRoleCount}</p>
-      <p className="text-xs text-[#808080] mt-1">Go straight to assessment</p>
+    <div className="bg-white border border-[#E6E6E6] rounded-2xl p-5 flex flex-col justify-center shadow-[0_2px_8px_-4px_rgba(0,0,0,0.04)]">
+      <p className="text-[13px] font-bold text-[#4A5568] mb-1.5">Roles You Match</p>
+      <p className="text-2xl font-bold text-[#0047CC] leading-none mb-1.5">{summary.matchedRoleCount}</p>
+      <p className="text-[11px] font-medium text-[#718096]">Go straight to assessment</p>
     </div>
   </div>
 );

@@ -58,7 +58,7 @@ const PaymentsWithdraw: React.FC = () => {
     setStep(next);
   };
 
-  const stepTitles = ['Step 1 – Amount & Destination', 'Step 2 – Account Details', 'Step 3 – Review & Confirm'];
+  const stepTitles = ['Step 1, Amount & Destination', 'Step 2, Account Details', 'Step 3, Review & Confirm'];
 
   return (
     <div className="w-full pb-10 animate-in fade-in duration-500">
