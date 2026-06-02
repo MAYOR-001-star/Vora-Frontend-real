@@ -17,10 +17,10 @@ const RoleShareSection: React.FC<RoleShareSectionProps> = ({
   shareTitle,
   className = '',
 }) => {
-  const [selected, setSelected] = useState<ShareChannel['id']>('email');
+  const [selected, setSelected] = useState<ShareChannel['id'] | null>(null);
 
   const displayLink = useMemo(
-    () => buildShareHref(selected, shareUrl, shareTitle),
+    () => buildShareHref(selected as ShareChannel['id'], shareUrl, shareTitle),
     [selected, shareUrl, shareTitle],
   );
 

@@ -232,53 +232,53 @@ export function getTimezoneValuesForRegionKey(regionKey: string): string[] {
 
 export const TZ_REGIONS: Record<string, string[]> = {
   EMEA: [
-    'UTC+0 (GMT, London, Dublin, Accra, Dakar, Abidjan)',
-    'UTC+1 (CET, Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
-    'UTC+2 (EET, Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
-    'UTC+3 (EAT, Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)'
+    'UTC+0 (GMT - London, Dublin, Accra, Dakar, Abidjan)',
+    'UTC+1 (CET - Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
+    'UTC+2 (EET - Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT - Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)'
   ],
   AMER: [
-    'UTC-8 (PST, Los Angeles, Vancouver)',
-    'UTC-7 (MST, Denver, Phoenix)',
-    'UTC-6 (CST, Chicago, Mexico City)',
-    'UTC-5 (EST, New York, Toronto)',
-    'UTC-4 (AST, Caracas, La Paz, Halifax)',
-    'UTC-3 (BRT, São Paulo, Buenos Aires, Montevideo)'
+    'UTC-8 (PST - Los Angeles, Vancouver)',
+    'UTC-7 (MST - Denver, Phoenix)',
+    'UTC-6 (CST - Chicago, Mexico City)',
+    'UTC-5 (EST - New York, Toronto)',
+    'UTC-4 (AST - Caracas, La Paz, Halifax)',
+    'UTC-3 (BRT - São Paulo, Buenos Aires, Montevideo)'
   ],
   APAC: [
-    'UTC+5:30 (IST, Mumbai, New Delhi)',
-    'UTC+6 (BST, Dhaka, Almaty)',
-    'UTC+7 (ICT, Bangkok, Jakarta, Hanoi, Phnom Penh)',
-    'UTC+8 (SGT/CST, Singapore, Beijing, Manila, Kuala Lumpur, Perth)',
-    'UTC+9 (JST/KST, Tokyo, Seoul)',
-    'UTC+10 (AEST, Sydney, Melbourne, Brisbane)',
-    'UTC+12 (NZST, Auckland, Fiji)'
+    'UTC+5:30 (IST - Mumbai, New Delhi)',
+    'UTC+6 (BST - Dhaka, Almaty)',
+    'UTC+7 (ICT - Bangkok, Jakarta, Hanoi, Phnom Penh)',
+    'UTC+8 (SGT/CST - Singapore, Beijing, Manila, Kuala Lumpur, Perth)',
+    'UTC+9 (JST/KST - Tokyo, Seoul)',
+    'UTC+10 (AEST - Sydney, Melbourne, Brisbane)',
+    'UTC+12 (NZST - Auckland, Fiji)'
   ],
   AFRICA: [
-    'UTC+0 (GMT, London, Dublin, Accra, Dakar, Abidjan)',
-    'UTC+1 (CET, Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
-    'UTC+2 (EET, Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
-    'UTC+3 (EAT, Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)'
+    'UTC+0 (GMT - London, Dublin, Accra, Dakar, Abidjan)',
+    'UTC+1 (CET - Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
+    'UTC+2 (EET - Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT - Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)'
   ],
   MENA: [
-    'UTC+2 (EET, Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
-    'UTC+3 (EAT, Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)',
-    'UTC+3:30 (IRST, Tehran)',
-    'UTC+4 (GST, Dubai, Abu Dhabi, Baku, Tbilisi)',
-    'UTC+5 (PKT, Islamabad, Karachi, Tashkent)'
+    'UTC+2 (EET - Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT - Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)',
+    'UTC+3:30 (IRST - Tehran)',
+    'UTC+4 (GST - Dubai, Abu Dhabi, Baku, Tbilisi)',
+    'UTC+5 (PKT - Islamabad, Karachi, Tashkent)'
   ],
   ALL: [
-    'UTC+0 (GMT, London, Dublin, Accra, Dakar, Abidjan)',
-    'UTC+1 (CET, Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
-    'UTC+2 (EET, Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
-    'UTC+3 (EAT, Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)',
-    'UTC+4 (GST, Dubai, Abu Dhabi, Baku, Tbilisi)',
-    'UTC+5:30 (IST, Mumbai, New Delhi)',
-    'UTC+7 (ICT, Bangkok, Jakarta, Hanoi, Phnom Penh)',
-    'UTC+8 (SGT/CST, Singapore, Beijing, Manila, Kuala Lumpur, Perth)',
-    'UTC-5 (EST, New York, Toronto)',
-    'UTC-3 (BRT, São Paulo, Buenos Aires, Montevideo)',
-    'UTC+10 (AEST, Sydney, Melbourne, Brisbane)'
+    'UTC+0 (GMT - London, Dublin, Accra, Dakar, Abidjan)',
+    'UTC+1 (CET - Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)',
+    'UTC+2 (EET - Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)',
+    'UTC+3 (EAT - Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)',
+    'UTC+4 (GST - Dubai, Abu Dhabi, Baku, Tbilisi)',
+    'UTC+5:30 (IST - Mumbai, New Delhi)',
+    'UTC+7 (ICT - Bangkok, Jakarta, Hanoi, Phnom Penh)',
+    'UTC+8 (SGT/CST - Singapore, Beijing, Manila, Kuala Lumpur, Perth)',
+    'UTC-5 (EST - New York, Toronto)',
+    'UTC-3 (BRT - São Paulo, Buenos Aires, Montevideo)',
+    'UTC+10 (AEST - Sydney, Melbourne, Brisbane)'
   ]
 };
 
@@ -286,49 +286,49 @@ export const TZ_GROUPS = [
   {
     label: 'Americas (AMER)',
     options: [
-      { label: 'UTC-8 (PST, Los Angeles, Vancouver)', value: 'UTC-8 (PST, Los Angeles, Vancouver)' },
-      { label: 'UTC-7 (MST, Denver, Phoenix)', value: 'UTC-7 (MST, Denver, Phoenix)' },
-      { label: 'UTC-6 (CST, Chicago, Mexico City)', value: 'UTC-6 (CST, Chicago, Mexico City)' },
-      { label: 'UTC-5 (EST, New York, Toronto)', value: 'UTC-5 (EST, New York, Toronto)' },
-      { label: 'UTC-4 (AST, Caracas, La Paz, Halifax)', value: 'UTC-4 (AST, Caracas, La Paz, Halifax)' },
-      { label: 'UTC-3 (BRT, São Paulo, Buenos Aires, Montevideo)', value: 'UTC-3 (BRT, São Paulo, Buenos Aires, Montevideo)' }
+      { label: 'UTC-8 (PST - Los Angeles, Vancouver)', value: 'UTC-8 (PST - Los Angeles, Vancouver)' },
+      { label: 'UTC-7 (MST - Denver, Phoenix)', value: 'UTC-7 (MST - Denver, Phoenix)' },
+      { label: 'UTC-6 (CST - Chicago, Mexico City)', value: 'UTC-6 (CST - Chicago, Mexico City)' },
+      { label: 'UTC-5 (EST - New York, Toronto)', value: 'UTC-5 (EST - New York, Toronto)' },
+      { label: 'UTC-4 (AST - Caracas, La Paz, Halifax)', value: 'UTC-4 (AST - Caracas, La Paz, Halifax)' },
+      { label: 'UTC-3 (BRT - São Paulo, Buenos Aires, Montevideo)', value: 'UTC-3 (BRT - São Paulo, Buenos Aires, Montevideo)' }
     ]
   },
   {
     label: 'Western Europe & West Africa (part of EMEA)',
     options: [
-      { label: 'UTC+0 (GMT, London, Dublin, Accra, Dakar, Abidjan)', value: 'UTC+0 (GMT, London, Dublin, Accra, Dakar, Abidjan)' },
-      { label: 'UTC+1 (CET, Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)', value: 'UTC+1 (CET, Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)' }
+      { label: 'UTC+0 (GMT - London, Dublin, Accra, Dakar, Abidjan)', value: 'UTC+0 (GMT - London, Dublin, Accra, Dakar, Abidjan)' },
+      { label: 'UTC+1 (CET - Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)', value: 'UTC+1 (CET - Paris, Berlin, Rome, Lagos, Kinshasa, Tunis)' }
     ]
   },
   {
     label: 'Eastern Europe & East/Southern Africa (part of EMEA)',
     options: [
-      { label: 'UTC+2 (EET, Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)', value: 'UTC+2 (EET, Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)' },
-      { label: 'UTC+3 (EAT, Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)', value: 'UTC+3 (EAT, Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)' }
+      { label: 'UTC+2 (EET - Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)', value: 'UTC+2 (EET - Cairo, Johannesburg, Harare, Lusaka, Helsinki, Athens)' },
+      { label: 'UTC+3 (EAT - Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)', value: 'UTC+3 (EAT - Nairobi, Addis Ababa, Mogadishu, Moscow, Riyadh, Kuwait)' }
     ]
   },
   {
     label: 'Middle East & Central/South Asia (MENA / part of APAC)',
     options: [
-      { label: 'UTC+3:30 (IRST, Tehran)', value: 'UTC+3:30 (IRST, Tehran)' },
-      { label: 'UTC+4 (GST, Dubai, Abu Dhabi, Baku, Tbilisi)', value: 'UTC+4 (GST, Dubai, Abu Dhabi, Baku, Tbilisi)' },
-      { label: 'UTC+4:30 (AFT, Kabul)', value: 'UTC+4:30 (AFT, Kabul)' },
-      { label: 'UTC+5 (PKT, Islamabad, Karachi, Tashkent)', value: 'UTC+5 (PKT, Islamabad, Karachi, Tashkent)' },
-      { label: 'UTC+5:30 (IST, Mumbai, New Delhi, Colombo)', value: 'UTC+5:30 (IST, Mumbai, New Delhi, Colombo)' },
-      { label: 'UTC+5:45 (NPT, Kathmandu)', value: 'UTC+5:45 (NPT, Kathmandu)' },
-      { label: 'UTC+6 (BST, Dhaka, Almaty)', value: 'UTC+6 (BST, Dhaka, Almaty)' }
+      { label: 'UTC+3:30 (IRST - Tehran)', value: 'UTC+3:30 (IRST - Tehran)' },
+      { label: 'UTC+4 (GST - Dubai, Abu Dhabi, Baku, Tbilisi)', value: 'UTC+4 (GST - Dubai, Abu Dhabi, Baku, Tbilisi)' },
+      { label: 'UTC+4:30 (AFT - Kabul)', value: 'UTC+4:30 (AFT - Kabul)' },
+      { label: 'UTC+5 (PKT - Islamabad, Karachi, Tashkent)', value: 'UTC+5 (PKT - Islamabad, Karachi, Tashkent)' },
+      { label: 'UTC+5:30 (IST - Mumbai, New Delhi, Colombo)', value: 'UTC+5:30 (IST - Mumbai, New Delhi, Colombo)' },
+      { label: 'UTC+5:45 (NPT - Kathmandu)', value: 'UTC+5:45 (NPT - Kathmandu)' },
+      { label: 'UTC+6 (BST - Dhaka, Almaty)', value: 'UTC+6 (BST - Dhaka, Almaty)' }
     ]
   },
   {
     label: 'Southeast & East Asia (APAC)',
     options: [
-      { label: 'UTC+7 (ICT, Bangkok, Jakarta, Hanoi, Phnom Penh)', value: 'UTC+7 (ICT, Bangkok, Jakarta, Hanoi, Phnom Penh)' },
-      { label: 'UTC+8 (SGT/CST, Singapore, Beijing, Manila, Kuala Lumpur, Perth)', value: 'UTC+8 (SGT/CST, Singapore, Beijing, Manila, Kuala Lumpur, Perth)' },
-      { label: 'UTC+9 (JST/KST, Tokyo, Seoul)', value: 'UTC+9 (JST/KST, Tokyo, Seoul)' },
-      { label: 'UTC+9:30 (ACST, Darwin, Adelaide)', value: 'UTC+9:30 (ACST, Darwin, Adelaide)' },
-      { label: 'UTC+10 (AEST, Sydney, Melbourne, Brisbane)', value: 'UTC+10 (AEST, Sydney, Melbourne, Brisbane)' },
-      { label: 'UTC+12 (NZST, Auckland, Fiji)', value: 'UTC+12 (NZST, Auckland, Fiji)' }
+      { label: 'UTC+7 (ICT - Bangkok, Jakarta, Hanoi, Phnom Penh)', value: 'UTC+7 (ICT - Bangkok, Jakarta, Hanoi, Phnom Penh)' },
+      { label: 'UTC+8 (SGT/CST - Singapore, Beijing, Manila, Kuala Lumpur, Perth)', value: 'UTC+8 (SGT/CST - Singapore, Beijing, Manila, Kuala Lumpur, Perth)' },
+      { label: 'UTC+9 (JST/KST - Tokyo, Seoul)', value: 'UTC+9 (JST/KST - Tokyo, Seoul)' },
+      { label: 'UTC+9:30 (ACST - Darwin, Adelaide)', value: 'UTC+9:30 (ACST - Darwin, Adelaide)' },
+      { label: 'UTC+10 (AEST - Sydney, Melbourne, Brisbane)', value: 'UTC+10 (AEST - Sydney, Melbourne, Brisbane)' },
+      { label: 'UTC+12 (NZST - Auckland, Fiji)', value: 'UTC+12 (NZST - Auckland, Fiji)' }
     ]
   }
 ];
@@ -432,12 +432,12 @@ export const MIN_QUALIFICATION_OPTIONS: Option[] = [
   { label: 'Undergraduate degree (any field)', value: 'Undergraduate degree (any field)' },
   { label: 'Undergraduate degree (health or life science)', value: 'Undergraduate degree (health or life science)' },
   { label: 'Postgraduate degree (Masters or equivalent)', value: 'Postgraduate degree (Masters or equivalent)' },
-  { label: 'Postgraduate degree in public health, global health, or epidemiology (MPH, MSc, etc.)', value: 'Postgraduate degree in public health, global health, or epidemiology (MPH, MSc, etc.)' },
-  { label: 'Professional clinical qualification (MBBS, MD, MBChB, etc.)', value: 'Professional clinical qualification (MBBS, MD, MBChB, etc.)' },
-  { label: 'Professional nursing qualification (RN, RM, BSN, etc.)', value: 'Professional nursing qualification (RN, RM, BSN, etc.)' },
+  { label: 'Postgraduate degree in public health, global health, or epidemiology (MPH - MSc, etc.)', value: 'Postgraduate degree in public health, global health, or epidemiology (MPH - MSc, etc.)' },
+  { label: 'Professional clinical qualification (MBBS - MD, MBChB, etc.)', value: 'Professional clinical qualification (MBBS - MD, MBChB, etc.)' },
+  { label: 'Professional nursing qualification (RN - RM, BSN, etc.)', value: 'Professional nursing qualification (RN - RM, BSN, etc.)' },
   { label: 'Professional allied health qualification (physiotherapy, OT, radiography, etc.)', value: 'Professional allied health qualification (physiotherapy, OT, radiography, etc.)' },
   { label: 'Professional pharmacy qualification (BPharm, MPharm, PharmD, etc.)', value: 'Professional pharmacy qualification (BPharm, MPharm, PharmD, etc.)' },
-  { label: 'Specialist / postgraduate clinical training (MRCP, FRCS, MRCGP, fellowship, residency, etc.)', value: 'Specialist / postgraduate clinical training (MRCP, FRCS, MRCGP, fellowship, residency, etc.)' },
+  { label: 'Specialist / postgraduate clinical training (MRCP - FRCS, MRCGP, fellowship, residency, etc.)', value: 'Specialist / postgraduate clinical training (MRCP - FRCS, MRCGP, fellowship, residency, etc.)' },
   { label: 'Doctoral degree (PhD or equivalent)', value: 'Doctoral degree (PhD or equivalent)' },
   { label: 'Professional certificate or vocational qualification', value: 'Professional certificate or vocational qualification' }
 ];
@@ -458,16 +458,16 @@ export const SECTOR_BACKGROUND_GROUPS: OptionGroup[] = [
   {
     label: 'International Organisations',
     options: [
-      { label: 'UN agency / multilateral organisation (WHO, UNICEF, UNFPA, etc.)', value: 'UN agency / multilateral organisation (WHO, UNICEF, UNFPA, etc.)' },
-      { label: 'Bilateral donor agency (USAID, FCDO, GIZ, Sida, etc.)', value: 'Bilateral donor agency (USAID, FCDO, GIZ, Sida, etc.)' },
+      { label: 'UN agency / multilateral organisation (WHO - UNICEF, UNFPA, etc.)', value: 'UN agency / multilateral organisation (WHO - UNICEF, UNFPA, etc.)' },
+      { label: 'Bilateral donor agency (USAID - FCDO, GIZ, Sida, etc.)', value: 'Bilateral donor agency (USAID - FCDO, GIZ, Sida, etc.)' },
       { label: 'Development bank (World Bank, AfDB, ADB, etc.)', value: 'Development bank (World Bank, AfDB, ADB, etc.)' },
-      { label: 'Global health financing body (GFATM, Gavi, PEPFAR, CEPI, etc.)', value: 'Global health financing body (GFATM, Gavi, PEPFAR, CEPI, etc.)' }
+      { label: 'Global health financing body (GFATM - Gavi, PEPFAR, CEPI, etc.)', value: 'Global health financing body (GFATM - Gavi, PEPFAR, CEPI, etc.)' }
     ]
   },
   {
     label: 'NGO & Civil Society',
     options: [
-      { label: 'International NGO (MSF, IRC, CARE, Save the Children, etc.)', value: 'International NGO (MSF, IRC, CARE, Save the Children, etc.)' },
+      { label: 'International NGO (MSF - IRC, CARE, Save the Children, etc.)', value: 'International NGO (MSF - IRC, CARE, Save the Children, etc.)' },
       { label: 'National / local NGO', value: 'National / local NGO' },
       { label: 'Faith-based organisation / mission hospital', value: 'Faith-based organisation / mission hospital' },
       { label: 'Social enterprise / impact organisation', value: 'Social enterprise / impact organisation' }

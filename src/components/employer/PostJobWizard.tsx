@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
@@ -2095,7 +2095,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
 
                       {showEscrow('sal') && renderEscrowBox('sal')}
 
-                      <AlertBanner variant="amber" className="mt-3 !text-xs">
+                      <AlertBanner variant="blue" className="mt-3 !text-[13px]" showIcon={false}>
                         The escrow is VORA&apos;s fee, not a salary deposit. You pay this once per role, regardless of whether the hire completes at the exact midpoint. The true-up at hire confirms the final fee against the actual salary agreed.
                       </AlertBanner>
                     </div>
@@ -2214,7 +2214,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
 
                       {showEscrow('uni') && renderEscrowBox('uni')}
 
-                      <AlertBanner variant="amber" className="mt-3 !text-xs">
+                      <AlertBanner variant="blue" className="mt-3 !text-[13px]" showIcon={false}>
                         For students from Global South countries, VORA applies a 40% reduction to the placement fee to support equitable access to international education. Global South is defined by the World Bank country income classification at the time of application.
                       </AlertBanner>
                     </div>
