@@ -14,7 +14,6 @@ import { useAuth } from '../../context/AuthContext';
 import { getRoleLandingForSlug } from '../../utils/roleLanding';
 import { loadRoleApplySlug } from '../../utils/roleSignup';
 import {
-  getPostMatchPath,
   resolveProfileMatchScan,
 } from '../../utils/profileMatchResult';
 import { useEffect, useMemo } from 'react';
