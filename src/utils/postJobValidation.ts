@@ -179,7 +179,9 @@ export function validatePostJobStep1(v: PostJobStep1Values): FieldErrors {
         ? validateMinLength(val, label, 3)
         : key === 'summary'
           ? validateMinLength(val, label, 20)
-          : validateRequired(val, label);
+          : key === 'roleType' && val === 'other'
+            ? 'Specify custom role type'
+            : validateRequired(val, label);
     if (err) errors[key] = err;
   }
 

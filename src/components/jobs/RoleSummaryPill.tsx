@@ -10,9 +10,9 @@ interface RoleSummaryPillProps {
 const RoleSummaryPill: React.FC<RoleSummaryPillProps> = ({ roleTitle, formatLocationLabel }) => (
   <div className="flex flex-wrap items-center justify-between gap-3 bg-white border border-[#E6E6E6] rounded-xl px-4 py-3.5 mb-6">
     <div className="flex items-center gap-2.5 min-w-0">
-      <BriefcaseIcon size={16} className="text-[#808080] shrink-0" strokeWidth={2} />
+      <BriefcaseIcon size={16} className="text-[#0047CC] shrink-0" strokeWidth={2} />
       <div className="min-w-0">
-        <span className="text-[10px] font-bold text-[#808080] uppercase tracking-wide mr-2">
+        <span className="text-xs font-bold text-[#0047CC] uppercase tracking-wide mr-2">
           Role
         </span>
         <span className="text-[15px] font-bold text-[#1A1A1A]">{roleTitle}</span>

@@ -1,9 +1,9 @@
 import AuthCenterLogoNav from './AuthCenterLogoNav';
-import RoleVerifyContextBanner from './RoleVerifyContextBanner';
+import RoleApplyContextBanner from './RoleApplyContextBanner';
 import type { PublicRoleLandingData } from '../../types/roleLanding';
 
 interface RoleOnboardingShellProps {
-  role: Pick<PublicRoleLandingData, 'roleTitle' | 'companyName' | 'formatLocationLabel'>;
+  role: Pick<PublicRoleLandingData, 'roleTitle' | 'companyName' | 'formatLocationLabel' | 'compensationLine' | 'overviewRows'>;
   children: React.ReactNode;
 }
 
@@ -11,7 +11,7 @@ interface RoleOnboardingShellProps {
 const RoleOnboardingShell: React.FC<RoleOnboardingShellProps> = ({ role, children }) => (
   <div className="min-h-screen flex flex-col bg-white">
     <AuthCenterLogoNav />
-    <RoleVerifyContextBanner role={role} />
+    <RoleApplyContextBanner role={role} />
     <div className="flex-1">{children}</div>
   </div>
 );

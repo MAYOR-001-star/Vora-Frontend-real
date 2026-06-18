@@ -84,7 +84,7 @@ function LongText({ text }: { text: string }) {
   if (!text?.trim()) return <span className="text-[13px] text-[#808080]">,</span>;
   const short = text.length > 180 && !expanded;
   return (
-    <p className="text-[13px] text-[#4A4A4A] leading-relaxed mt-1">
+    <p className="text-[13px] text-[#4A4A4A] leading-relaxed mt-1 break-words">
       {short ? `${text.slice(0, 180)}…` : text}{' '}
       {text.length > 180 && (
         <button
@@ -153,10 +153,14 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
       </AlertBanner>
 
       {isScheduled && (
-        <div className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[#BDD9FF] bg-white px-4 py-1.5 text-[13px] font-semibold text-[#0047CC]">
-          <LockIcon size={13} strokeWidth={2.3} />
-          Scheduled Hiring, role enters Vault on submission, goes live{' '}
-          <span className="font-bold">{goLiveDate ? formatDate(goLiveDate) : ','}</span>
+        <div className="inline-flex items-center gap-2 text-[13px] text-[#4A4A4A]">
+          <span className="text-[#0047CC] flex items-center">
+            <LockIcon size={13} strokeWidth={2.3} />
+          </span>
+          <span>
+            Scheduled Hiring, role enters Vault on submission, goes live{' '}
+            <span className="font-bold text-[#1A1A1A]">{goLiveDate ? formatDate(goLiveDate) : ','}</span>
+          </span>
         </div>
       )}
 
@@ -272,7 +276,7 @@ const PostJobPreviewStep: React.FC<PostJobPreviewStepProps> = ({
             <PreviewField label="Benefits / allowances" value={expenses} />
           )}
         </div>
-        <div className="mt-4 rounded-lg bg-[#EBF6FF] px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+        <div className="mt-4 rounded-lg bg-white border border-[#E6E6E6] p-4 flex flex-wrap justify-between items-center gap-3">
           <div>
             <FieldLabel className="text-[12px] normal-case tracking-normal text-[#808080]">
               Escrow locked today

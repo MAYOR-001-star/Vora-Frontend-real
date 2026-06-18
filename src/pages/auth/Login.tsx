@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import { validateEmail } from '../../utils/validation';
@@ -20,14 +20,31 @@ import { routeAfterAuth } from '../../utils/auth';
 import { useAuth } from '../../context/AuthContext';
 import { useFullPageLoading } from '../../hooks/useFullPageLoading';
 import { useBlockBrowserAutofill } from '../../hooks/useBlockBrowserAutofill';
+import AuthTopNav from '../../components/auth/AuthTopNav';
+import RoleApplyContextBanner from '../../components/auth/RoleApplyContextBanner';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug?: string }>();
   const { isLoading: isAuthLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
   const loginMutation = useLoginMutation();
+
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(slug || '');
+
+  const role: PublicRoleLandingData | null = useMemo(() => {
+    if (!slug) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(slug);
+    }
+    return mapApiResponseToRoleData(slug, apiData);
+  }, [response, slug]);
 
   const [touched, setTouched] = useState({
     email: false,
@@ -56,13 +73,25 @@ const Login: React.FC = () => {
     setFormError('');
 
     try {
-      const response = await loginMutation.mutateAsync({ email, password });
+      const payload: any = { email, password };
+      if (slug) {
+        payload.roleLink = slug;
+      }
+      const response = await loginMutation.mutateAsync(payload);
       const authData = response.data;
       const user = authData?.user;
 
       if (user) {
         const targetRoute = routeAfterAuth(user);
-        navigate(targetRoute, { state: { email, accountType: user.role } });
+        const isRestrictedRole = slug && user.role && user.role.toUpperCase() !== 'TALENT';
+
+        navigate(targetRoute, { 
+          state: { 
+            email, 
+            accountType: user.role,
+            ...(isRestrictedRole ? { showRoleRestrictedModal: true } : {})
+          } 
+        });
       } else {
         navigate('/dashboard');
       }
@@ -86,7 +115,7 @@ const Login: React.FC = () => {
   };
 
   const showFullPage = useFullPageLoading(
-    isAuthLoading || loginMutation.isPending,
+    isAuthLoading || loginMutation.isPending || (!!slug && isRoleLoading),
     loginMutation.isPending,
   );
 
@@ -100,8 +129,8 @@ const Login: React.FC = () => {
     forPassword: true,
   });
 
-  return (
-    <AuthPageShell loading={showFullPage}>
+  const loginContent = (
+    <AuthPageShell loading={showFullPage} centered={!role} className={role ? "flex-1 !min-h-0" : ""}>
       <AuthPageHeader
         title="Welcome back to vora."
         subtitle="Access your dashboard to manage jobs, mentorships, and career growth."
@@ -151,7 +180,7 @@ const Login: React.FC = () => {
           <AuthSocialDivider />
 
           <AuthSocialButtons>
-            <GoogleSignInButton disabled={loginMutation.isPending} />
+            <GoogleSignInButton disabled={loginMutation.isPending} roleSlug={slug} />
             <Button variant="social" disabled={loginMutation.isPending} className="min-w-0">
               <AppleIcon />
               <span className="truncate">Sign in with Apple</span>
@@ -160,7 +189,7 @@ const Login: React.FC = () => {
 
           <p className="pt-2 text-center text-sm text-[#374151] sm:text-[0.95rem]">
             Don&apos;t have an account?{' '}
-            <Link to="/signup" className={authFooterLinkClass}>
+            <Link to={slug ? `/role/${slug}/signup` : "/signup"} className={authFooterLinkClass}>
               Create an account
             </Link>
           </p>
@@ -168,6 +197,18 @@ const Login: React.FC = () => {
       </AuthFormCard>
     </AuthPageShell>
   );
+
+  if (role) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <AuthTopNav logoTo={`/role/${slug}`} loginTo="" />
+        <RoleApplyContextBanner role={role} />
+        {loginContent}
+      </div>
+    );
+  }
+
+  return loginContent;
 };
 
 export default Login;

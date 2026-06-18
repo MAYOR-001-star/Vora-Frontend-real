@@ -14,7 +14,9 @@ import {
   TALENT_ONBOARDING_STATE_KEY,
 } from '../../utils/onboardingStateQuery';
 import RoleOnboardingShell from '../../components/auth/RoleOnboardingShell';
-import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
 import { loadRoleApplySlug, saveRoleApplySlug } from '../../utils/roleSignup';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
@@ -22,6 +24,7 @@ import MultiSelect from '../../components/common/MultiSelect';
 import LocationAutocomplete from '../../components/common/LocationAutocomplete';
 import NationalityTagger from '../../components/common/NationalityTagger';
 import { capitalizeFirstLetter } from '../../utils/stringUtils';
+import { resolveCountryIsoCode } from '../../utils/locationSearch';
 import { 
   ChevronLeftIcon, 
   ShieldIcon, 
@@ -101,11 +104,10 @@ const extractCountryName = (location: string): string => {
   return location.trim();
 };
 
-const getCountryIsoCode = (name: string): string => {
+const getCountryIsoCode = async (name: string): Promise<string> => {
   if (!name) return name;
-  const countryName = extractCountryName(name);
-  if (countryName.length === 2) return countryName.toUpperCase();
-  return countryToIsoMap[countryName] || countryName;
+  const iso = await resolveCountryIsoCode(name);
+  return iso || name;
 };
 
 const getCountryFullName = (code: string): string => {
@@ -119,7 +121,7 @@ const getCountryFullName = (code: string): string => {
 const TalentOnboarding: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { updateUser } = useAuth();
 
@@ -127,13 +129,40 @@ const TalentOnboarding: React.FC = () => {
   const initialStep = stepParam || location.state?.onboardingStep || 1;
   const [step, setStep] = useState(initialStep);
 
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('step', String(step));
+        return newParams;
+      },
+      { replace: true }
+    );
+  }, [step, setSearchParams]);
+
+  const {
+    data: onboardingState,
+    isPending: isStatePending,
+    isFetching: isStateFetching,
+  } = useTalentOnboardingStateQuery(true);
+
   const roleSlug =
-    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || '';
+    onboardingState?.data?.applyContext?.roleLink ||
+    (location.state as { roleSlug?: string } | null)?.roleSlug || 
+    loadRoleApplySlug() || 
+    '';
   const isRoleApplyFlow = Boolean(roleSlug);
-  const role = useMemo(
-    () => (isRoleApplyFlow ? getRoleLandingForSlug(roleSlug) : null),
-    [isRoleApplyFlow, roleSlug],
-  );
+
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(roleSlug || '');
+
+  const role: PublicRoleLandingData | null = useMemo(() => {
+    if (!isRoleApplyFlow) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(roleSlug);
+    }
+    return mapApiResponseToRoleData(roleSlug, apiData);
+  }, [isRoleApplyFlow, response, roleSlug]);
 
   useEffect(() => {
     const fromState = (location.state as { roleSlug?: string } | null)?.roleSlug;
@@ -142,11 +171,7 @@ const TalentOnboarding: React.FC = () => {
 
   const step1Mutation = useTalentOnboardingStep1Mutation();
   const step2Mutation = useTalentOnboardingStep2Mutation();
-  const {
-    data: onboardingState,
-    isPending: isStatePending,
-    isFetching: isStateFetching,
-  } = useTalentOnboardingStateQuery(!isRoleApplyFlow);
+
   const { isSubmittingStep, runStepSubmit } = useOnboardingStepSubmit();
 
   useEffect(() => {
@@ -357,11 +382,7 @@ const TalentOnboarding: React.FC = () => {
 
     await runStepSubmit(async () => {
       if (step === 1 && isStep1Valid) {
-        if (isRoleApplyFlow) {
-          setStep(2);
-          window.scrollTo(0, 0);
-          return;
-        }
+
         try {
           await step1Mutation.mutateAsync({
             firstName: formData.firstName,
@@ -377,16 +398,7 @@ const TalentOnboarding: React.FC = () => {
       }
 
       if (step === 2 && isStep2Valid) {
-        if (isRoleApplyFlow) {
-          updateUser({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-          });
-          navigate('/onboarding/talent/cv', {
-            state: { firstName: formData.firstName, roleSlug },
-          });
-          return;
-        }
+
         try {
         const payloadExperienceLevel = (() => {
           switch (experienceLevel) {
@@ -405,18 +417,18 @@ const TalentOnboarding: React.FC = () => {
         const payloadRightToWorkStatus = (() => {
           switch (rightToWork) {
             case 'national': return 'NATIONAL_ROLE_COUNTRY_NO_VISA';
-            case 'eu_eea': return 'EU_EEA_FREEDOM_MOVEMENT';
-            case 'study_permit': return 'STUDY_PERMIT';
-            case 'work_permit': return 'WORK_PERMIT';
-            case 'open_permit': return 'OPEN_PERMIT';
-            case 'ilr_uk': return 'UK_ILR_SETTLED';
-            case 'green_card': return 'US_GREEN_CARD';
-            case 'pr_canada': return 'PR_CANADA';
-            case 'pr_aus_nz': return 'PR_AUS_NZ';
-            case 'pr_eu': return 'PR_EU';
-            case 'pr_other': return 'PR_OTHER';
-            case 'need_sponsorship': return 'NEED_SPONSORSHIP';
-            case 'remote_only': return 'REMOTE_ONLY';
+            case 'eu_eea': return 'EU_EEA_FREEDOM_OF_MOVEMENT';
+            case 'study_permit': return 'STUDENT_VISA_LIMITED_WORK';
+            case 'work_permit': return 'WORK_VISA_ROLE_COUNTRY';
+            case 'open_permit': return 'OPEN_WORK_PERMIT_MULTI_COUNTRY';
+            case 'ilr_uk': return 'UK_ILR_SETTLED_STATUS';
+            case 'green_card': return 'US_LAWFUL_PERMANENT_RESIDENT';
+            case 'pr_canada': return 'CA_PERMANENT_RESIDENT';
+            case 'pr_aus_nz': return 'AU_NZ_PERMANENT_RESIDENT';
+            case 'pr_eu': return 'EU_MEMBER_PERMANENT_RESIDENT';
+            case 'pr_other': return 'OTHER_LONG_TERM_OR_PERMANENT';
+            case 'need_sponsorship': return 'REQUIRES_EMPLOYER_SPONSORSHIP';
+            case 'remote_only': return 'REMOTE_OR_CONSULTANCY_ONLY';
             default: return 'NATIONAL_ROLE_COUNTRY_NO_VISA';
           }
         })();
@@ -435,7 +447,7 @@ const TalentOnboarding: React.FC = () => {
           WORK_ARRANGEMENT_TO_API[workArrangement] ?? 'FULLY_REMOTE';
 
         const payloadRelocateCountryCodes = relocation === 'specific'
-          ? relocationDestinations.split(',').map(s => getCountryIsoCode(s.trim())).filter(Boolean)
+          ? (await Promise.all(relocationDestinations.split(',').map(s => getCountryIsoCode(s.trim())))).filter(Boolean)
           : [];
 
         await step2Mutation.mutateAsync({
@@ -445,8 +457,8 @@ const TalentOnboarding: React.FC = () => {
           country,
           region: country,
           nationalities,
-          countryOfResidence: getCountryIsoCode(residence),
-          residenceCity: city,
+          countryOfResidence: await getCountryIsoCode(residence),
+          residenceCity: city.split(',')[0].trim(),
           rightToWorkStatus: payloadRightToWorkStatus,
           willingnessToRelocate: payloadWillingnessToRelocate,
           relocateCountryCodes: payloadRelocateCountryCodes,
@@ -454,14 +466,14 @@ const TalentOnboarding: React.FC = () => {
           workAuthorisationConfirmed: true,
 
           studyPermitType: showStudyPanel ? studyPermitType : undefined,
-          studyCountry: showStudyPanel ? getCountryIsoCode(studyCountry) : undefined,
+          studyCountry: showStudyPanel ? await getCountryIsoCode(studyCountry) : undefined,
           studyValidity: showStudyPanel ? studyValidity : undefined,
           studyHoursManual: (showStudyPanel && !studyHoursData) ? studyHoursManual : undefined,
           permitType: showPermitPanel ? permitType : undefined,
-          permitCountry: showPermitPanel ? getCountryIsoCode(permitCountry) : undefined,
+          permitCountry: showPermitPanel ? await getCountryIsoCode(permitCountry) : undefined,
           permitValidity: showPermitPanel ? permitValidity : undefined,
           prType: showPRPanel ? prType : undefined,
-          prCountry: showPRPanel ? getCountryIsoCode(prCountry) : undefined,
+          prCountry: showPRPanel ? await getCountryIsoCode(prCountry) : undefined,
           prValidity: showPRPanel ? prValidity : undefined,
         });
 
@@ -469,7 +481,15 @@ const TalentOnboarding: React.FC = () => {
           firstName: formData.firstName,
           lastName: formData.lastName,
         });
-        navigate('/onboarding/welcome', { state: { firstName: formData.firstName, role: 'talent' } });
+        await refetchOnboardingState(queryClient, TALENT_ONBOARDING_STATE_KEY);
+          
+        if (isRoleApplyFlow) {
+          navigate(`/onboarding/talent/${roleSlug}/cv`, {
+            state: { firstName: formData.firstName },
+          });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
         } catch {
           // Errors are automatically caught and toasted by our interceptor
         }

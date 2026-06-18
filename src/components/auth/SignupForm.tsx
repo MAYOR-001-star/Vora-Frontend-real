@@ -82,21 +82,15 @@ const SignupForm: React.FC<SignupFormProps> = ({
 
     setFormError('');
 
-    if (isRoleSignup) {
-      navigate('/verify-email', {
-        state: {
-          email,
-          accountType: 'Talent',
-          roleSlug,
-          mockAuth: true,
-        },
-      });
-      return;
-    }
+
 
     try {
       const backendRole = accountType.toUpperCase() as 'TALENT' | 'EMPLOYER' | 'MENTOR';
-      await signupMutation.mutateAsync({ email, password, role: backendRole });
+      const payload: any = { email, password, role: backendRole };
+      if (roleSlug) {
+        payload.roleLink = roleSlug;
+      }
+      await signupMutation.mutateAsync(payload);
       navigate('/verify-email', {
         state: { email, accountType, roleSlug },
       });

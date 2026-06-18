@@ -28,7 +28,7 @@ const JobPostedConfirmation: React.FC = () => {
     <VaultReviewPageLayout showBackBar={false} maxWidthClass="w-full">
       <JobsBreadcrumb
         className="mb-6"
-        separator=">"
+        separator="/"
         segments={[
           { label: 'Jobs', to: '/jobs' },
           { label: 'Post a Job', to: '/jobs' },

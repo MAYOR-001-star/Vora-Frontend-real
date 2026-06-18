@@ -10,17 +10,28 @@ import {
 } from '../../components/auth/AuthPageLayout';
 import { useAuth } from '../../context/AuthContext';
 import { useFullPageLoading } from '../../hooks/useFullPageLoading';
-import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
+
 const RoleSignup: React.FC = () => {
   const { slug = '' } = useParams<{ slug: string }>();
   const { isLoading: isAuthLoading } = useAuth();
-  const role = useMemo(() => getRoleLandingForSlug(slug), [slug]);
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(slug);
 
-  const showFullPage = useFullPageLoading(isAuthLoading, false);
+  const role: PublicRoleLandingData = useMemo(() => {
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(slug); // fallback
+    }
+    return mapApiResponseToRoleData(slug, apiData);
+  }, [response, slug]);
+
+  const showFullPage = useFullPageLoading(isAuthLoading || isRoleLoading, false);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <AuthTopNav logoTo={slug ? `/role/${slug}` : '/signup'} />
+      <AuthTopNav logoTo={slug ? `/role/${slug}` : '/signup'} loginTo={slug ? `/role/${slug}/login` : '/login'} />
       <RoleApplyContextBanner role={role} />
 
       <AuthPageShell loading={showFullPage} centered={false} className="flex-1 !min-h-0">
@@ -31,7 +42,7 @@ const RoleSignup: React.FC = () => {
         />
 
         <AuthFormCard className="max-w-[460px]">
-          <SignupForm roleSlug={slug} showFooterLogin loginTo="/login" />
+          <SignupForm roleSlug={slug} showFooterLogin loginTo={`/role/${slug}/login`} />
         </AuthFormCard>
       </AuthPageShell>
     </div>

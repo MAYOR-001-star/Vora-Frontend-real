@@ -15,6 +15,7 @@ const RoleTagRow: React.FC<RoleTagRowProps> = ({ primaryTags, secondaryTags }) =
         key={tag}
         label={tag}
         variant="gray"
+        className="!bg-[#E6E6E6] !text-[#4A4A4A] !border-transparent"
       />
     ))}
   </div>

@@ -18,13 +18,13 @@ const matchBoxStyles = {
     box: 'bg-white border-[#E6E6E6]',
     title: 'text-[#1A1A1A]',
     sub: 'text-gray-600',
-    icon: 'text-[#1A1A1A]',
+    icon: 'text-[#0047CC]',
   },
   blue: {
     box: 'bg-white border-[#E6E6E6]',
     title: 'text-[#1A1A1A]',
     sub: 'text-gray-600',
-    icon: 'text-[#1A1A1A]',
+    icon: 'text-[#0047CC]',
   },
 } as const;
 
@@ -58,9 +58,9 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
             <p className="text-[13px] text-[#808080] font-semibold mt-0.5">{role.companyName}</p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-lg font-black text-[#1A1A1A]">{salaryLabel}</p>
+            <p className="text-lg font-black text-[#0047CC]">{salaryLabel}</p>
             <p className="text-xs font-bold mt-1 text-gray-600">
-              ✓ {role.matchPercent}% profile match
+              {role.matchPercent}% profile match
             </p>
           </div>
           <button
@@ -73,8 +73,8 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-7 py-[22px]">
-          <div className="flex flex-wrap gap-2.5 mb-3.5">
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-7 py-[22px]">
+          <div className="flex flex-wrap gap-2.5 mb-1.5">
             {role.metaItems.map((item) => (
               <span key={item} className="text-[13px] text-[#4A4A4A] font-semibold">
                 · {item}
@@ -89,9 +89,8 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
           </div>
 
           <div
-            className={`border-[1.5px] rounded-lg px-4 py-3 mb-[18px] flex gap-2.5 items-center ${matchStyle.box}`}
+            className={`border-[1.5px] rounded-lg px-4 py-3 mb-[18px] flex items-center ${matchStyle.box}`}
           >
-            <CheckIcon size={16} strokeWidth={2.5} className={`shrink-0 ${matchStyle.icon}`} />
             <div>
               <p className={`text-[13px] font-bold ${matchStyle.title}`}>
                 {role.matchPercent}% profile match, your profile qualifies. Your next step is
@@ -104,14 +103,13 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
           </div>
 
           <div className="mb-[18px]">
-            <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-2.5 flex items-center gap-2">
-              <ShieldIcon size={14} strokeWidth={2.5} />
-              Location, eligibility &amp; right to work
-            </h3>
-            <span className="inline-block bg-[#F7F7F7] border border-[#E6E6E6] rounded px-3 py-1 text-[13px] font-bold text-[#4A4A4A] mb-2.5">
-              ✓ Eligibility verified
-            </span>
-            <div className="bg-[#F7F7F7] rounded-lg overflow-hidden">
+            <div className="flex justify-between items-center gap-3 mb-2.5">
+              <h3 className="text-[15px] font-bold text-[#1A1A1A]">
+                Location, eligibility &amp; right to work
+              </h3>
+              <Tag label="Eligibility verified" variant="blue" />
+            </div>
+            <div className="bg-[#F7F7F7] rounded-lg overflow-hidden px-4 py-1">
               <RoleOverviewList rows={role.eligibilityRows} />
             </div>
           </div>
@@ -147,10 +145,9 @@ const MatchedRoleJdModal: React.FC<MatchedRoleJdModalProps> = ({
             pill
             fullWidth={false}
             onClick={() => onGoToAssessment?.(role.id)}
-            className="gap-1.5 sm:!w-auto !font-bold !min-h-0 !py-2.5 !px-5"
+            className="sm:!w-auto !font-bold !min-h-0 !py-2.5 !px-5"
           >
             Go to assessment
-            <ChevronRightIcon size={13} strokeWidth={2.5} />
           </Button>
         </div>
       </div>

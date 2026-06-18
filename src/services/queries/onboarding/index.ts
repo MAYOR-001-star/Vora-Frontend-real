@@ -39,7 +39,20 @@ export interface TalentOnboardingStep2Request {
 
 export interface TalentOnboardingStateResponse {
   step: number;
+  onboardingCompleted?: boolean;
   fields: Partial<TalentOnboardingStep1Request & TalentOnboardingStep2Request>;
+  onboarding?: any;
+  applyContext?: {
+    roleLink: string;
+    source: string;
+    parseStatus?: string;
+  };
+  activeCv?: {
+    cvUploadId: string;
+    originalName?: string;
+    parseStatus: 'NONE' | 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+    parsedData?: any;
+  };
 }
 
 export const useTalentOnboardingStep1Mutation = () => {
@@ -66,7 +79,7 @@ export const useTalentOnboardingStep2Mutation = () => {
   });
 };
 
-export const useTalentOnboardingStateQuery = (enabled = true) => {
+export const useTalentOnboardingStateQuery = (enabled = true, refetchInterval: number | false = false) => {
   return useQuery({
     queryKey: ['talent-onboarding', 'state'],
     queryFn: () =>
@@ -75,6 +88,7 @@ export const useTalentOnboardingStateQuery = (enabled = true) => {
         auth: true,
       }),
     enabled,
+    refetchInterval,
   });
 };
 

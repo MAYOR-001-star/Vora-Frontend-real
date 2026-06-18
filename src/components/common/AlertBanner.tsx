@@ -13,9 +13,9 @@ interface AlertBannerProps {
 }
 
 const variantStyles: Record<AlertBannerVariant, string> = {
-  amber: 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]',
-  green: 'bg-[#EEFBEE] border-[#85E585] text-[#135813]',
-  red: 'bg-[#FEF2F2] border-[#FECACA] text-[#991B1B]',
+  amber: 'bg-white border-[#FDE68A] text-[#92400E]',
+  green: 'bg-white border-[#85E585] text-[#135813]',
+  red: 'bg-white border-[#FECACA] text-[#991B1B]',
   blue: 'bg-white border-[#BDD9FF] text-[#1e3a8a]',
 };
 

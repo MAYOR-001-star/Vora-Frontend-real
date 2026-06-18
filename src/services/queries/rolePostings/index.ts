@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../api';
 import type { ApiResponse } from '../auth/types';
 import type {
@@ -14,6 +14,8 @@ import type {
   UpdateRolePostingStepOneRequest,
   UpdateRolePostingStepThreeRequest,
   UpdateRolePostingStepTwoRequest,
+  RolePostingPrefillData,
+  RolePostingIntakeDocumentResponse,
 } from '../../../types/rolePosting';
 
 export const rolePostingKeys = {
@@ -24,6 +26,49 @@ export const rolePostingKeys = {
   stepThree: (id: string) => [...rolePostingKeys.all, id, 'step-3'] as const,
   stepFour: (id: string) => [...rolePostingKeys.all, id, 'step-4'] as const,
   stepFive: (id: string) => [...rolePostingKeys.all, id, 'step-5'] as const,
+  detail: (id: string) => [...rolePostingKeys.all, id, 'detail'] as const,
+  prefill: (id: string) => [...rolePostingKeys.all, id, 'jd-prefill'] as const,
+};
+
+export const useGetRolePostingQuery = (
+  id: string,
+  options?: { refetchInterval?: number | false | ((data: any) => number | false); enabled?: boolean }
+) => {
+  return useQuery({
+    queryKey: rolePostingKeys.detail(id),
+    queryFn: () =>
+      apiClient.get<ApiResponse<RolePostingIntakeData>>({
+        url: `/role-postings/${id}`,
+        auth: true,
+      }),
+    ...options,
+  });
+};
+
+export const useGetRolePostingPrefillQuery = (id: string, options?: { refetchInterval?: number | false | ((data: any) => number | false); enabled?: boolean }) => {
+  return useQuery({
+    queryKey: rolePostingKeys.prefill(id),
+    queryFn: () =>
+      apiClient.get<ApiResponse<RolePostingPrefillData>>({
+        url: `/role-postings/${id}/jd-prefill`,
+        auth: true,
+      }),
+    ...options,
+  });
+};
+
+export const useUploadRolePostingIntakeDocumentMutation = () => {
+  return useMutation({
+    mutationFn: (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return apiClient.post<ApiResponse<RolePostingIntakeDocumentResponse>>({
+        url: '/role-postings/intake/job-description',
+        body: formData,
+        auth: true,
+      });
+    },
+  });
 };
 
 export const useCreateRolePostingIntakeMutation = () => {

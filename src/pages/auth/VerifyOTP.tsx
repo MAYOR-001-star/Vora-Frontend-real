@@ -2,7 +2,10 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import AuthCenterLogoNav from '../../components/auth/AuthCenterLogoNav';
-import RoleVerifyContextBanner from '../../components/auth/RoleVerifyContextBanner';
+import RoleApplyContextBanner from '../../components/auth/RoleApplyContextBanner';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
 import {
   AuthPageShell,
   AuthPageHeader,
@@ -23,7 +26,6 @@ import { useAuth } from '../../context/AuthContext';
 import { getSetupToken } from '../../utils/oauth';
 import type { VerifyLocationState } from '../../types';
 import { useFullPageLoading } from '../../hooks/useFullPageLoading';
-import { getRoleLandingForSlug } from '../../utils/roleLanding';
 import { getRoleSignupPath, saveRoleApplySlug } from '../../utils/roleSignup';
 
 const VerifyOTP: React.FC = () => {
@@ -40,10 +42,17 @@ const VerifyOTP: React.FC = () => {
     accountType,
   } = state;
 
-  const role = useMemo(
-    () => (roleSlug ? getRoleLandingForSlug(roleSlug) : null),
-    [roleSlug],
-  );
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(roleSlug || '');
+
+  const role: PublicRoleLandingData | null = useMemo(() => {
+    if (!roleSlug) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(roleSlug);
+    }
+    return mapApiResponseToRoleData(roleSlug, apiData);
+  }, [response, roleSlug]);
+
   const isRoleFlow = Boolean(roleSlug);
 
   const resendCooldownSecs = mockAuth ? 60 : oauth ? otpExpiresInMinutes * 60 : 60;
@@ -102,7 +111,7 @@ const VerifyOTP: React.FC = () => {
       ? oauthResendMutation.isPending
       : resendMutation.isPending;
   const buttonLoading = isPending || isResending;
-  const showFullPage = useFullPageLoading(isPending || isResending, buttonLoading);
+  const showFullPage = useFullPageLoading(isPending || isResending || isRoleLoading, buttonLoading);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,14 +238,7 @@ const VerifyOTP: React.FC = () => {
             Verify email
           </Button>
 
-          {isRoleFlow && roleSlug ? (
-            <p className="text-center text-[13px] text-[#808080] font-medium">
-              Wrong email?{' '}
-              <Link to={getRoleSignupPath(roleSlug)} className={authFooterLinkClass}>
-                Change it here
-              </Link>
-            </p>
-          ) : null}
+
         </form>
       </AuthFormCard>
     </>
@@ -246,7 +248,7 @@ const VerifyOTP: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col bg-white">
         <AuthCenterLogoNav />
-        <RoleVerifyContextBanner role={role} />
+        <RoleApplyContextBanner role={role} />
         <AuthPageShell loading={showFullPage} centered={false} className="flex-1 !min-h-0 !py-10 sm:!py-16">
           {formContent}
         </AuthPageShell>

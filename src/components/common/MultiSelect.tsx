@@ -168,14 +168,14 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                       }
                     }}
                     placeholder="Type and press Enter..."
-                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#0047CC]/20 focus:border-[#0047CC] transition-all placeholder:text-gray-400"
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#0047CC]/20 focus:border-[#0047CC] transition-all placeholder:text-gray-400 h-[38px]"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={() => handleAddOther()}
                     disabled={!otherValue.trim()}
-                    className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
+                    className={`px-4 text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center h-[38px] ${
                       otherValue.trim() 
                         ? 'bg-[#0047CC] text-white hover:bg-[#003d99]' 
                         : 'bg-[#E5E7EB] text-[#374151] opacity-70 cursor-not-allowed'

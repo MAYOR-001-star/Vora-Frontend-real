@@ -29,3 +29,30 @@ export interface PublicRoleLandingData {
   eligibilityNote?: string;
   assessmentItems: string[];
 }
+
+export interface PublicRoleResponse {
+  active: boolean;
+  message?: string;
+  roleTitle?: string;
+  employer?: any;
+  compensationSummary?: string;
+  roleType?: string;
+  locationBadge?: string;
+  employmentLevel?: string;
+  positionsAvailable?: number;
+  tags?: string[];
+  about?: string;
+  responsibilities?: string[];
+  requirements?: string[];
+  overview?: {
+    salary?: string;
+    contract?: string;
+    duration?: string;
+    level?: string;
+    format?: string;
+    location?: string;
+    positions?: string;
+  };
+  eligibility?: any;
+  posting?: any;
+}

@@ -4,7 +4,11 @@ import { ChevronRightIcon } from '../common/Icons';
 import { SectionTitle } from '../common/Typography';
 import { MATCH_CTA_STEPS } from '../../constants/roleLanding';
 
-const RoleMatchCtaBanner: React.FC = () => {
+interface RoleMatchCtaBannerProps {
+  roleSlug?: string;
+}
+
+const RoleMatchCtaBanner: React.FC<RoleMatchCtaBannerProps> = ({ roleSlug }) => {
   const navigate = useNavigate();
 
   return (
@@ -35,14 +39,13 @@ const RoleMatchCtaBanner: React.FC = () => {
       <Button
         type="button"
         variant="primary"
-        size="sm"
+        size="lg"
         pill
         fullWidth={false}
-        onClick={() => navigate('/login')}
-        className="gap-1.5 w-full lg:w-auto shrink-0"
+        onClick={() => navigate(roleSlug ? `/role/${roleSlug}/signup` : '/signup')}
+        className="w-full lg:w-auto shrink-0"
       >
         Check if I match
-        <ChevronRightIcon size={13} strokeWidth={2.5} />
       </Button>
     </div>
   );

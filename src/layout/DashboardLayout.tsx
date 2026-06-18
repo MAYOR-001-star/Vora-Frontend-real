@@ -38,10 +38,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isNavCollapsed, setIsNavCollapsed] = useState(() => {
     try {
       const stored = localStorage.getItem(SIDEBAR_STORAGE_KEY);
-      if (stored === null) return true;
+      if (stored === null) return false;
       return stored === '1';
     } catch {
-      return true;
+      return false;
     }
   });
 

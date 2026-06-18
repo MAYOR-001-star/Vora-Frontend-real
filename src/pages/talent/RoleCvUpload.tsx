@@ -1,25 +1,42 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import { CloseIcon } from '../../components/common/Icons';
 import RoleApplyContextStrip from '../../components/talent/cvUpload/RoleApplyContextStrip';
+import AuthCenterLogoNav from '../../components/auth/AuthCenterLogoNav';
 import CvUploadZone from '../../components/talent/cvUpload/CvUploadZone';
 import CvUploadedFileRow from '../../components/talent/cvUpload/CvUploadedFileRow';
-import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { useTalentOnboardingStateQuery } from '../../services/queries/onboarding';
+import { useUploadCvMutation, useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
 import { loadRoleApplySlug } from '../../utils/roleSignup';
 import { ROLE_CV_UPLOAD_PATH } from '../../utils/cvUpload';
 
 const RoleCvUpload: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const roleSlug =
-    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || '';
+  const params = useParams<{ roleSlug: string }>();
+  const roleSlug = params.roleSlug || '';
   const firstName = (location.state as { firstName?: string } | null)?.firstName ?? '';
 
-  const role = useMemo(
-    () => (roleSlug ? getRoleLandingForSlug(roleSlug) : null),
-    [roleSlug],
-  );
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(roleSlug || '');
+  const uploadCvMutation = useUploadCvMutation();
+  const [isPolling, setIsPolling] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  const { data: stateData, refetch: refetchState } = useTalentOnboardingStateQuery(isPolling, isPolling ? 2000 : false);
+
+  const activeCvStatus = stateData?.data?.activeCv?.parseStatus || stateData?.data?.applyContext?.parseStatus;
+
+  const role: PublicRoleLandingData | null = useMemo(() => {
+    if (!roleSlug) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(roleSlug);
+    }
+    return mapApiResponseToRoleData(roleSlug, apiData);
+  }, [response, roleSlug]);
 
   const [file, setFile] = useState<File | null>(null);
 
@@ -29,6 +46,18 @@ const RoleCvUpload: React.FC = () => {
     }
   }, [roleSlug, navigate]);
 
+  useEffect(() => {
+    if (activeCvStatus === 'COMPLETED') {
+      setIsPolling(false);
+      navigate(`/onboarding/talent/${roleSlug}/match`, {
+        state: { firstName },
+      });
+    } else if (activeCvStatus === 'FAILED') {
+      setIsPolling(false);
+      setUploadError('CV parsing failed. Please ensure you uploaded a valid text-based PDF or DOCX file, and try again.');
+    }
+  }, [activeCvStatus, navigate, firstName, roleSlug]);
+
   if (!roleSlug || !role) {
     return null;
   }
@@ -37,15 +66,22 @@ const RoleCvUpload: React.FC = () => {
     navigate('/onboarding/talent?step=2');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!file) return;
-    navigate('/onboarding/talent/match', {
-      state: { firstName, roleSlug },
-    });
+    setUploadError('');
+    try {
+      await uploadCvMutation.mutateAsync({ file, roleLink: roleSlug });
+      setIsPolling(true);
+      // Immediately refetch the state to get the PENDING state from activeCv
+      refetchState();
+    } catch (error: any) {
+      setUploadError(error?.message || 'Failed to upload CV. Please try again.');
+    }
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <AuthCenterLogoNav />
       <RoleApplyContextStrip role={role} />
 
       <div className="flex-1 flex flex-col items-center pt-8 sm:pt-12 pb-24 px-4 sm:px-6">
@@ -73,18 +109,25 @@ const RoleCvUpload: React.FC = () => {
             , we&apos;ll run a gap analysis and guide you step by step until you do.
           </p>
 
-          <CvUploadZone file={file} onFileSelect={setFile} />
-          {file ? <CvUploadedFileRow file={file} onRemove={() => setFile(null)} /> : null}
+          {uploadError ? (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm font-medium">
+              {uploadError}
+            </div>
+          ) : null}
+
+          <CvUploadZone file={file} onFileSelect={setFile} disabled={isPolling || uploadCvMutation.isPending} />
+          {file ? <CvUploadedFileRow file={file} onRemove={() => setFile(null)} disabled={isPolling || uploadCvMutation.isPending} /> : null}
 
           <div className="mt-10">
             <Button
               type="button"
               variant={file ? 'primary' : 'secondary'}
-              disabled={!file}
+              disabled={!file || isPolling || uploadCvMutation.isPending}
+              isLoading={isPolling || uploadCvMutation.isPending}
               onClick={handleSubmit}
               className="w-full md:min-w-[200px]"
             >
-              Check if I match
+              {isPolling ? 'Analyzing your CV...' : 'Check if I match'}
             </Button>
           </div>
         </div>

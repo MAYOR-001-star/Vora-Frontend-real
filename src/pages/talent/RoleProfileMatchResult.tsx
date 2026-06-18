@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import DashboardLayout from '../../layout/DashboardLayout';
 import { buildUserDisplayName } from '../../components/talent/profileMatch/RoleApplyAppShell';
 import MatchResultHero from '../../components/talent/profileMatchResult/MatchResultHero';
@@ -7,7 +7,9 @@ import MatchResultEligibility from '../../components/talent/profileMatchResult/M
 import MatchResultBreakdown from '../../components/talent/profileMatchResult/MatchResultBreakdown';
 import MatchResultAssessmentCTA from '../../components/talent/profileMatchResult/MatchResultAssessmentCTA';
 import { useAuth } from '../../context/AuthContext';
-import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
 import { loadRoleApplySlug } from '../../utils/roleSignup';
 import { resolveProfileMatchScan } from '../../utils/profileMatchResult';
 import { MOCK_PROFILE_MATCH_SCAN_STRONG_MATCH } from '../../constants/profileMatchWaitlist';
@@ -17,8 +19,8 @@ const RoleProfileMatchResult: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
 
-  const roleSlug =
-    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || 'junior-global-health-researcher';
+  const params = useParams<{ roleSlug: string }>();
+  const roleSlug = params.roleSlug || '';
   const firstName =
     (location.state as { firstName?: string } | null)?.firstName || user?.firstName || '';
   const lastName =
@@ -29,10 +31,16 @@ const RoleProfileMatchResult: React.FC = () => {
     (location.state as { matchScan?: ReturnType<typeof resolveProfileMatchScan> } | null)?.matchScan || MOCK_PROFILE_MATCH_SCAN_STRONG_MATCH,
   );
 
-  const appliedRole = useMemo(
-    () => (roleSlug ? getRoleLandingForSlug(roleSlug) : null),
-    [roleSlug],
-  );
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(roleSlug || '');
+
+  const appliedRole: PublicRoleLandingData | null = useMemo(() => {
+    if (!roleSlug) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(roleSlug);
+    }
+    return mapApiResponseToRoleData(roleSlug, apiData);
+  }, [response, roleSlug]);
 
   useEffect(() => {
     /*
@@ -41,17 +49,19 @@ const RoleProfileMatchResult: React.FC = () => {
       return;
     }
 
-    const correctPath = getPostMatchPath(matchScan);
-    if (correctPath !== '/onboarding/talent/match/result') {
+    let correctPath = getPostMatchPath(matchScan);
+    correctPath = correctPath.replace('/onboarding/talent/', `/onboarding/talent/${roleSlug}/`);
+    
+    if (correctPath !== `/onboarding/talent/${roleSlug}/match/result`) {
       navigate(correctPath, {
         replace: true,
-        state: { firstName, lastName, roleSlug, matchScan, matchScore: matchScan.originalRoleScore },
+        state: { firstName, lastName, matchScan, matchScore: matchScan.originalRoleScore },
       });
     }
     */
   }, [roleSlug, matchScan, navigate, firstName, lastName]);
 
-  if (!roleSlug || !appliedRole) {
+  if (!appliedRole) {
     return null;
   }
 

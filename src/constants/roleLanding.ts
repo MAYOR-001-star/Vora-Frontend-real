@@ -3,7 +3,7 @@ import type { PublicRoleLandingData } from '../types/roleLanding';
 export const ROLE_LANDING_STORAGE_PREFIX = 'voraRoleLanding:';
 
 export const MATCH_CTA_STEPS = [
-  'Sign up free',
+  'Sign up',
   'Complete onboarding',
   'Upload your CV',
   'See if you match',

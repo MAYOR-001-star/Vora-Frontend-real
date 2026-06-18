@@ -16,6 +16,8 @@ export interface JobPostedConfirmationInput {
   summary?: string;
   roleGoal?: string;
   coreResponsibilities?: string;
+  slug?: string;
+  shareUrl?: string;
 }
 
 const formatWorkFormatLabel = (workFormat: string): string => {
@@ -39,7 +41,8 @@ export const buildJobPostedConfirmationData = (
   const workFormat = input.workFormat || 'Hybrid';
   const location = input.location?.trim() || '';
   const positions = parseInt(String(input.positions ?? '1'), 10) || 1;
-  const slug = buildRoleSlug(roleTitle);
+  const slug = input.slug || buildRoleSlug(roleTitle);
+  const shareUrl = input.shareUrl || buildRoleShareUrl(slug);
 
   const landingData = buildRoleLandingData({
     slug,
@@ -61,7 +64,7 @@ export const buildJobPostedConfirmationData = (
     location,
     formatLocationLabel: `${formatWorkFormatLabel(workFormat)} · ${formatLocationShort(location)}`,
     positions,
-    shareUrl: buildRoleShareUrl(slug),
+    shareUrl,
     candidatesMatched: 0,
   };
 };

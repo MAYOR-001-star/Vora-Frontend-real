@@ -16,6 +16,16 @@ const TalentOnboarding = lazy(() => import('./pages/talent/TalentOnboarding'))
 const RoleCvUpload = lazy(() => import('./pages/talent/RoleCvUpload'))
 const RoleProfileMatchBuilding = lazy(() => import('./pages/talent/RoleProfileMatchBuilding'))
 const RoleProfileMatchResult = lazy(() => import('./pages/talent/RoleProfileMatchResult'))
+const RoleEmployerAsks = lazy(() => import('./pages/talent/RoleEmployerAsks'))
+const RoleAssessmentIntro = lazy(() => import('./pages/talent/RoleAssessmentIntro'))
+const RoleAssessmentSessionInfo = lazy(() => import('./pages/talent/RoleAssessmentSessionInfo'))
+const RoleAssessmentJourney = lazy(() => import('./pages/talent/RoleAssessmentJourney'))
+const RoleAssessmentSessionPsychometric = lazy(() => import('./pages/talent/RoleAssessmentSessionPsychometric'))
+const RoleAssessmentSessionForcedChoice = lazy(() => import('./pages/talent/RoleAssessmentSessionForcedChoice'))
+const RoleAssessmentSessionPsychometricValues = lazy(() => import('./pages/talent/RoleAssessmentSessionPsychometricValues'))
+const RoleAssessmentSessionSituational = lazy(() => import('./pages/talent/RoleAssessmentSessionSituational'))
+const RoleAssessmentSessionReading = lazy(() => import('./pages/talent/RoleAssessmentSessionReading'))
+const RoleAssessmentSessionComplete = lazy(() => import('./pages/talent/RoleAssessmentSessionComplete'))
 const RoleProfileRolesFound = lazy(() => import('./pages/talent/RoleProfileRolesFound'))
 const RoleProfileMatchWaitlist = lazy(() => import('./pages/talent/RoleProfileMatchWaitlist'))
 const RoleProfileMatchBlocked = lazy(() => import('./pages/talent/RoleProfileMatchBlocked'))
@@ -36,6 +46,8 @@ const Payments = lazy(() => import('./pages/employer/Payments'))
 const VaultRoleConfirmation = lazy(() => import('./pages/employer/VaultRoleConfirmation'))
 const EditVaultRole = lazy(() => import('./pages/employer/EditVaultRole'))
 const VaultEditReview = lazy(() => import('./pages/employer/VaultEditReview'))
+const RoleApplyRoute = lazy(() => import('./components/auth/RoleApplyRoute'))
+
 const JobPostedConfirmation = lazy(() => import('./pages/employer/JobPostedConfirmation'))
 const RoleLanding = lazy(() => import('./pages/public/RoleLanding'))
 const RoleSignup = lazy(() => import('./pages/auth/RoleSignup'))
@@ -57,6 +69,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/role/:slug" element={<RoleLanding />} />
           <Route path="/role/:slug/signup" element={<RoleSignup />} />
+          <Route path="/role/:slug/login" element={<Login />} />
           <Route path="/dashboard" element={<ProtectedDashboardLayout><Dashboard /></ProtectedDashboardLayout>} />
           <Route path="/jobs" element={<ProtectedDashboardLayout><Jobs /></ProtectedDashboardLayout>} />
           <Route path="/jobs/posted/confirmation" element={<ProtectedDashboardLayout><EmployerRoute><JobPostedConfirmation /></EmployerRoute></ProtectedDashboardLayout>} />
@@ -80,13 +93,29 @@ const App = () => {
           <Route path="/onboarding" element={<OnboardingContainer />} />
           <Route path="/onboarding/welcome" element={<Welcome />} />
           <Route path="/onboarding/employer" element={<EmployerOnboarding />} />
-          <Route path="/onboarding/talent/cv" element={<RoleCvUpload />} />
-          <Route path="/onboarding/talent/match" element={<RoleProfileMatchBuilding />} />
-          <Route path="/onboarding/talent/match/result" element={<RoleProfileMatchResult />} />
-          <Route path="/onboarding/talent/match/blocked" element={<RoleProfileMatchBlocked />} />
-          <Route path="/onboarding/talent/match/roles" element={<RoleProfileRolesFound />} />
-          <Route path="/onboarding/talent/match/waitlist" element={<RoleProfileMatchWaitlist />} />
+          {/* Normal Onboarding Routes */}
           <Route path="/onboarding/talent" element={<TalentOnboarding />} />
+
+          {/* Job-Link Role Apply Routes (Dynamic & Protected) */}
+          <Route path="/onboarding/talent/:roleSlug" element={<RoleApplyRoute />}>
+            <Route path="cv" element={<RoleCvUpload />} />
+            <Route path="match" element={<RoleProfileMatchBuilding />} />
+            <Route path="match/result" element={<RoleProfileMatchResult />} />
+            <Route path="assessment/asks" element={<RoleEmployerAsks />} />
+            <Route path="assessment/journey" element={<RoleAssessmentJourney />} />
+            <Route path="assessment/stage-1" element={<RoleAssessmentIntro />} />
+            <Route path="assessment/session-1" element={<RoleAssessmentSessionInfo />} />
+            <Route path="assessment/session-1/psychometric" element={<RoleAssessmentSessionPsychometric />} />
+            <Route path="assessment/session-1/forced-choice" element={<RoleAssessmentSessionForcedChoice />} />
+            <Route path="assessment/session-1/psychometric-values" element={<RoleAssessmentSessionPsychometricValues />} />
+            <Route path="assessment/session-1/situational" element={<RoleAssessmentSessionSituational />} />
+            <Route path="assessment/session-1/reading" element={<RoleAssessmentSessionReading />} />
+            <Route path="assessment/session-1/complete" element={<RoleAssessmentSessionComplete />} />
+            <Route path="match/blocked" element={<RoleProfileMatchBlocked />} />
+            <Route path="match/roles" element={<RoleProfileRolesFound />} />
+            <Route path="match/waitlist" element={<RoleProfileMatchWaitlist />} />
+          </Route>
+
           <Route path="/onboarding/mentor-apply/profile" element={<MentorProfile />} />
           <Route path="/onboarding/mentor-apply" element={<MentorApply />} />
 

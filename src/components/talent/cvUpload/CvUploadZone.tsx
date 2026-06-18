@@ -5,9 +5,10 @@ import { CV_ACCEPT_MIME, isAcceptedCvFile } from '../../../utils/cvUpload';
 interface CvUploadZoneProps {
   file: File | null;
   onFileSelect: (file: File | null) => void;
+  disabled?: boolean;
 }
 
-const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect }) => {
+const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect, disabled }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -20,12 +21,14 @@ const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect }) => {
   }, [file]);
 
   const pickFile = (selected: File | null) => {
+    if (disabled) return;
     if (selected && !isAcceptedCvFile(selected)) return;
     onFileSelect(selected);
   };
 
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
+    if (disabled) return;
     setIsDragging(false);
     pickFile(event.dataTransfer.files?.[0] ?? null);
   };
@@ -37,10 +40,12 @@ const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect }) => {
         type="file"
         accept={CV_ACCEPT_MIME}
         className="hidden"
+        disabled={disabled}
         onChange={(event) => pickFile(event.target.files?.[0] ?? null)}
       />
       <button
         type="button"
+        disabled={disabled}
         onClick={() => inputRef.current?.click()}
         onDragOver={(event) => {
           event.preventDefault();
@@ -48,7 +53,9 @@ const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect }) => {
         }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`w-full min-h-[220px] border-[1.5px] rounded-[10px] bg-white flex flex-col items-center justify-center cursor-pointer transition-colors mb-5 px-5 py-8 ${
+        className={`w-full min-h-[220px] border-[1.5px] rounded-[10px] bg-white flex flex-col items-center justify-center transition-colors mb-5 px-5 py-8 ${
+          disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+        } ${
           hasFile
             ? 'border-[#0047CC] bg-[#EEFBEE]'
             : isDragging
