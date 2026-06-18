@@ -108,10 +108,9 @@ const MatchedRoleCard: React.FC<MatchedRoleCardProps> = ({ role, onViewJd, onGoT
         pill
         fullWidth={false}
         onClick={() => onGoToAssessment?.(role.id)}
-        className="gap-1.5 sm:!w-auto !font-bold !min-h-0 !py-2.5 !px-5"
+        className="sm:!w-auto !font-bold !min-h-0 !py-2.5 !px-5"
       >
         Go to assessment
-        <ChevronRightIcon size={13} strokeWidth={2.5} />
       </Button>
     </div>
   </article>

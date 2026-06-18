@@ -3,8 +3,8 @@ import { ModalTitle } from './Typography';
 
 interface ModalDialogProps {
   open: boolean;
-  title: string;
-  subtitle?: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
   onClose: () => void;
   children: React.ReactNode;
   footer?: React.ReactNode;
@@ -37,11 +37,13 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
       >
         <div className="px-6 pt-5 pb-4 border-b border-[#E6E6E6]">
           <ModalTitle id="modal-title">{title}</ModalTitle>
-          {subtitle && (
-            <p className="text-[13px] text-[#808080] mt-1 leading-relaxed">{subtitle}</p>
-          )}
         </div>
-        <div className="px-6 py-5">{children}</div>
+        <div>
+          {subtitle && (
+            <p className="px-6 text-base text-black my-4 leading-relaxed font-bold">{subtitle}</p>
+          )}
+          <div className="px-6 pb-5">{children}</div>
+        </div>
         {footer && <div className="px-6 pb-5">{footer}</div>}
       </div>
     </div>

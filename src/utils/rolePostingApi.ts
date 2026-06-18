@@ -26,7 +26,8 @@ export function mapFillMethodToApi(
 export function buildCreateRolePostingIntakeBody(
   hireMode: 'live' | 'vault',
   fillMethod: 'upload' | 'manual',
-  goLiveDate?: string
+  goLiveDate?: string,
+  jobDescriptionDocumentId?: string
 ): CreateRolePostingIntakeRequest {
   const hiringMode = mapHireModeToApi(hireMode);
   const body: CreateRolePostingIntakeRequest = {
@@ -36,6 +37,10 @@ export function buildCreateRolePostingIntakeBody(
 
   if (hiringMode === 'VAULT' && goLiveDate) {
     body.vaultGoLiveDate = toVaultGoLiveISO(goLiveDate);
+  }
+
+  if (jobDescriptionDocumentId) {
+    body.jobDescriptionDocumentId = jobDescriptionDocumentId;
   }
 
   return body;

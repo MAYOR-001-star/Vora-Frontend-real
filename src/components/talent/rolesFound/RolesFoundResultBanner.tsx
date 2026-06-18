@@ -8,7 +8,7 @@ interface RolesFoundResultBannerProps {
 const RolesFoundResultBanner: React.FC<RolesFoundResultBannerProps> = ({ summary }) => (
   <div className="bg-white border border-[#E6E6E6] rounded-2xl px-6 py-5 flex gap-4 items-start mb-6">
     <div className="w-[42px] h-[42px] rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 mt-0.5 border border-[#E6E6E6]">
-      <InfoIcon size={20} strokeWidth={2.5} className="text-[#0047CC]" />
+      <InfoIcon size={20} strokeWidth={2.5} className="text-[#DC2626]" />
     </div>
     <div>
       <p className="text-[15px] font-bold text-[#1A1A1A] mb-1.5 tracking-tight">

@@ -12,11 +12,15 @@ export function useGoogleAuth() {
   const googleMutation = useGoogleLoginMutation();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  const handleGoogleSignIn = useCallback(async () => {
+  const handleGoogleSignIn = useCallback(async (roleLink?: string) => {
     setIsGoogleLoading(true);
     try {
       const idToken = await signInWithGoogle();
-      const response = await googleMutation.mutateAsync({ idToken });
+      const payload: any = { idToken };
+      if (roleLink) {
+        payload.roleLink = roleLink;
+      }
+      const response = await googleMutation.mutateAsync(payload);
       const { route, state } = resolveOAuthNavigation(response.data, login, setSetupToken);
 
       if (response.data.accessToken) {

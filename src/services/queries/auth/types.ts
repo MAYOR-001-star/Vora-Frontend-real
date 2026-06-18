@@ -1,17 +1,33 @@
 export interface LoginRequest {
   email: string;
   password?: string;
+  roleLink?: string;
 }
 
 export interface SignupRequest {
   email: string;
   password?: string;
   role?: 'TALENT' | 'EMPLOYER' | 'MENTOR';
+  roleLink?: string;
 }
 
 export interface VerifyOTPRequest {
   email: string;
   code: string;
+}
+
+export interface ApplyContext {
+  roleLink: string;
+  source: string;
+}
+
+export type CvParseStatus = 'NONE' | 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+
+export interface ActiveCv {
+  cvUploadId: string;
+  originalName?: string;
+  parseStatus: CvParseStatus;
+  parsedData?: any;
 }
 
 export interface User {
@@ -24,6 +40,8 @@ export interface User {
   onboardingStep?: number;
   onboardingCompleted?: boolean;
   isOnboardingComplete?: boolean;
+  applyContext?: ApplyContext;
+  activeCv?: ActiveCv;
   [key: string]: any;
 }
 
@@ -57,6 +75,7 @@ export type OAuthAuthResponse = ApiResponse<OAuthAuthData>;
 
 export interface GoogleLoginRequest {
   idToken: string;
+  roleLink?: string;
 }
 
 export interface OAuthSelectRoleRequest {

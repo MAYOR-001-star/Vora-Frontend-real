@@ -4,9 +4,10 @@ import { formatCvFileSize } from '../../../utils/cvUpload';
 interface CvUploadedFileRowProps {
   file: File;
   onRemove: () => void;
+  disabled?: boolean;
 }
 
-const CvUploadedFileRow: React.FC<CvUploadedFileRowProps> = ({ file, onRemove }) => (
+const CvUploadedFileRow: React.FC<CvUploadedFileRowProps> = ({ file, onRemove, disabled }) => (
   <div className="flex items-center gap-3.5 border-[1.5px] border-[#0047CC] rounded-lg px-4 py-3.5 bg-white mb-4">
     <div className="w-11 h-11 rounded-lg bg-white border border-[#E6E6E6] flex items-center justify-center shrink-0">
       <FileIcon size={22} className="text-[#0047CC]" strokeWidth={2} />
@@ -18,7 +19,10 @@ const CvUploadedFileRow: React.FC<CvUploadedFileRowProps> = ({ file, onRemove })
     <button
       type="button"
       onClick={onRemove}
-      className="text-[#ADADAD] hover:text-[#1A1A1A] p-1 flex items-center shrink-0 cursor-pointer transition-colors"
+      disabled={disabled}
+      className={`p-1 flex items-center shrink-0 transition-colors ${
+        disabled ? 'text-[#E6E6E6] cursor-not-allowed' : 'text-[#ADADAD] hover:text-[#1A1A1A] cursor-pointer'
+      }`}
       aria-label="Remove file"
     >
       <CloseIcon size={18} strokeWidth={2.5} />

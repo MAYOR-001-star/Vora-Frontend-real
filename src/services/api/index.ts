@@ -45,7 +45,7 @@ async function fetchWithInterceptors(options: ApiRequestOptions): Promise<any> {
   const authToken: AuthTokenMode =
     authTokenOption ?? (auth === false ? 'none' : 'access');
 
-  let headers = new Headers(fetchOptions.headers || {});
+  const headers = new Headers(fetchOptions.headers || {});
   if (!headers.has('Content-Type') && !(body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }

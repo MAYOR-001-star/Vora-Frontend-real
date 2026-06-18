@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import AlertBanner from '../../components/common/AlertBanner';
@@ -46,10 +46,14 @@ const EditVaultRole: React.FC = () => {
   const original = DEFAULT_VAULT_EDIT_ORIGINAL;
   const [form, setForm] = useState<VaultEditOriginal>({ ...original });
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [customRoleText, setCustomRoleText] = useState('');
+  const [showCustomRoleInput, setShowCustomRoleInput] = useState(false);
 
   const patch = (key: keyof VaultEditOriginal, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
+
+
 
   const changed = (key: keyof VaultEditOriginal) => form[key] !== original[key];
 
@@ -161,10 +165,61 @@ const EditVaultRole: React.FC = () => {
               <Select
                 label="Role type"
                 groups={ROLE_TYPE_GROUPS}
-                value={form.roleType}
-                onChange={(e) => patch('roleType', e.target.value)}
+                value={showCustomRoleInput ? 'other' : form.roleType}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === 'other') {
+                    const standardOptions = ROLE_TYPE_GROUPS.flatMap(g => g.options.map(o => o.value)).filter(v => v !== 'other');
+                    const isStandard = standardOptions.includes(form.roleType);
+                    const initialText = isStandard ? '' : form.roleType;
+                    setCustomRoleText(initialText);
+                    setShowCustomRoleInput(true);
+                  } else {
+                    patch('roleType', val);
+                    setShowCustomRoleInput(false);
+                  }
+                }}
                 className={changedInputClass(changed('roleType'))}
               />
+              {showCustomRoleInput && (
+                <div className="mt-3 flex gap-3 items-end">
+                  <div className="flex-1">
+                    <Input
+                      label="Specify custom role type"
+                      placeholder="e.g. Specialized Nurse Coordinator"
+                      value={customRoleText}
+                      onChange={(e) => setCustomRoleText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (customRoleText.trim()) {
+                            patch('roleType', customRoleText.trim());
+                            setShowCustomRoleInput(false);
+                          }
+                        }
+                      }}
+                      className={`${changedInputClass(changed('roleType'))} h-[50px] sm:h-[54px] py-0`}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (customRoleText.trim()) {
+                        patch('roleType', customRoleText.trim());
+                        setShowCustomRoleInput(false);
+                      }
+                    }}
+                    disabled={!customRoleText.trim()}
+                    size="md"
+                    pill={false}
+                    variant="primary"
+                    fullWidth={false}
+                    className="h-[50px] sm:h-[54px] min-h-0 py-0"
+                  >
+                    Add
+                  </Button>
+                </div>
+              )}
             </TrackedField>
             <TrackedField
               changed={changed('roleTitle')}

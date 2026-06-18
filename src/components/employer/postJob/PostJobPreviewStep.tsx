@@ -84,7 +84,7 @@ function LongText({ text }: { text: string }) {
   if (!text?.trim()) return <span className="text-[13px] text-[#808080]">,</span>;
   const short = text.length > 180 && !expanded;
   return (
-    <p className="text-[13px] text-[#4A4A4A] leading-relaxed mt-1">
+    <p className="text-[13px] text-[#4A4A4A] leading-relaxed mt-1 break-words">
       {short ? `${text.slice(0, 180)}…` : text}{' '}
       {text.length > 180 && (
         <button

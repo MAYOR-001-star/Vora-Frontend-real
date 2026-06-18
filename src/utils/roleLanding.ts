@@ -124,3 +124,158 @@ export const getRoleLandingForSlug = (slug: string): PublicRoleLandingData => {
     roleTitle: humanizeSlug(slug),
   };
 };
+
+const COUNTRY_MAP: Record<string, string> = {
+  US: 'United States',
+  UK: 'United Kingdom',
+  GB: 'United Kingdom',
+  NG: 'Nigeria',
+  ZA: 'South Africa',
+  KE: 'Kenya',
+  GH: 'Ghana',
+  CA: 'Canada',
+  AU: 'Australia',
+  IN: 'India',
+};
+
+export const mapApiResponseToRoleData = (slug: string, apiData: any): PublicRoleLandingData => {
+  const companyName = typeof apiData.employer === 'string' 
+    ? apiData.employer 
+    : apiData.employer?.organisationName || apiData.employer?.companyName || 'Unknown Employer';
+    
+  const companyInitials = companyName
+    .split(' ')
+    .map((w: string) => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+
+  let companyCountry = typeof apiData.employer !== 'string' ? apiData.employer?.country : null;
+  if (companyCountry) {
+    const trimmed = companyCountry.trim().toUpperCase();
+    companyCountry = COUNTRY_MAP[trimmed] || companyCountry.trim();
+  }
+
+  const metaItems = [];
+  
+  if (apiData.publishedAt) {
+    const published = new Date(apiData.publishedAt);
+    const today = new Date();
+    published.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    
+    const diffTime = today.getTime() - published.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    
+    let postedStr = 'Posted today';
+    if (diffDays === 1) {
+      postedStr = 'Posted 1 day ago';
+    } else if (diffDays > 1) {
+      postedStr = `Posted ${diffDays} days ago`;
+    }
+    
+    if (apiData.closingDate) {
+      const closing = new Date(apiData.closingDate);
+      closing.setHours(0, 0, 0, 0);
+      const diffClosing = closing.getTime() - today.getTime();
+      const diffClosingDays = Math.round(diffClosing / (1000 * 60 * 60 * 24));
+      if (diffClosingDays > 0) {
+        postedStr += ` · Expires in ${diffClosingDays} days`;
+      }
+    }
+    
+    metaItems.push(postedStr);
+  }
+  if (apiData.roleType) metaItems.push(apiData.roleType);
+  if (apiData.locationBadge) metaItems.push(apiData.locationBadge);
+  if (apiData.employmentLevel) {
+    let level = apiData.employmentLevel as string;
+    if (!level.toLowerCase().includes('level')) {
+      level = level.charAt(0).toUpperCase() + level.slice(1).toLowerCase() + ' level';
+    }
+    metaItems.push(level);
+  }
+
+  const formatCamelCase = (str: string) => {
+    const spaced = str.replace(/([A-Z])/g, ' $1').trim();
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+  };
+
+  const overviewRows = Object.entries(apiData.overview || {})
+    .filter(([_, val]) => val !== null && val !== undefined && val !== '')
+    .map(([key, val]) => ({
+      label: formatCamelCase(key),
+      value: String(val),
+    }));
+
+  const eligibilityRows = Object.entries(apiData.eligibility || {})
+    .filter(([_, val]) => {
+      if (val === null || val === undefined || val === '') return false;
+      if (Array.isArray(val) && val.length === 0) return false;
+      return true;
+    })
+    .map(([key, val]) => {
+      const valueStr = Array.isArray(val) ? val.join(', ') : String(val);
+      return { label: formatCamelCase(key), value: valueStr };
+    });
+
+  const parseRequirements = (reqs: any): string[] => {
+    if (!reqs) return [];
+    if (Array.isArray(reqs)) return reqs;
+    if (typeof reqs === 'string') return reqs.split('\n').map(s => s.trim()).filter(Boolean);
+    
+    const result: string[] = [];
+    Object.entries(reqs).forEach(([key, val]) => {
+      if (val === null || val === undefined || val === '') return;
+      if (Array.isArray(val) && val.length === 0) return;
+      
+      const label = formatCamelCase(key);
+      const valueStr = Array.isArray(val) ? val.join(', ') : String(val);
+      result.push(`${label}: ${valueStr}`);
+    });
+    return result;
+  };
+
+  const ensureArray = (val: any): string[] => {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') return val.split('\n').map(s => s.trim()).filter(Boolean);
+    return [];
+  };
+
+  const formatRoleTitle = (title: string) => {
+    return title.replace(/-/g, ' ')
+      .split(' ')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+    let compLine = apiData.compensationSummary || '';
+    if (!compLine && (apiData.salaryMin || apiData.salaryMax)) {
+      const min = apiData.salaryMin;
+      const max = apiData.salaryMax;
+      if (min && max && min !== max) {
+        compLine = `$${min.toLocaleString()} - $${max.toLocaleString()}`;
+      } else {
+        compLine = `$${(min || max).toLocaleString()}`;
+      }
+    }
+    
+    return {
+      slug,
+      companyName: companyName || '',
+      companyLocation: companyCountry || '',
+      companyInitials: companyInitials || '',
+      roleTitle: formatRoleTitle(apiData.roleTitle || ''),
+      formatLocationLabel: apiData.locationBadge || '',
+      compensationLine: compLine + (apiData.positionsAvailable ? ` · ${apiData.positionsAvailable} position${apiData.positionsAvailable === 1 ? '' : 's'} available` : ''),
+    metaItems,
+    primaryTags: ensureArray(apiData.tags),
+    secondaryTags: [],
+    aboutRole: apiData.about || '',
+    responsibilities: ensureArray(apiData.responsibilities),
+    requirements: parseRequirements(apiData.requirements),
+    overviewRows,
+    eligibilityRows,
+    assessmentItems: ensureArray(apiData.assessmentItems),
+  };
+};

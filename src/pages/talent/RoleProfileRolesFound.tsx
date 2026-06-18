@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import DashboardLayout from '../../layout/DashboardLayout';
 import {
   buildUserDisplayName,
@@ -14,7 +14,9 @@ import {
 } from '../../constants/talentRolesFound';
 import { isCareerReadinessPassing } from '../../constants/profileMatchWaitlist';
 import { useAuth } from '../../context/AuthContext';
-import { getRoleLandingForSlug } from '../../utils/roleLanding';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
+import type { PublicRoleLandingData } from '../../types/roleLanding';
 import { loadRoleApplySlug } from '../../utils/roleSignup';
 import {
   resolveProfileMatchScan,
@@ -26,8 +28,8 @@ const RoleProfileRolesFound: React.FC = () => {
   const { user } = useAuth();
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
 
-  const roleSlug =
-    (location.state as { roleSlug?: string } | null)?.roleSlug || loadRoleApplySlug() || 'junior-global-health-researcher';
+  const params = useParams<{ roleSlug: string }>();
+  const roleSlug = params.roleSlug || '';
   const firstName =
     (location.state as { firstName?: string } | null)?.firstName || user?.firstName || '';
   const lastName =
@@ -37,10 +39,16 @@ const RoleProfileRolesFound: React.FC = () => {
   );
   const careerReadinessPassing = isCareerReadinessPassing(matchScan);
 
-  const appliedRole = useMemo(
-    () => (roleSlug ? getRoleLandingForSlug(roleSlug) : null),
-    [roleSlug],
-  );
+  const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(roleSlug || '');
+
+  const appliedRole: PublicRoleLandingData | null = useMemo(() => {
+    if (!roleSlug) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(roleSlug);
+    }
+    return mapApiResponseToRoleData(roleSlug, apiData);
+  }, [response, roleSlug]);
 
   const summary = useMemo(
     () => ({

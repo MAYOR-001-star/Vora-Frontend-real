@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { ShareChannel } from '../../types/jobs';
 import { buildShareHref } from '../../utils/shareLinks';
 import CopyLinkField from './CopyLinkField';
 import ShareViaButtons from './ShareViaButtons';
+import ModalDialog from '../common/ModalDialog';
+import Button from '../common/Button';
 
 interface RoleShareSectionProps {
   channels: ShareChannel[];
@@ -17,21 +19,51 @@ const RoleShareSection: React.FC<RoleShareSectionProps> = ({
   shareTitle,
   className = '',
 }) => {
-  const [selected, setSelected] = useState<ShareChannel['id'] | null>(null);
+  const [pendingChannel, setPendingChannel] = useState<ShareChannel | null>(null);
 
-  const displayLink = useMemo(
-    () => buildShareHref(selected as ShareChannel['id'], shareUrl, shareTitle),
-    [selected, shareUrl, shareTitle],
-  );
+  const handleShareClick = (channelId: ShareChannel['id']) => {
+    const channel = channels.find((c) => c.id === channelId);
+    if (channel) {
+      setPendingChannel(channel);
+    }
+  };
+
+  const confirmShare = () => {
+    if (pendingChannel) {
+      const href = buildShareHref(pendingChannel.id, shareUrl, shareTitle);
+      window.open(href, '_blank', 'noopener,noreferrer');
+      setPendingChannel(null);
+    }
+  };
 
   return (
     <div className={className}>
-      <CopyLinkField url={displayLink} className="mb-4" />
+      <CopyLinkField url={shareUrl} className="mb-4" />
       <ShareViaButtons
         channels={channels}
-        selected={selected}
-        onSelect={setSelected}
+        onSelect={handleShareClick}
       />
+
+      <ModalDialog
+        open={!!pendingChannel}
+        title="Leaving VORA"
+        subtitle={`You are about to be redirected to ${pendingChannel?.label} to share this role.`}
+        onClose={() => setPendingChannel(null)}
+        footer={
+          <div className="flex gap-3 justify-end mt-2">
+            <Button variant="outline" size="md" onClick={() => setPendingChannel(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="md" onClick={confirmShare}>
+              Continue to {pendingChannel?.label}
+            </Button>
+          </div>
+        }
+      >
+        <p className="text-[14px] text-[#4A4A4A] leading-relaxed">
+          The link will open in a new tab where you can customize your post before sharing.
+        </p>
+      </ModalDialog>
     </div>
   );
 };

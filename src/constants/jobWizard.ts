@@ -139,6 +139,12 @@ export const ROLE_TYPE_GROUPS: OptionGroup[] = [
       { label: 'Fundraising / Development Officer', value: 'Fundraising / Development Officer' },
       { label: 'Grant Writer', value: 'Grant Writer' }
     ]
+  },
+  {
+    label: 'Other',
+    options: [
+      { label: 'Other', value: 'other' }
+    ]
   }
 ];
 
@@ -331,15 +337,14 @@ export const TZ_GROUPS = [
       { label: 'UTC+12 (NZST - Auckland, Fiji)', value: 'UTC+12 (NZST - Auckland, Fiji)' }
     ]
   }
-];
-
-export const COMMUNICATION_RHYTHM_OPTIONS: Option[] = [
+];export const COMMUNICATION_RHYTHM_OPTIONS: Option[] = [
   { label: 'Weekly team meetings', value: 'Weekly team meetings' },
   { label: 'Daily handovers', value: 'Daily handovers' },
   { label: 'Async by default', value: 'Async by default' },
   { label: 'Bi-weekly check-ins', value: 'Bi-weekly check-ins' },
   { label: 'Monthly reviews', value: 'Monthly reviews' },
   { label: 'Ad-hoc / as needed', value: 'Ad-hoc / as needed' },
+  { label: 'Other', value: 'other' }
 ];
 
 export const PREFERRED_WORKING_STYLE_OPTIONS: Option[] = [
@@ -351,7 +356,8 @@ export const PREFERRED_WORKING_STYLE_OPTIONS: Option[] = [
   { label: 'Data-driven / analytical', value: 'Data-driven / analytical' },
   { label: 'Process-oriented / protocol-led', value: 'Process-oriented / protocol-led' },
   { label: 'Fast-paced / adaptive', value: 'Fast-paced / adaptive' },
-  { label: 'Research-first', value: 'Research-first' }
+  { label: 'Research-first', value: 'Research-first' },
+  { label: 'Other', value: 'other' }
 ];
 
 export const PERSONALITY_TRAITS_OPTIONS: Option[] = [
@@ -364,7 +370,8 @@ export const PERSONALITY_TRAITS_OPTIONS: Option[] = [
   { label: 'Analytical', value: 'Analytical' },
   { label: 'Decisive under uncertainty', value: 'Decisive under uncertainty' },
   { label: 'Tactful / diplomatically aware', value: 'Tactful / diplomatically aware' },
-  { label: 'Strong communicator', value: 'Strong communicator' }
+  { label: 'Strong communicator', value: 'Strong communicator' },
+  { label: 'Other', value: 'other' }
 ];
 
 export const WORK_ENVIRONMENT_OPTIONS: Option[] = [
@@ -377,8 +384,9 @@ export const WORK_ENVIRONMENT_OPTIONS: Option[] = [
   { label: 'Structured / protocol-led', value: 'Structured / protocol-led' },
   { label: 'Inclusive / diverse', value: 'Inclusive / diverse' },
   { label: 'Research-oriented', value: 'Research-oriented' },
-{ label: 'Commercial / performance-focused', value: 'Commercial / performance-focused' },
-  { label: 'Boutique / specialist practice', value: 'Boutique / specialist practice' }
+  { label: 'Commercial / performance-focused', value: 'Commercial / performance-focused' },
+  { label: 'Boutique / specialist practice', value: 'Boutique / specialist practice' },
+  { label: 'Other', value: 'other' }
 ];
 
 export const EXPERIENCE_YEARS_OPTIONS: Option[] = [
@@ -423,6 +431,12 @@ export const EXPERIENCE_TYPES_GROUPS: OptionGroup[] = [
       { label: 'Budget management and financial oversight', value: 'Budget management and financial oversight' },
       { label: 'People management / team leadership', value: 'People management / team leadership' },
       { label: 'Stakeholder engagement (government, NGO, multilateral)', value: 'Stakeholder engagement (government, NGO, multilateral)' }
+    ]
+  },
+  {
+    label: 'Other',
+    options: [
+      { label: 'Other', value: 'other' }
     ]
   }
 ];
@@ -687,6 +701,12 @@ export const TECHNICAL_SKILLS_GROUPS: OptionGroup[] = [
       { label: 'Logistics & Fleet Management', value: 'Logistics & Fleet Management' },
       { label: 'Facilities & Estates Management', value: 'Facilities & Estates Management' }
     ]
+  },
+  {
+    label: 'Other',
+    options: [
+      { label: 'Other', value: 'other' }
+    ]
   }
 ];
 
@@ -771,6 +791,12 @@ export const TOOLS_SOFTWARE_GROUPS: OptionGroup[] = [
       { label: 'Xero / NetSuite / ERP', value: 'Xero / NetSuite / ERP' },
       { label: 'Raiser\'s Edge / Salesforce NPSP', value: 'Raiser\'s Edge / Salesforce NPSP' }
     ]
+  },
+  {
+    label: 'Other',
+    options: [
+      { label: 'Other', value: 'other' }
+    ]
   }
 ];
 
@@ -823,6 +849,12 @@ export const PRE_ASSESSMENT_GROUPS: OptionGroup[] = [
       { label: 'Professional portfolio or work samples', value: 'Professional portfolio or work samples' },
       { label: 'Training material or curriculum sample', value: 'Training material or curriculum sample' },
       { label: 'Communication or campaign material', value: 'Communication or campaign material' }
+    ]
+  },
+  {
+    label: 'Other',
+    options: [
+      { label: 'Other', value: 'other' }
     ]
   }
 ];

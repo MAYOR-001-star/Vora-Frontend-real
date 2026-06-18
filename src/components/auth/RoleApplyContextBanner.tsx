@@ -33,11 +33,17 @@ const RoleApplyContextBanner: React.FC<RoleApplyContextBannerProps> = ({ role })
           {locationShort ? ` · ${locationShort}` : ''}
         </p>
       </div>
-      <div className="flex flex-col items-end gap-1 shrink-0 ml-auto">
+      <div className="flex flex-col items-end gap-1.5 shrink-0 ml-auto">
         <Tag
-          label={salaryShort ? `${role.formatLocationLabel} · ${salaryShort}` : role.formatLocationLabel}
+          label={role.formatLocationLabel}
           variant="blue"
         />
+        {salaryShort && (
+          <Tag
+            label={salaryShort}
+            variant="blue"
+          />
+        )}
       </div>
     </div>
   );

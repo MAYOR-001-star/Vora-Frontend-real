@@ -80,7 +80,7 @@ const ApplicantDetailsModal: React.FC<ApplicantDetailsModalProps> = ({
             <div className="space-y-6">
               <div className="space-y-2">
                 <p className="text-[11px] font-medium text-gray-400 uppercase tracking-tight">Description</p>
-                <p className="text-[14px] font-medium text-gray-600 leading-relaxed">
+                <p className="text-[14px] font-medium text-gray-600 leading-relaxed break-words">
                   Lörem ipsum siler sit moressatur. Rune sed vovettar, ifall alandis fädar eljest betvåran. 
                   Ytande sedas ulkasoper vinga... <span className="text-[#0047CC] cursor-pointer hover:underline font-medium">see more</span>
                 </p>

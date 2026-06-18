@@ -33,10 +33,9 @@ const MatchAssessmentCta: React.FC<MatchAssessmentCtaProps> = ({ pills, onStart 
       pill
       fullWidth={false}
       onClick={onStart}
-      className="gap-1.5 w-full lg:w-auto shrink-0"
+      className="w-full lg:w-auto shrink-0"
     >
       Go to assessment
-      <ChevronRightIcon size={13} strokeWidth={2.5} />
     </Button>
   </div>
 );

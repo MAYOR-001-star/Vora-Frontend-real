@@ -39,7 +39,7 @@ const InfoField: React.FC<{ label: string; value: string; isLongText?: boolean }
   <div className="space-y-1">
     <p className="text-[11px] font-medium text-gray-400 uppercase tracking-tight">{label}</p>
     <div className="flex items-baseline gap-1">
-      <p className={`text-[14px] font-medium text-gray-800 ${isLongText ? 'leading-relaxed' : ''}`}>
+      <p className={`text-[14px] font-medium text-gray-800 break-words ${isLongText ? 'leading-relaxed' : ''}`}>
         {value}
         {isLongText && <span className="text-[#0047CC] cursor-pointer hover:underline ml-1 font-medium">see more</span>}
       </p>

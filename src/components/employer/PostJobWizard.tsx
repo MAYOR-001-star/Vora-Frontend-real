@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import { apiClient } from '../../services/api';
 import StepValidationAlert from '../common/StepValidationAlert';
 import {
   validatePostJobStep,
@@ -12,7 +13,8 @@ import {
 import { 
   ChevronLeftIcon, 
   ChevronRightIcon,
-  CalendarIcon
+  CalendarIcon,
+  CloseIcon
 } from '../common/Icons';
 import Select from '../common/Select';
 import Button from '../common/Button';
@@ -100,6 +102,8 @@ import {
   useUpdateRolePostingStepOneMutation,
   useUpdateRolePostingStepThreeMutation,
   useUpdateRolePostingStepTwoMutation,
+  useGetRolePostingQuery,
+  useGetRolePostingPrefillQuery,
 } from '../../services/queries/rolePostings';
 import { buildUpdateRolePostingStepOneBody } from '../../utils/rolePostingStepOne';
 import { buildUpdateRolePostingStepTwoBody } from '../../utils/rolePostingStepTwo';
@@ -125,6 +129,8 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
 
   // Form State
   const [roleType, setRoleType] = useState('');
+  const [customRoleText, setCustomRoleText] = useState('');
+  const [showCustomRoleInput, setShowCustomRoleInput] = useState(false);
   const [roleTitle, setRoleTitle] = useState('');
   const [level, setLevel] = useState('');
   const [positions, setPositions] = useState('1');
@@ -160,6 +166,35 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
 
   // Prefill Banner State
   const [showPrefillBanner, setShowPrefillBanner] = useState(false);
+  const [isPollingFinished, setIsPollingFinished] = useState(false);
+  const [parseStatus, setParseStatus] = useState<'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'>('PENDING');
+
+  const { data: prefillRes } = useGetRolePostingPrefillQuery(rolePostingId || '', {
+    enabled: isOpen && !!rolePostingId && !!initialConfig?.isPrefilled && !isPollingFinished,
+    refetchInterval: 3000,
+  });
+
+  useEffect(() => {
+    if (prefillRes?.data) {
+      const p = prefillRes.data as any;
+      if (p.jdParseStatus) {
+        setParseStatus(p.jdParseStatus);
+      }
+      
+      const isStillProcessing = p.jdParseStatus === 'PENDING' || p.jdParseStatus === 'PROCESSING';
+      
+      if (!isStillProcessing) {
+        if (p.jdParseStatus === 'FAILED') {
+          // Keep the polling screen up, but it will show the FAILED state because of `parseStatus`
+          toast.error('Failed to extract job details.');
+          setShowPrefillBanner(false);
+        } else {
+          setIsPollingFinished(true);
+          setShowPrefillBanner(true);
+        }
+      }
+    }
+  }, [prefillRes]);
 
   // Step 2 state
   const [roleGoal, setRoleGoal] = useState('');
@@ -625,20 +660,11 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
       setShowPrefillBanner(initialConfig.isPrefilled);
       setCurrentStep(parseRolePostingCurrentStep(initialConfig.currentStep) ?? 1);
 
-      if (initialConfig.isPrefilled) {
-        setRoleTitle('Global Health Research Intern');
-        setRoleType('Internship (paid)');
-        setLevel('student');
-        setPositions('3');
-        setTimeCommitment('20');
-        setWorkFormat('Fully onsite');
-        setLocation('Lagos, Nigeria');
-        setStartDate('2025-10-21');
-        setEndDate('2026-01-21');
-        setSummary('Lorem ipsum dolor sit amet consectetur. Vierra lectus rutrum luesnh...');
-      } else {
+      if (!initialConfig.isPrefilled) {
         setRoleTitle('');
         setRoleType('');
+        setShowCustomRoleInput(false);
+        setCustomRoleText('');
         setLevel('');
         setPositions('1');
         setTimeCommitment('');
@@ -652,6 +678,61 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
   }, [isOpen, initialConfig]);
 
   useEffect(() => {
+    if (prefillRes?.data) {
+      const p = prefillRes.data;
+      // Step 1
+      if (p.roleTitle) setRoleTitle(p.roleTitle);
+      if (p.roleType) setRoleType(p.roleType);
+      if (p.employmentLevel) setLevel(p.employmentLevel);
+      if (p.positionsAvailable) setPositions(p.positionsAvailable.toString());
+      if (p.timeCommitment) setTimeCommitment(p.timeCommitment);
+      if (p.workFormat) setWorkFormat(p.workFormat);
+      if (p.workLocationPrimary) setLocation(p.workLocationPrimary);
+      if (p.additionalHiringLocations) setAdditionalLocations(p.additionalHiringLocations);
+      if (p.timezoneRegions) setSelectedTimezoneRegions(p.timezoneRegions);
+      if (p.timezoneRequirements) setSelectedTimezones(p.timezoneRequirements);
+      if (p.startDate) setStartDate(p.startDate);
+      if (p.closingDate) setEndDate(p.closingDate);
+      if (p.roleSummary) setSummary(p.roleSummary);
+      if (p.internationalTalentPolicy) setInternationalPolicy(p.internationalTalentPolicy);
+      if (p.securityClearanceRequirement) setSecurityClearance(p.securityClearanceRequirement);
+      if (p.workPermitTypesAccepted) setSelectedWorkPermits(p.workPermitTypesAccepted);
+
+      // Step 2
+      if (p.roleGoal) setRoleGoal(p.roleGoal);
+      if (p.coreResponsibilities) setCoreResponsibilities(p.coreResponsibilities);
+      if (p.technicalSkills) setTechnicalSkills(p.technicalSkills);
+      if (p.toolsRequired) setTools(p.toolsRequired);
+      if (p.languageRequirements) setLanguages(p.languageRequirements);
+
+      // Step 3
+      if (p.yearsExperienceRequired) setExperienceYears(p.yearsExperienceRequired);
+      if (p.typeOfExperience) setExperienceTypes(p.typeOfExperience);
+      if (p.minimumQualification) setMinQualification(p.minimumQualification);
+      if (p.preferredQualifications) setPreferredQualifications(p.preferredQualifications);
+      if (p.sectorBackground) setSectorBackground(p.sectorBackground);
+      if (p.geographicExperience) setGeographicExperience(p.geographicExperience);
+      if (p.publicationsRequired) setPublicationsRequired(p.publicationsRequired);
+      if (p.budgetManagementRequired) setBudgetManagement(p.budgetManagementRequired);
+      if (p.teamManagementRequired) setTeamManagement(p.teamManagementRequired);
+
+      // Step 4
+      if (p.preferredWorkingStyle) setPreferredWorkingStyle(p.preferredWorkingStyle);
+      if (p.communicationRhythm) setCommunicationRhythm(p.communicationRhythm);
+      if (p.primaryWorkingLanguage) setPrimaryLanguage(p.primaryWorkingLanguage);
+      if (p.personalityTraits) setPersonalityTraits(p.personalityTraits);
+      if (p.workEnvironmentDescriptors) setWorkEnvironment(p.workEnvironmentDescriptors);
+      if (p.teamCultureFreeText) setAdditionalTeamContext(p.teamCultureFreeText);
+      
+      // Step 5
+      // Assuming mapping for compensation is handled mostly via the user, or if returned, handled here.
+
+      // We can hide the prefill banner or change its state once data is populated
+      setShowPrefillBanner(false);
+    }
+  }, [prefillRes]);
+
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -659,6 +740,8 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
+
+
 
   const handleClose = () => {
     setIsClosing(true);
@@ -1054,12 +1137,20 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
     setIsProceeding(true);
     try {
       const escrow = buildEscrowPreview();
+      const vaultMode = isScheduled;
+      const vaultGoLiveDate = vaultMode ? (goLiveDate || initialConfig?.goLiveDate) : undefined;
 
-      if (isScheduled) {
+      // Submit role
+      const res = await apiClient.post({
+        url: `/role-postings/${rolePostingId}/submit`,
+        body: { vaultMode, vaultGoLiveDate }
+      });
+
+      if (vaultMode) {
         saveVaultConfirmation(
           buildVaultConfirmationData({
             roleTitle: roleTitle || undefined,
-            goLiveDate: goLiveDate || initialConfig?.goLiveDate,
+            goLiveDate: vaultGoLiveDate,
             positions: String(escrow.positions),
             salaryMidpoint: escrow.midpoint,
             currency: escrow.currency,
@@ -1082,6 +1173,10 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
         return;
       }
 
+      const responseData = (res as any)?.data || {};
+      const returnedSlug = responseData.roleLink;
+      const returnedShareUrl = responseData.shareUrl;
+
       saveJobPostedConfirmation(
         buildJobPostedConfirmationData({
           jobId: rolePostingId,
@@ -1092,6 +1187,8 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
           summary,
           roleGoal,
           coreResponsibilities,
+          slug: returnedSlug,
+          shareUrl: returnedShareUrl,
         }),
       );
 
@@ -1268,8 +1365,42 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
           )}
 
           <div className="px-5 py-6 md:px-10 md:py-8 space-y-5">
-            {/* Prefill Notification Banner */}
-            {showPrefillBanner && (
+            {initialConfig?.isPrefilled && !isPollingFinished ? (
+              <div className="flex flex-col items-center justify-center py-32 text-center animate-in fade-in duration-300 bg-white border border-[#E6E6E6] rounded-xl shadow-sm">
+                {parseStatus === 'FAILED' ? (
+                  <>
+                    <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mb-5">
+                      <CloseIcon size={28} strokeWidth={2.5} className="text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">Extraction failed</h3>
+                    <p className="text-[13px] text-gray-500 mt-2 max-w-md mx-auto mb-6">
+                      We encountered an issue while analyzing your document. You can continue to manually fill in the role details.
+                    </p>
+                    <Button 
+                      onClick={() => setIsPollingFinished(true)} 
+                      className="bg-[#0047CC] hover:bg-[#003d99] text-white font-bold text-xs px-6 min-h-[38px] rounded-full flex items-center justify-center transition-all cursor-pointer shadow-none"
+                      fullWidth={false}
+                    >
+                      Continue manually
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <svg className="animate-spin h-10 w-10 text-[#0047CC] mb-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <h3 className="text-xl font-bold text-gray-900">Extracting job details...</h3>
+                    <p className="text-[13px] text-gray-500 mt-2 max-w-md mx-auto">
+                      VORA is analyzing your uploaded document to instantly pre-fill your role requirements. This usually takes just a few seconds.
+                    </p>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* Prefill Notification Banner */}
+                {showPrefillBanner && (
               <AlertBanner
                 variant="blue"
                 className="animate-in fade-in duration-300"
@@ -1295,12 +1426,66 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                   {/* Role Type */}
                   <Select 
                     label="Role type"
-                    value={roleType}
+                    value={showCustomRoleInput ? 'other' : roleType}
                     placeholder="Select option"
                     groups={ROLE_TYPE_GROUPS}
-                    onChange={(e) => setRoleType(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === 'other') {
+                        const standardOptions = ROLE_TYPE_GROUPS.flatMap(g => g.options.map(o => o.value)).filter(v => v !== 'other');
+                        const isStandard = standardOptions.includes(roleType);
+                        const initialText = isStandard ? '' : roleType;
+                        setCustomRoleText(initialText);
+                        setShowCustomRoleInput(true);
+                      } else {
+                        setRoleType(val);
+                        setShowCustomRoleInput(false);
+                      }
+                    }}
                     {...fieldErrorProps('roleType')}
                   />
+
+                  {/* Specify Custom Role Type */}
+                  {showCustomRoleInput && (
+                    <div className="flex gap-3 items-end">
+                      <div className="flex-1">
+                        <Input
+                          label="Specify custom role type"
+                          placeholder="e.g. Specialized Nurse Coordinator"
+                          value={customRoleText}
+                          onChange={(e) => setCustomRoleText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              if (customRoleText.trim()) {
+                                setRoleType(customRoleText.trim());
+                                setShowCustomRoleInput(false);
+                              }
+                            }
+                          }}
+                          className="h-[50px] sm:h-[54px] py-0"
+                          {...fieldErrorProps('roleType')}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          if (customRoleText.trim()) {
+                            setRoleType(customRoleText.trim());
+                            setShowCustomRoleInput(false);
+                          }
+                        }}
+                        disabled={!customRoleText.trim()}
+                        size="md"
+                        pill={false}
+                        variant="primary"
+                        fullWidth={false}
+                        className="h-[50px] sm:h-[54px] min-h-0 py-0"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  )}
 
                   {/* Role Title */}
                   <Input 
@@ -2489,7 +2674,8 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                 />
               </>
             )}
-
+              </>
+            )}
           </div>
         </div>
 
@@ -2502,7 +2688,7 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                 onClick={prevStep}
                 className="px-6 min-h-[38px] border-[#E6E6E6] text-[#4A4A4A] font-bold text-xs rounded-full flex items-center gap-1 hover:bg-gray-50 transition-all cursor-pointer"
               >
-                <ChevronLeftIcon size={14} strokeWidth={3} /> Back
+                Back
               </Button>
             ) : (
               <div />
@@ -2527,7 +2713,6 @@ const PostJobWizard: React.FC<PostJobWizardProps> = ({ isOpen, onClose, initialC
                 className="px-7 min-h-[38px] bg-[#0047CC] hover:bg-[#003d99] text-white font-bold text-xs rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-none"
               >
                 {currentStep === 6 ? 'Continue to payment' : 'Proceed'}
-                {currentStep !== 6 && <ChevronRightIcon size={14} strokeWidth={3} />}
               </Button>
             </div>
           </div>

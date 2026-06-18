@@ -7,7 +7,7 @@ import { CloseIcon, LockIcon, FileIcon, FilePlusIcon } from '../common/Icons';
 import ScrollArea from '../common/ScrollArea';
 import { toISODate } from '../../utils/date';
 import { useAuth } from '../../context/AuthContext';
-import { useCreateRolePostingIntakeMutation } from '../../services/queries/rolePostings';
+import { useCreateRolePostingIntakeMutation, useUploadRolePostingIntakeDocumentMutation } from '../../services/queries/rolePostings';
 import { buildCreateRolePostingIntakeBody } from '../../utils/rolePostingApi';
 import { parseRolePostingCurrentStep } from '../../constants/jobWizard';
 import { saveRolePostingDraft } from '../../utils/rolePostingDraft';
@@ -27,11 +27,15 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
   const [goLiveDate, setGoLiveDate] = useState('');
   const [fillMethod, setFillMethod] = useState<'upload' | 'manual' | null>(null);
   const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
+  const [uploadedDocumentId, setUploadedDocumentId] = useState<string | null>(null);
+  const [isUploadingDocument, setIsUploadingDocument] = useState(false);
   const [documentLink, setDocumentLink] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const createIntakeMutation = useCreateRolePostingIntakeMutation();
+  const uploadMutation = useUploadRolePostingIntakeDocumentMutation();
 
   if (!isOpen || !isEmployer) return null;
 
@@ -49,7 +53,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
     onClose();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const fileErr = validateJobDocumentFile(file);
@@ -65,17 +69,29 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
         return next;
       });
       const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
-      setUploadedFile({
-        name: file.name,
-        size: `${sizeInMB}MB`
-      });
-      toast.success('Job description document loaded');
+      
+      try {
+        setIsUploadingDocument(true);
+        const res = await uploadMutation.mutateAsync(file);
+        setUploadedDocumentId(res.data.document.id);
+        setUploadedFile({
+          name: file.name,
+          size: `${sizeInMB}MB`
+        });
+        toast.success('Job description document loaded');
+      } catch (err) {
+        toast.error('Failed to upload the document. Please try again.');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } finally {
+        setIsUploadingDocument(false);
+      }
     }
   };
 
   const handleRemoveFile = (e: React.MouseEvent) => {
     e.stopPropagation();
     setUploadedFile(null);
+    setUploadedDocumentId(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -90,7 +106,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
@@ -107,11 +123,22 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
         return next;
       });
       const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
-      setUploadedFile({
-        name: file.name,
-        size: `${sizeInMB}MB`
-      });
-      toast.success('Job description document dropped');
+      
+      try {
+        setIsUploadingDocument(true);
+        const res = await uploadMutation.mutateAsync(file);
+        setUploadedDocumentId(res.data.document.id);
+        setUploadedFile({
+          name: file.name,
+          size: `${sizeInMB}MB`
+        });
+        toast.success('Job description document dropped');
+      } catch (err) {
+        toast.error('Failed to upload the document. Please try again.');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } finally {
+        setIsUploadingDocument(false);
+      }
     }
   };
 
@@ -120,6 +147,9 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
   const getButtonState = () => {
     if (isSubmitting) {
       return { disabled: true, text: 'Creating draft…' };
+    }
+    if (isUploadingDocument) {
+      return { disabled: true, text: 'Uploading document…' };
     }
     if (!hireMode) {
       return { disabled: true, text: 'Continue' };
@@ -136,7 +166,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
       if (!hasFile && !hasLink) {
         return { disabled: true, text: 'Upload a file or paste a link to continue' };
       }
-      return { disabled: false, text: 'Continue with uploaded document →' };
+      return { disabled: false, text: 'Continue with uploaded document' };
     }
     // Manual mode
     if (hireMode === 'vault') {
@@ -171,7 +201,8 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
       const body = buildCreateRolePostingIntakeBody(
         hireMode!,
         fillMethod!,
-        isScheduled ? goLiveDate : undefined
+        isScheduled ? goLiveDate : undefined,
+        uploadedDocumentId || undefined
       );
       const response = await createIntakeMutation.mutateAsync(body);
       const intake = response.data;
@@ -379,25 +410,40 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose, onContinue
                         className="hidden" 
                       />
                       
-                      <div 
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-                          isDragging ? 'border-[#0047CC] bg-[#EBF6FF]/40' : 'border-gray-200 hover:border-[#0047CC] hover:bg-[#EBF6FF]/20'
-                        }`}
-                      >
-                        <div className="flex flex-col items-center justify-center">
-                          <FilePlusIcon size={26} strokeWidth={1.8} className="text-[#0047CC]" />
-                          <div className="text-[13px] font-bold text-gray-700 mt-2">
-                            Drop PDF or DOCX here, or click to browse
+                      {isUploadingDocument ? (
+                        <div className="border-2 border-dashed rounded-xl p-6 text-center border-[#0047CC] bg-[#EBF6FF]/20 flex flex-col items-center justify-center">
+                          <svg className="animate-spin h-7 w-7 text-[#0047CC] mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <div className="text-[13px] font-bold text-[#0047CC]">
+                            Uploading document...
                           </div>
-                          <div className="text-[11px] text-gray-400 mt-1">
-                            PDF, DOCX only, Max 10 MB
+                          <div className="text-[11px] text-[#0047CC]/70 mt-1">
+                            Please wait while we upload your file.
                           </div>
                         </div>
-                      </div>
+                      ) : !uploadedFile ? (
+                        <div 
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                          onClick={() => fileInputRef.current?.click()}
+                          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                            isDragging ? 'border-[#0047CC] bg-[#EBF6FF]/40' : 'border-gray-200 hover:border-[#0047CC] hover:bg-[#EBF6FF]/20'
+                          }`}
+                        >
+                          <div className="flex flex-col items-center justify-center">
+                            <FilePlusIcon size={26} strokeWidth={1.8} className="text-[#0047CC]" />
+                            <div className="text-[13px] font-bold text-gray-700 mt-2">
+                              Drop PDF or DOCX here, or click to browse
+                            </div>
+                            <div className="text-[11px] text-gray-400 mt-1">
+                              PDF, DOCX only, Max 10 MB
+                            </div>
+                          </div>
+                        </div>
+                      ) : null}
 
                       {/* File item preview */}
                       {uploadedFile && (

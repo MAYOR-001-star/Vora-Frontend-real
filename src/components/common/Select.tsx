@@ -41,9 +41,9 @@ const Select: React.FC<SelectProps> = ({
         const found = group.options.find(o => o.value === value);
         if (found) return found.label;
       }
-      return '';
+      return value || '';
     }
-    return options.find(o => o.value === value)?.label || '';
+    return options.find(o => o.value === value)?.label || value || '';
   };
 
   const selectedLabel = findSelectedLabel();
@@ -90,7 +90,7 @@ const Select: React.FC<SelectProps> = ({
         key={option.value}
         type="button"
         onClick={() => handleSelect(option.value)}
-        className={`w-full text-left px-3 py-2 text-[13px] rounded-lg transition-colors cursor-pointer mb-0.5 last:mb-0 whitespace-nowrap ${
+        className={`w-full text-left px-3 py-2 text-[13px] rounded-lg transition-colors cursor-pointer mb-0.5 last:mb-0 whitespace-normal break-words ${
           isSelected
             ? 'bg-[#0047CC] text-white font-medium'
             : option.italic
@@ -105,7 +105,7 @@ const Select: React.FC<SelectProps> = ({
 
   const menuClass = isInline
     ? `absolute left-1/2 -translate-x-1/2 top-full mt-1 z-20 w-[4.75rem] rounded-lg bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] p-1 max-h-44 overflow-y-auto custom-scrollbar border-0 ${menuClassName}`
-    : `absolute z-20 mt-1.5 w-full min-w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-72 overflow-y-auto custom-scrollbar ${menuClassName}`;
+    : `absolute z-20 mt-1.5 w-full min-w-full rounded-xl border border-border-default bg-white shadow-lg p-1.5 max-h-72 overflow-y-auto overflow-x-hidden custom-scrollbar ${menuClassName}`;
 
   const triggerClass = isInline
     ? `w-auto min-w-[3.25rem] px-1 py-0.5 rounded-md border-0 bg-transparent font-bold text-sm hover:bg-[#F7F7F7] focus:outline-none transition-all cursor-pointer flex items-center justify-center gap-0.5 ${isOpen || value ? 'text-[#0047CC]' : 'text-[#1A1A1A]'} ${className}`

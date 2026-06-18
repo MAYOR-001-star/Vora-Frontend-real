@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { apiClient } from '../../../services/api';
 import AlertBanner from '../../common/AlertBanner';
 import { CardTitle, DrawerTitle } from '../../common/Typography';
 import { CloseIcon } from '../../common/Icons';
 import type { EscrowPreviewSummary } from './PostJobPreviewStep';
+
+interface PaymentConfig {
+  mode: string;
+  providersConfigured: boolean;
+  checkoutRequired: boolean;
+  collectionOptions: any[];
+  devBypassNotice?: string;
+}
 
 interface PostJobCheckoutDrawerProps {
   isOpen: boolean;
@@ -26,6 +35,24 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
   onSubmit,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState('card');
+  const [paymentConfig, setPaymentConfig] = useState<PaymentConfig | null>(null);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsLoadingConfig(true);
+      apiClient.get({ url: `/payments/employer/config?currency=${escrow.currency}` })
+        .then((res: any) => setPaymentConfig(res?.data || res))
+        .catch(() => {
+          // On error, we fallback to requiring checkout to be safe
+          setPaymentConfig(null);
+        })
+        .finally(() => setIsLoadingConfig(false));
+    } else {
+      setPaymentConfig(null);
+      setIsLoadingConfig(true);
+    }
+  }, [isOpen, escrow.currency]);
 
   if (!isOpen) return null;
 
@@ -111,55 +138,69 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
             </AlertBanner>
           )}
 
-          <div>
-            <CardTitle className="text-base mb-2">Payment options</CardTitle>
-            <p className="text-[13px] text-[#808080] mb-3">Select your preferred payment method</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-              {[
-                { id: 'card', label: 'Credit / Debit' },
-                { id: 'paypal', label: 'PayPal' },
-                { id: 'apple', label: 'Apple Pay' },
-                { id: 'google', label: 'Google Pay' },
-              ].map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => setPaymentMethod(m.id)}
-                  className={`rounded-[10px] border-2 py-3 px-2 text-[11px] font-bold transition-colors cursor-pointer ${
-                    paymentMethod === m.id
-                      ? 'border-[#0047CC] bg-white text-[#0047CC]'
-                      : 'border-[#E6E6E6] text-[#4A4A4A] hover:border-[#387DFF]'
-                  }`}
-                >
-                  {m.label}
-                </button>
-              ))}
-            </div>
+          {paymentConfig?.devBypassNotice && paymentConfig.mode === 'stub' && (
+            <AlertBanner variant="amber" className="mb-5 !text-[12px] bg-white">
+              {paymentConfig.devBypassNotice}
+            </AlertBanner>
+          )}
 
-            {paymentMethod === 'card' && (
-              <div className="space-y-3">
-                <p className="text-[13px] font-bold text-[#1A1A1A]">Payment details</p>
-                <input autoComplete="off"
-                  className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
-                  placeholder="Cardholder's name"
-                />
-                <input autoComplete="off"
-                  className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
-                  placeholder="0000 0000 0000 0000"
-                />
-                <div className="grid grid-cols-2 gap-3">
-                  <input autoComplete="off"
-                    className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
-                    placeholder="MM / YYYY"
-                  />
-                  <input autoComplete="off"
-                    className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
-                    placeholder="CVV"
-                  />
-                </div>
+          {isLoadingConfig ? (
+            <div className="py-6 text-center text-[13px] text-[#808080]">Loading payment options…</div>
+          ) : paymentConfig?.checkoutRequired === false ? (
+            <div className="py-2 text-[13px] text-[#4A4A4A]">
+              Payment details are not required at this time. You can proceed directly to submit the role.
+            </div>
+          ) : (
+            <div>
+              <CardTitle className="text-base mb-2">Payment options</CardTitle>
+              <p className="text-[13px] text-[#808080] mb-3">Select your preferred payment method</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+                {[
+                  { id: 'card', label: 'Credit / Debit' },
+                  { id: 'paypal', label: 'PayPal' },
+                  { id: 'apple', label: 'Apple Pay' },
+                  { id: 'google', label: 'Google Pay' },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setPaymentMethod(m.id)}
+                    className={`rounded-[10px] border-2 py-3 px-2 text-[11px] font-bold transition-colors cursor-pointer ${
+                      paymentMethod === m.id
+                        ? 'border-[#0047CC] bg-white text-[#0047CC]'
+                        : 'border-[#E6E6E6] text-[#4A4A4A] hover:border-[#387DFF]'
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
               </div>
-            )}
-          </div>
+
+              {paymentMethod === 'card' && (
+                <div className="space-y-3">
+                  <p className="text-[13px] font-bold text-[#1A1A1A]">Payment details</p>
+                  <input autoComplete="off"
+                    className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
+                    placeholder="Cardholder's name"
+                  />
+                  <input autoComplete="off"
+                    className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
+                    placeholder="0000 0000 0000 0000"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input autoComplete="off"
+                      className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
+                      placeholder="MM / YYYY"
+                    />
+                    <input autoComplete="off"
+                      className="w-full px-3.5 py-2.5 border border-[#E6E6E6] rounded-lg text-sm outline-none focus:border-[#0047CC]"
+                      placeholder="CVV"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 border-t border-[#E6E6E6] px-7 py-4 grid grid-cols-2 gap-3 bg-white">
@@ -174,14 +215,16 @@ const PostJobCheckoutDrawer: React.FC<PostJobCheckoutDrawerProps> = ({
           <button
             type="button"
             onClick={onSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoadingConfig}
             className="rounded-full bg-[#0047CC] hover:bg-[#344DA1] py-3 text-sm font-bold text-white cursor-pointer disabled:opacity-60"
           >
             {isSubmitting
               ? 'Processing…'
-              : isScheduled
-                ? `Lock in Escrow, ${totalLabel}`
-                : `Pay ${totalLabel}`}
+              : paymentConfig?.checkoutRequired === false
+                ? 'Submit role'
+                : isScheduled
+                  ? `Lock in Escrow, ${totalLabel}`
+                  : `Pay ${totalLabel}`}
           </button>
         </div>
       </div>

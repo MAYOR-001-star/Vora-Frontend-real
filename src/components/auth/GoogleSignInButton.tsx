@@ -22,21 +22,9 @@ const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   const navigate = useNavigate();
   const { handleGoogleSignIn, isGoogleLoading } = useGoogleAuth();
   const isConfigured = !!getGoogleClientId();
-  const isRoleSignupMock = Boolean(roleSlug);
 
   const handleClick = () => {
-    if (isRoleSignupMock) {
-      navigate('/verify-email', {
-        state: {
-          email: email?.trim() || 'test@vora.com',
-          accountType: 'Talent',
-          roleSlug,
-          mockAuth: true,
-        },
-      });
-      return;
-    }
-    handleGoogleSignIn();
+    handleGoogleSignIn(roleSlug);
   };
 
   return (
@@ -45,8 +33,8 @@ const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
       type="button"
       className="min-w-0"
       onClick={handleClick}
-      disabled={disabled || isGoogleLoading || (!isRoleSignupMock && !isConfigured)}
-      isLoading={isGoogleLoading && !isRoleSignupMock}
+      disabled={disabled || isGoogleLoading || (!roleSlug && !isConfigured)}
+      isLoading={isGoogleLoading && !roleSlug}
     >
       <GoogleIcon />
       <span className="truncate">{label}</span>

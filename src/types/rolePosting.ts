@@ -13,6 +13,19 @@ export interface CreateRolePostingIntakeRequest {
   hiringMode: RolePostingHiringMode;
   fillMethod: RolePostingFillMethod;
   vaultGoLiveDate?: string;
+  jobDescriptionDocumentId?: string;
+}
+
+export type RoleDocumentParseStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+
+export interface RolePostingJobDescription {
+  id: string;
+  originalName: string;
+  jdParseStatus: RoleDocumentParseStatus;
+}
+
+export interface RolePostingIntakeDocumentResponse {
+  document: RolePostingJobDescription;
 }
 
 export interface RolePostingIntakeData {
@@ -24,6 +37,7 @@ export interface RolePostingIntakeData {
   fillMethod: RolePostingFillMethod;
   vaultMode: boolean;
   vaultGoLiveDate?: string | null;
+  jobDescription?: RolePostingJobDescription;
   createdAt: string;
   updatedAt: string;
 }
@@ -134,6 +148,18 @@ export interface RolePostingStepThreeData {
   id: string;
   status: RolePostingStatus;
   currentStep: number | string;
+  yearsExperienceRequired?: string;
+  typeOfExperience?: string[];
+  minimumQualification?: string;
+  preferredQualifications?: string;
+  sectorBackground?: string[];
+  geographicExperience?: string[];
+  publicationsRequired?: string;
+  budgetManagementRequired?: string;
+  teamManagementRequired?: string;
+  internationalTalentPolicy?: string;
+  securityClearanceRequirement?: string;
+  preferredTalentProfile?: string;
 }
 
 export interface UpdateRolePostingStepFourRequest {
@@ -150,6 +176,12 @@ export interface RolePostingStepFourData {
   id: string;
   status: RolePostingStatus;
   currentStep: number | string;
+  preferredWorkingStyle?: string[];
+  communicationRhythm?: string[];
+  primaryWorkingLanguage?: string;
+  personalityTraits?: string[];
+  workEnvironmentDescriptors?: string[];
+  teamCultureFreeText?: string;
 }
 
 export type CompensationType =
@@ -195,6 +227,24 @@ export interface RolePostingStepFiveData {
   id: string;
   status: RolePostingStatus;
   currentStep: number | string;
+  compensationType?: CompensationType;
+  compensationCurrency?: string;
+  positionsAvailable?: number;
+  salaryMin?: number;
+  salaryMax?: number;
+  dailyRateMin?: number;
+  dailyRateMax?: number;
+  dailyRate?: number;
+  contractDurationMonths?: number;
+  totalContractValue?: number;
+  stipendValue?: string;
+  yearOneStipend?: number;
+  programmeType?: CompensationProgrammeType;
+  annualTuitionValue?: number;
+  expensesAllowancesBenefits?: string;
+  isOpenEnded?: boolean;
+  internalNotes?: string;
+  jobDescriptionDocumentId?: string;
 }
 
 export interface RolePostingStepOneData extends RolePostingIntakeData {
@@ -219,3 +269,10 @@ export interface RolePostingStepOneData extends RolePostingIntakeData {
   scheduledHiringEnabled: boolean;
   scheduledGoLiveDate?: string | null;
 }
+
+export interface RolePostingPrefillData
+  extends Omit<Partial<RolePostingStepOneData>, 'positionsAvailable' | 'internationalTalentPolicy' | 'securityClearanceRequirement'>,
+    Partial<RolePostingStepTwoData>,
+    Partial<RolePostingStepThreeData>,
+    Partial<RolePostingStepFourData>,
+    Partial<RolePostingStepFiveData> {}
