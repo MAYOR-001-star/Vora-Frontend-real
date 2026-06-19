@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import VoraLogo from '../../components/common/VoraLogo';
 import Button from '../../components/common/Button';
@@ -50,6 +50,7 @@ const OptionCard: React.FC<OptionProps> = ({ letter, text, selected, onClick }) 
 
 const RoleAssessmentSessionSituational: React.FC = () => {
   const navigate = useNavigate();
+  const { roleSlug } = useParams<{ roleSlug: string }>();
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const handleAnswer = (qId: string, optId: string) => {
@@ -60,9 +61,7 @@ const RoleAssessmentSessionSituational: React.FC = () => {
   const isComplete = answeredCount === 2; // Two questions on this page
 
   const handleContinue = () => {
-    // In a real flow, this would go to part 4
-    // For now, navigate back to dashboard or next
-    navigate('/dashboard'); 
+    navigate(`/onboarding/talent/${roleSlug}/assessment/session-1/cognitive`); 
   };
 
   const handleSave = () => {
@@ -104,8 +103,8 @@ const RoleAssessmentSessionSituational: React.FC = () => {
       <div className="bg-gradient-to-b from-white to-[#FBFCFF] border-b border-[#E6E6E6] px-[20px] sm:px-[32px] py-[14px] flex items-center justify-center gap-[6px] flex-wrap">
         <div className="h-[5px] rounded-full transition-all duration-300 bg-[#387DFF] w-[38px]"></div>
         <div className="h-[5px] rounded-full transition-all duration-300 bg-[#387DFF] w-[38px]"></div>
+        <div className="h-[5px] rounded-full transition-all duration-300 bg-[#387DFF] w-[38px]"></div>
         <div className="h-[5px] rounded-full transition-all duration-300 bg-[#0047CC] w-[64px]"></div>
-        <div className="h-[5px] rounded-full transition-all duration-300 bg-[#E6E6E6] w-[38px]"></div>
         <div className="h-[5px] rounded-full transition-all duration-300 bg-[#E6E6E6] w-[38px]"></div>
         <div className="h-[5px] rounded-full transition-all duration-300 bg-[#E6E6E6] w-[38px]"></div>
       </div>

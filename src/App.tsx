@@ -24,6 +24,7 @@ const RoleAssessmentSessionPsychometric = lazy(() => import('./pages/talent/Role
 const RoleAssessmentSessionForcedChoice = lazy(() => import('./pages/talent/RoleAssessmentSessionForcedChoice'))
 const RoleAssessmentSessionPsychometricValues = lazy(() => import('./pages/talent/RoleAssessmentSessionPsychometricValues'))
 const RoleAssessmentSessionSituational = lazy(() => import('./pages/talent/RoleAssessmentSessionSituational'))
+const RoleAssessmentSessionCognitive = lazy(() => import('./pages/talent/RoleAssessmentSessionCognitive'))
 const RoleAssessmentSessionReading = lazy(() => import('./pages/talent/RoleAssessmentSessionReading'))
 const RoleAssessmentSessionComplete = lazy(() => import('./pages/talent/RoleAssessmentSessionComplete'))
 const RoleProfileRolesFound = lazy(() => import('./pages/talent/RoleProfileRolesFound'))
@@ -109,6 +110,7 @@ const App = () => {
             <Route path="assessment/session-1/forced-choice" element={<RoleAssessmentSessionForcedChoice />} />
             <Route path="assessment/session-1/psychometric-values" element={<RoleAssessmentSessionPsychometricValues />} />
             <Route path="assessment/session-1/situational" element={<RoleAssessmentSessionSituational />} />
+            <Route path="assessment/session-1/cognitive" element={<RoleAssessmentSessionCognitive />} />
             <Route path="assessment/session-1/reading" element={<RoleAssessmentSessionReading />} />
             <Route path="assessment/session-1/complete" element={<RoleAssessmentSessionComplete />} />
             <Route path="match/blocked" element={<RoleProfileMatchBlocked />} />

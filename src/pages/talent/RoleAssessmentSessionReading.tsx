@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import VoraLogo from '../../components/common/VoraLogo';
 import Button from '../../components/common/Button';
@@ -43,6 +43,7 @@ const OptionCard: React.FC<OptionProps> = ({ letter, text, selected, onClick }) 
 
 const RoleAssessmentSessionReading: React.FC = () => {
   const navigate = useNavigate();
+  const { roleSlug } = useParams<{ roleSlug: string }>();
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const handleAnswer = (qId: string, optId: string) => {
@@ -53,8 +54,7 @@ const RoleAssessmentSessionReading: React.FC = () => {
   const isComplete = answeredCount === 3; // Three questions
 
   const handleContinue = () => {
-    // Navigate to completion screen
-    navigate('/dashboard'); 
+    navigate(`/onboarding/talent/${roleSlug}/assessment/session-1/complete`); 
   };
 
   const handleSave = () => {

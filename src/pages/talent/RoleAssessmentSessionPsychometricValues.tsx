@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import VoraLogo from '../../components/common/VoraLogo';
 import Button from '../../components/common/Button';
@@ -42,6 +42,7 @@ const INITIAL_RANK_ITEMS = [
 
 const RoleAssessmentSessionPsychometricValues: React.FC = () => {
   const navigate = useNavigate();
+  const { roleSlug } = useParams<{ roleSlug: string }>();
 
   // Drag and drop ranking state
   const [rankItems, setRankItems] = useState(INITIAL_RANK_ITEMS);
@@ -81,7 +82,7 @@ const RoleAssessmentSessionPsychometricValues: React.FC = () => {
   const isComplete = fc1 !== null && fc2 !== null;
 
   const handleContinue = () => {
-    navigate('/dashboard'); // Navigates to dashboard for now
+    navigate(`/onboarding/talent/${roleSlug}/assessment/session-1/situational`);
   };
 
   return (
