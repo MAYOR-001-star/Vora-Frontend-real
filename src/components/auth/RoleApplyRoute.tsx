@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTalentOnboardingStateQuery } from '../../services/queries/onboarding';
+import FullPageSpinner from '../common/FullPageSpinner';
 
 const RoleApplyRoute: React.FC = () => {
   const { roleSlug } = useParams<{ roleSlug: string }>();
@@ -15,11 +16,7 @@ const RoleApplyRoute: React.FC = () => {
   const { data: stateData, isLoading } = useTalentOnboardingStateQuery(true);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-10 h-10 border-4 border-[#0047CC] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <FullPageSpinner />;
   }
 
   const step = stateData?.data?.step || 0;

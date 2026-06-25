@@ -1,5 +1,6 @@
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import VoraLogo from '../../components/common/VoraLogo';
 import Button from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -91,8 +92,20 @@ const RoleAssessmentJourney: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
   
+  useEffect(() => {
+    if (roleSlug) {
+      localStorage.setItem('active_assessment_role_slug', roleSlug);
+    }
+  }, [roleSlug]);
+
   const firstName =
     (location.state as { firstName?: string } | null)?.firstName || user?.firstName || 'there';
+
+  const isStage2Unlocked = localStorage.getItem('vora_stage2_unlocked') === 'true';
+  const isStage2Completed = localStorage.getItem('vora_stage2_completed') === 'true';
+  const isStage3Unlocked = localStorage.getItem('vora_stage3_unlocked') === 'true';
+  const isStage3Completed = localStorage.getItem('vora_stage3_completed') === 'true';
+  const isStage4Unlocked = localStorage.getItem('vora_stage4_unlocked') === 'true';
 
   const { data: response, isLoading: isRoleLoading } = useGetPublicRoleQuery(roleSlug || '');
 
@@ -109,6 +122,7 @@ const RoleAssessmentJourney: React.FC = () => {
   const roleTitle = appliedRole?.roleTitle || 'the role';
 
   const handleStart = () => {
+    localStorage.setItem('vora_stage1_started', 'true');
     navigate(`/onboarding/talent/${roleSlug}/assessment/stage-1`);
   };
 
@@ -173,18 +187,62 @@ const RoleAssessmentJourney: React.FC = () => {
             <DocumentCheckIcon className="w-[24px] h-[24px]" />
           </div>
           <div className="flex-1 min-w-[240px]">
-            <div className="text-[11px] font-[800] tracking-[0.7px] text-[#0047CC] uppercase mb-[5px]">Onboarding submitted · Stage 1 unlocked</div>
-            <div className="text-[18px] font-[600] text-[#1A1A1A] mb-[5px] tracking-[-0.2px] leading-[1.3]">Ready when you are, Adaeze</div>
-            <div className="text-[13.5px] text-[#808080] leading-[1.55]">Reach Africa's hiring panel has your full file. Stage 1 takes about 35 minutes and is a single sitting. Your progress saves automatically.</div>
+            <div className="text-[11px] font-[800] tracking-[0.7px] text-[#0047CC] uppercase mb-[5px]">
+              {isStage3Completed
+                ? 'Stage 3 completed · Final decision pending'
+                : isStage2Completed 
+                  ? 'Stage 2 completed · Stage 3 unlocked' 
+                  : isStage2Unlocked 
+                    ? 'Stage 1 completed · Stage 2 unlocked' 
+                    : 'Onboarding submitted · Stage 1 unlocked'}
+            </div>
+            <div className="text-[18px] font-[600] text-[#1A1A1A] mb-[5px] tracking-[-0.2px] leading-[1.3]">
+              {isStage3Completed
+                ? `You're all set, ${firstName}`
+                : isStage2Completed 
+                  ? `Stage 3 is unlocked, ${firstName}` 
+                  : `Ready when you are, ${firstName}`}
+            </div>
+            <div className="text-[13.5px] text-[#808080] leading-[1.55]">
+              {isStage3Completed
+                ? "You have completed all assessment stages! Reach Africa's hiring panel is currently reviewing your application file."
+                : isStage2Completed 
+                  ? 'Your Stage 2 professional dimension scored 87/100, clearing the threshold. Stage 3 is a short asynchronous video interview about how you show up.' 
+                  : isStage2Unlocked 
+                    ? `${companyName}'s hiring panel has your full file. Stage 2 takes about 60 to 100 minutes, split across three parts. You can pause between them. Your progress saves automatically.`
+                    : `${companyName}'s hiring panel has your full file. Stage 1 takes about 35 minutes and is a single sitting. Your progress saves automatically.`}
+            </div>
           </div>
           <div className="ml-auto flex items-end">
-            <Button 
-              onClick={handleStart}
-              fullWidth={false}
-              className="bg-[#0047CC] text-white rounded-full p-[12px_24px] text-[14px] font-[800] hover:bg-[#344DA1] hover:-translate-y-[1px] hover:shadow-[0_6px_18px_rgba(0,71,204,0.36)] transition-all flex items-center gap-[8px] shadow-[0_4px_14px_rgba(0,71,204,0.28)]"
-            >
-              Begin Stage 1
-            </Button>
+            {isStage3Completed ? (
+              <div className="flex items-center gap-1.5 text-[12px] font-[800] text-[#0047CC] bg-[#FAFCFF] border border-[#0047CC]/20 rounded-full px-4 py-2 uppercase tracking-[0.4px]">
+                <DocumentCheckIcon className="w-3.5 h-3.5" />
+                All stages complete
+              </div>
+            ) : (
+              <Button 
+                onClick={() => {
+                  if (isStage3Unlocked && !isStage3Completed) {
+                    navigate(`/onboarding/talent/${roleSlug}/assessment/resume`);
+                  } else if (isStage2Completed) {
+                    navigate(`/onboarding/talent/${roleSlug}/assessment/stage-3`);
+                  } else if (isStage2Unlocked && !isStage2Completed) {
+                    navigate(`/onboarding/talent/${roleSlug}/assessment/resume`);
+                  } else {
+                    const hasStartedStage1 = localStorage.getItem('vora_stage1_started') === 'true';
+                    if (hasStartedStage1) {
+                      navigate(`/onboarding/talent/${roleSlug}/assessment/resume`);
+                    } else {
+                      handleStart();
+                    }
+                  }
+                }}
+                fullWidth={false}
+                className="bg-[#0047CC] text-white rounded-full p-[12px_24px] text-[14px] font-[800] hover:bg-[#344DA1] hover:-translate-y-[1px] hover:shadow-[0_6px_18px_rgba(0,71,204,0.36)] transition-all flex items-center gap-[8px] shadow-[0_4px_14px_rgba(0,71,204,0.28)]"
+              >
+                {isStage2Completed ? 'Begin Stage 3' : isStage2Unlocked ? 'Begin Stage 2' : 'Begin Stage 1'}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -195,12 +253,12 @@ const RoleAssessmentJourney: React.FC = () => {
             <p className="text-[13.5px] text-[#808080] leading-[1.55]">Each stage builds on the last. Pass one and the next unlocks automatically.</p>
           </div>
           <div className="text-[12px] text-[#808080] font-[700] flex items-center gap-[6px]">
-            1 of 4 unlocked
+            {isStage3Unlocked ? '3 of 4 unlocked' : isStage2Unlocked ? '2 of 4 unlocked' : '1 of 4 unlocked'}
           </div>
         </div>
 
         {/* Stages timeline */}
-        <div className="grid grid-cols-1 gap-[14px] mb-[36px] relative before:hidden sm:before:block before:absolute before:left-[28px] before:top-[54px] before:bottom-[54px] before:w-[2px] before:bg-gradient-to-b before:from-[#0047CC] before:via-[#0047CC] before:to-[#E6E6E6] before:via-25% before:to-25% before:z-0">
+        <div className={`grid grid-cols-1 gap-[14px] mb-[36px] relative before:hidden sm:before:block before:absolute before:left-[28px] before:top-[54px] before:bottom-[54px] before:w-[2px] before:bg-gradient-to-b before:from-[#0047CC] before:via-[#0047CC] ${isStage3Unlocked ? 'before:to-[#E6E6E6] before:via-[75%] before:to-[75%]' : isStage2Unlocked ? 'before:to-[#E6E6E6] before:via-[50%] before:to-[50%]' : 'before:to-[#E6E6E6] before:via-[25%] before:to-[25%]'} before:z-0`}>
           
           {/* Pre stage (done) */}
           <div className="bg-white border-[1.5px] border-[#0047CC]/20 rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all z-[1]">
@@ -222,13 +280,30 @@ const RoleAssessmentJourney: React.FC = () => {
             </div>
           </div>
 
-          {/* Stage 1 (active) */}
-          <div className="bg-gradient-to-b from-[#FAFCFF] to-white border-[1.5px] border-[#0047CC] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all shadow-[0_8px_24px_rgba(0,71,204,0.1)] z-[1]">
-            <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] text-[17px] font-[900] bg-gradient-to-br from-[#0047CC] to-[#387DFF] border-[1.5px] border-[#0047CC] text-white shadow-[0_4px_14px_rgba(0,71,204,0.3)]">
-              01
+          {/* Stage 1 (active/complete) */}
+          <div 
+            onClick={() => {
+              if (!isStage2Unlocked) {
+                const hasStartedStage1 = localStorage.getItem('vora_stage1_started') === 'true';
+                if (hasStartedStage1) {
+                  navigate(`/onboarding/talent/${roleSlug}/assessment/resume`);
+                } else {
+                  handleStart();
+                }
+              }
+            }}
+            className={isStage2Unlocked 
+              ? "bg-white border-[1.5px] border-[#0047CC]/20 rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all z-[1]"
+              : "bg-gradient-to-b from-[#FAFCFF] to-white border-[1.5px] border-[#0047CC] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all shadow-[0_8px_24px_rgba(0,71,204,0.1)] z-[1] cursor-pointer"
+            }
+          >
+            <div className={`w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] ${isStage2Unlocked ? 'bg-gradient-to-br from-[#0047CC] to-[#387DFF] text-white shadow-[0_4px_14px_rgba(0,71,204,0.28)]' : 'text-[17px] font-[900] bg-gradient-to-br from-[#0047CC] to-[#387DFF] border-[1.5px] border-[#0047CC] text-white shadow-[0_4px_14px_rgba(0,71,204,0.3)]'}`}>
+              {isStage2Unlocked ? <DocumentCheckIcon className="w-[22px] h-[22px] stroke-[3]" /> : '01'}
             </div>
             <div className="flex-1 min-w-0 pt-[2px]">
-              <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#0047CC]">Starting here</div>
+              <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#0047CC]">
+                {isStage2Unlocked ? 'Stage 1 · Complete' : 'Starting here'}
+              </div>
               <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Getting to know you</div>
               <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A relaxed first stage about how you think, what you value, and your instincts in real situations. No clinical recall required. Just be yourself.</div>
               <div className="flex flex-wrap gap-[6px] mb-[14px]">
@@ -252,110 +327,239 @@ const RoleAssessmentJourney: React.FC = () => {
               </div>
             </div>
             <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-white border border-[#0047CC] text-[#0047CC]">
-              Start here
+              {isStage2Unlocked ? 'Complete' : 'Start here'}
             </div>
           </div>
 
-          {/* Stage 2 (locked) */}
-          <div className="bg-white border-[1.5px] border-[#E6E6E6] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all opacity-[0.62] z-[1]">
-            <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] bg-[#F7F7F7] border-[1.5px] border-[#E6E6E6] text-[17px] font-[900] text-[#ADADAD]">
-              02
-            </div>
-            <div className="flex-1 min-w-0 pt-[2px]">
-              <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#ADADAD]">Up next once Stage 1 passes</div>
-              <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Your professional dimension</div>
-              <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A focused look at the work itself, built around your CV, onboarding profile and this exact role. Three parts. Knowledge, then reasoning, then applied simulation.</div>
-              <div className="flex flex-wrap gap-[6px] mb-[14px]">
-                {['Part 1 · Knowledge', 'Part 2 · Reasoning', 'Part 3 · Simulation'].map((item) => (
-                  <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
-                ))}
+          {/* Stage 2 (locked/active) */}
+          {isStage2Unlocked ? (
+            <div 
+              onClick={() => {
+                if (isStage2Completed) {
+                  navigate(`/onboarding/talent/${roleSlug}/assessment/stage-2/results`);
+                } else {
+                  navigate(`/onboarding/talent/${roleSlug}/assessment/resume`);
+                }
+              }}
+              className={`bg-white border-[1.5px] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all z-[1] ${
+                isStage2Completed 
+                  ? 'border-[#0047CC]/20 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.02)]' 
+                  : 'border-[#0047CC] cursor-pointer hover:shadow-[0_12px_32px_rgba(0,71,204,0.15)] shadow-[0_8px_24px_rgba(0,71,204,0.1)]'
+              }`}
+            >
+              <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] text-[17px] font-[900] bg-gradient-to-br from-[#0047CC] to-[#387DFF] text-white shadow-[0_4px_14px_rgba(0,71,204,0.3)]">
+                {isStage2Completed ? <DocumentCheckIcon className="w-[22px] h-[22px] stroke-[3]" /> : '02'}
               </div>
-              <div className="flex flex-wrap gap-[14px]">
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <ClockPlayIcon className="w-[13px] h-[13px]" />
-                  60 to 100 minutes
+              <div className="flex-1 min-w-0 pt-[2px]">
+                <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#0047CC]">
+                  {isStage2Completed ? 'Stage 2 · Complete' : 'Starting here'}
                 </div>
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <WindowIcon className="w-[13px] h-[13px]" />
-                  72 hour window
+                <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Your professional dimension</div>
+                <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A focused look at the work itself, built around your CV, onboarding profile and this exact role. Three parts. Knowledge, then reasoning, then applied simulation.</div>
+                <div className="flex flex-wrap gap-[6px] mb-[14px]">
+                  {['Part 1 · Knowledge', 'Part 2 · Reasoning', 'Part 3 · Simulation'].map((item) => (
+                    <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
+                  ))}
                 </div>
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#B45309]">
-                  <ThresholdIcon className="w-[13px] h-[13px] text-[#D97706]" />
-                  80% to advance
+                <div className="flex flex-wrap gap-[14px]">
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <ClockPlayIcon className="w-[13px] h-[13px]" />
+                    60 to 100 minutes
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <WindowIcon className="w-[13px] h-[13px]" />
+                    72 hour window
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#B45309]">
+                    <ThresholdIcon className="w-[13px] h-[13px] text-[#D97706]" />
+                    80% to advance
+                  </div>
                 </div>
               </div>
+              <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-white border border-[#0047CC] text-[#0047CC]">
+                {isStage2Completed ? 'Complete' : 'Start here'}
+              </div>
             </div>
-            <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-[#F7F7F7] text-[#ADADAD]">
-              <LockRectIcon className="w-[10px] h-[10px]" />
-              Locked
+          ) : (
+            <div className="bg-white border-[1.5px] border-[#E6E6E6] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all opacity-[0.62] z-[1]">
+              <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] bg-[#F7F7F7] border-[1.5px] border-[#E6E6E6] text-[17px] font-[900] text-[#ADADAD]">
+                02
+              </div>
+              <div className="flex-1 min-w-0 pt-[2px]">
+                <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#ADADAD]">Up next once Stage 1 passes</div>
+                <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Your professional dimension</div>
+                <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A focused look at the work itself, built around your CV, onboarding profile and this exact role. Three parts. Knowledge, then reasoning, then applied simulation.</div>
+                <div className="flex flex-wrap gap-[6px] mb-[14px]">
+                  {['Part 1 · Knowledge', 'Part 2 · Reasoning', 'Part 3 · Simulation'].map((item) => (
+                    <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-[14px]">
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <ClockPlayIcon className="w-[13px] h-[13px]" />
+                    60 to 100 minutes
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <WindowIcon className="w-[13px] h-[13px]" />
+                    72 hour window
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#B45309]">
+                    <ThresholdIcon className="w-[13px] h-[13px] text-[#D97706]" />
+                    80% to advance
+                  </div>
+                </div>
+              </div>
+              <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-[#F7F7F7] text-[#ADADAD]">
+                <LockRectIcon className="w-[10px] h-[10px]" />
+                Locked
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Stage 3 (locked) */}
-          <div className="bg-white border-[1.5px] border-[#E6E6E6] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all opacity-[0.62] z-[1]">
-            <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] bg-[#F7F7F7] border-[1.5px] border-[#E6E6E6] text-[17px] font-[900] text-[#ADADAD]">
-              03
-            </div>
-            <div className="flex-1 min-w-0 pt-[2px]">
-              <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#ADADAD]">After Stage 2 passes</div>
-              <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">How you show up</div>
-              <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A short asynchronous video interview. Five questions. Record live in your browser or upload pre recorded video, per question. Your face, your voice, your time.</div>
-              <div className="flex flex-wrap gap-[6px] mb-[14px]">
-                {['5 questions', 'Record or upload', 'Per question submit'].map((item) => (
-                  <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
-                ))}
+          {/* Stage 3 (locked/active) */}
+          {isStage3Unlocked ? (
+            <div 
+              onClick={() => {
+                if (!isStage3Completed) {
+                  navigate(`/onboarding/talent/${roleSlug}/assessment/resume`);
+                }
+              }}
+              className={`bg-white border-[1.5px] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all z-[1] ${
+                isStage3Completed 
+                  ? 'border-[#0047CC]/20 cursor-default shadow-[0_4px_12px_rgba(0,0,0,0.02)]' 
+                  : 'border-[#0047CC] cursor-pointer hover:shadow-[0_12px_32px_rgba(0,71,204,0.15)] shadow-[0_8px_24px_rgba(0,71,204,0.1)]'
+              }`}
+            >
+              <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] text-[17px] font-[900] bg-gradient-to-br from-[#0047CC] to-[#387DFF] text-white shadow-[0_4px_14px_rgba(0,71,204,0.3)]">
+                {isStage3Completed ? <DocumentCheckIcon className="w-[22px] h-[22px] stroke-[3]" /> : '03'}
               </div>
-              <div className="flex flex-wrap gap-[14px]">
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <ClockPlayIcon className="w-[13px] h-[13px]" />
-                  ~25 minutes
+              <div className="flex-1 min-w-0 pt-[2px]">
+                <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#0047CC]">
+                  {isStage3Completed ? 'Stage 3 · Complete' : 'Starting here'}
                 </div>
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <WindowIcon className="w-[13px] h-[13px]" />
-                  48 hour window
+                <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">How you show up</div>
+                <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A short asynchronous video interview. Five questions. Record live in your browser or upload pre recorded video, per question. Your face, your voice, your time.</div>
+                <div className="flex flex-wrap gap-[6px] mb-[14px]">
+                  {['5 questions', 'Record or upload', 'Per question submit'].map((item) => (
+                    <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
+                  ))}
                 </div>
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <CameraMicIcon className="w-[13px] h-[13px]" />
-                  Camera and mic
+                <div className="flex flex-wrap gap-[14px]">
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <ClockPlayIcon className="w-[13px] h-[13px]" />
+                    ~25 minutes
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <WindowIcon className="w-[13px] h-[13px]" />
+                    48 hour window
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <CameraMicIcon className="w-[13px] h-[13px]" />
+                    Camera and mic
+                  </div>
                 </div>
               </div>
+              <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-white border border-[#0047CC] text-[#0047CC]">
+                {isStage3Completed ? 'Complete' : 'Start here'}
+              </div>
             </div>
-            <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-[#F7F7F7] text-[#ADADAD]">
-              <LockRectIcon className="w-[10px] h-[10px]" />
-              Locked
+          ) : (
+            <div className="bg-white border-[1.5px] border-[#E6E6E6] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all opacity-[0.62] z-[1]">
+              <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] bg-[#F7F7F7] border-[1.5px] border-[#E6E6E6] text-[17px] font-[900] text-[#ADADAD]">
+                03
+              </div>
+              <div className="flex-1 min-w-0 pt-[2px]">
+                <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#ADADAD]">After Stage 2 passes</div>
+                <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">How you show up</div>
+                <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">A short asynchronous video interview. Five questions. Record live in your browser or upload pre recorded video, per question. Your face, your voice, your time.</div>
+                <div className="flex flex-wrap gap-[6px] mb-[14px]">
+                  {['5 questions', 'Record or upload', 'Per question submit'].map((item) => (
+                    <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-[14px]">
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <ClockPlayIcon className="w-[13px] h-[13px]" />
+                    ~25 minutes
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <WindowIcon className="w-[13px] h-[13px]" />
+                    48 hour window
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <CameraMicIcon className="w-[13px] h-[13px]" />
+                    Camera and mic
+                  </div>
+                </div>
+              </div>
+              <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-[#F7F7F7] text-[#ADADAD]">
+                <LockRectIcon className="w-[10px] h-[10px]" />
+                Locked
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Stage 4 (locked) */}
-          <div className="bg-white border-[1.5px] border-[#E6E6E6] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all opacity-[0.62] z-[1]">
-            <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] bg-[#F7F7F7] border-[1.5px] border-[#E6E6E6] text-[17px] font-[900] text-[#ADADAD]">
-              04
-            </div>
-            <div className="flex-1 min-w-0 pt-[2px]">
-              <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#ADADAD]">The employer's call</div>
-              <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Final decision</div>
-              <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">Reach Africa's hiring panel reviews your complete file and makes one of three calls. Hired. Invited to a 30 minute alignment session. Or this role isn't moving forward, with a path to your next match.</div>
-              <div className="flex flex-wrap gap-[6px] mb-[14px]">
-                {['Hired', 'Alignment session', 'Onward path'].map((item) => (
-                  <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
-                ))}
+          {/* Stage 4 (locked/active) */}
+          {isStage4Unlocked ? (
+            <div className="bg-gradient-to-b from-[#FAFCFF] to-white border-[1.5px] border-[#0047CC] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all shadow-[0_8px_24px_rgba(0,71,204,0.1)] z-[1]">
+              <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] text-[17px] font-[900] bg-gradient-to-br from-[#0047CC] to-[#387DFF] text-white shadow-[0_4px_14px_rgba(0,71,204,0.3)]">
+                04
               </div>
-              <div className="flex flex-wrap gap-[14px]">
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <ClockPlayIcon className="w-[13px] h-[13px]" />
-                  Couple of hours typically
+              <div className="flex-1 min-w-0 pt-[2px]">
+                <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#0047CC]">Active evaluation</div>
+                <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Final decision</div>
+                <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">Reach Africa's hiring panel reviews your complete file and makes one of three calls. Hired. Invited to a 30 minute alignment session. Or this role isn't moving forward, with a path to your next match.</div>
+                <div className="flex flex-wrap gap-[6px] mb-[14px]">
+                  {['Hired', 'Alignment session', 'Onward path'].map((item) => (
+                    <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
+                  ))}
                 </div>
-                <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
-                  <GroupIcon className="w-[13px] h-[13px]" />
-                  Reach Africa panel
+                <div className="flex flex-wrap gap-[14px]">
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <ClockPlayIcon className="w-[13px] h-[13px]" />
+                    Couple of hours typically
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <GroupIcon className="w-[13px] h-[13px]" />
+                    Reach Africa panel
+                  </div>
                 </div>
               </div>
+              <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-white border border-[#0047CC] text-[#0047CC]">
+                Under review
+              </div>
             </div>
-            <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-[#F7F7F7] text-[#ADADAD]">
-              <LockRectIcon className="w-[10px] h-[10px]" />
-              Locked
+          ) : (
+            <div className="bg-white border-[1.5px] border-[#E6E6E6] rounded-[16px] p-[22px_24px] flex gap-[18px] items-start relative transition-all opacity-[0.62] z-[1]">
+              <div className="w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shrink-0 relative z-[2] bg-[#F7F7F7] border-[1.5px] border-[#E6E6E6] text-[17px] font-[900] text-[#ADADAD]">
+                04
+              </div>
+              <div className="flex-1 min-w-0 pt-[2px]">
+                <div className="text-[10.5px] font-[800] tracking-[0.8px] uppercase mb-[4px] text-[#ADADAD]">The employer's call</div>
+                <div className="text-[17px] font-[600] text-[#1A1A1A] mb-[6px] tracking-[-0.2px] leading-[1.3]">Final decision</div>
+                <div className="text-[13.5px] text-[#4A4A4A] leading-[1.65] mb-[14px]">Reach Africa's hiring panel reviews your complete file and makes one of three calls. Hired. Invited to a 30 minute alignment session. Or this role isn't moving forward, with a path to your next match.</div>
+                <div className="flex flex-wrap gap-[6px] mb-[14px]">
+                  {['Hired', 'Alignment session', 'Onward path'].map((item) => (
+                    <span key={item} className="text-[11px] font-[700] px-[10px] py-[4px] rounded-full border border-[#0047CC] bg-white text-[#0047CC]">{item}</span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-[14px]">
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <ClockPlayIcon className="w-[13px] h-[13px]" />
+                    Couple of hours typically
+                  </div>
+                  <div className="flex items-center gap-[6px] text-[11.5px] font-[700] text-[#808080]">
+                    <GroupIcon className="w-[13px] h-[13px]" />
+                    Reach Africa panel
+                  </div>
+                </div>
+              </div>
+              <div className="absolute top-[22px] right-[22px] hidden sm:flex items-center gap-[6px] text-[11px] font-[800] px-[11px] py-[5px] rounded-full tracking-[0.4px] bg-[#F7F7F7] text-[#ADADAD]">
+                <LockRectIcon className="w-[10px] h-[10px]" />
+                Locked
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
 

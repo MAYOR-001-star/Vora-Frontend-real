@@ -5,6 +5,7 @@ import ProtectedDashboardLayout from './layout/ProtectedDashboardLayout'
 import EmployerRoute from './components/auth/EmployerRoute'
 import { Toaster } from 'react-hot-toast'
 import { defaultToastOptions } from './config/toastOptions'
+import FullPageSpinner from './components/common/FullPageSpinner'
 
 // Lazy load pages for performance
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -27,6 +28,39 @@ const RoleAssessmentSessionSituational = lazy(() => import('./pages/talent/RoleA
 const RoleAssessmentSessionCognitive = lazy(() => import('./pages/talent/RoleAssessmentSessionCognitive'))
 const RoleAssessmentSessionReading = lazy(() => import('./pages/talent/RoleAssessmentSessionReading'))
 const RoleAssessmentSessionComplete = lazy(() => import('./pages/talent/RoleAssessmentSessionComplete'))
+const RoleAssessmentSessionTwoInfo = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoInfo'))
+const RoleAssessmentSessionTwoSituational = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoSituational'))
+const RoleAssessmentSessionTwoRanking = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoRanking'))
+const RoleAssessmentSessionTwoBestWorst = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoBestWorst'))
+const RoleAssessmentSessionTwoCombine = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoCombine'))
+const RoleAssessmentSessionTwoTradeoff = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoTradeoff'))
+const RoleAssessmentSessionTwoReview = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoReview'))
+const RoleAssessmentSessionTwoAnalyzing = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoAnalyzing'))
+const RoleAssessmentSessionTwoResults = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoResults'))
+const RoleAssessmentSessionTwoOutcome = lazy(() => import('./pages/talent/RoleAssessmentSessionTwoOutcome'))
+const RoleAssessmentStageTwoIntro = lazy(() => import('./pages/talent/RoleAssessmentStageTwoIntro'))
+const RoleAssessmentStageTwoPharmacology = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPharmacology'))
+const RoleAssessmentStageTwoBiostatistics = lazy(() => import('./pages/talent/RoleAssessmentStageTwoBiostatistics'))
+const RoleAssessmentStageTwoPartOneComplete = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartOneComplete'))
+const RoleAssessmentStageTwoCompliance = lazy(() => import('./pages/talent/RoleAssessmentStageTwoCompliance'))
+const RoleAssessmentStageTwoReasoning = lazy(() => import('./pages/talent/RoleAssessmentStageTwoReasoning'))
+const RoleAssessmentStageTwoAppraisal = lazy(() => import('./pages/talent/RoleAssessmentStageTwoAppraisal'))
+const RoleAssessmentStageTwoInterpretation = lazy(() => import('./pages/talent/RoleAssessmentStageTwoInterpretation'))
+const RoleAssessmentStageTwoPartTwoIntro = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartTwoIntro'))
+const RoleAssessmentStageTwoPartTwoComplete = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartTwoComplete'))
+const RoleAssessmentStageTwoPartThreeIntro = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartThreeIntro'))
+const RoleAssessmentStageTwoPartThreeSimulationOne = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartThreeSimulationOne'))
+const RoleAssessmentStageTwoPartThreeSimulationTwo = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartThreeSimulationTwo'))
+const RoleAssessmentStageTwoPartThreeSimulationThree = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartThreeSimulationThree'))
+const RoleAssessmentStageTwoPartThreeSimulationFour = lazy(() => import('./pages/talent/RoleAssessmentStageTwoPartThreeSimulationFour'))
+const RoleAssessmentStageTwoAnalyzing = lazy(() => import('./pages/talent/RoleAssessmentStageTwoAnalyzing'))
+const RoleAssessmentStageTwoResults = lazy(() => import('./pages/talent/RoleAssessmentStageTwoResults'))
+const RoleAssessmentStageThreeIntro = lazy(() => import('./pages/talent/RoleAssessmentStageThreeIntro'))
+const RoleAssessmentStageThreeVideo = lazy(() => import('./pages/talent/RoleAssessmentStageThreeVideo'))
+const RoleAssessmentStageThreeComplete = lazy(() => import('./pages/talent/RoleAssessmentStageThreeComplete'))
+const RoleAssessmentStageFourReview = lazy(() => import('./pages/talent/RoleAssessmentStageFourReview'))
+const RoleAssessmentStageFourOutcome = lazy(() => import('./pages/talent/RoleAssessmentStageFourOutcome'))
+const RoleAssessmentResumeGate = lazy(() => import('./pages/talent/RoleAssessmentResumeGate'))
 const RoleProfileRolesFound = lazy(() => import('./pages/talent/RoleProfileRolesFound'))
 const RoleProfileMatchWaitlist = lazy(() => import('./pages/talent/RoleProfileMatchWaitlist'))
 const RoleProfileMatchBlocked = lazy(() => import('./pages/talent/RoleProfileMatchBlocked'))
@@ -61,11 +95,7 @@ const App = () => {
         reverseOrder={false}
         toastOptions={defaultToastOptions}
       />
-      <Suspense fallback={
-        <div className="fixed inset-0 flex justify-center items-center bg-white z-[9999]">
-          <div className="w-10 h-10 border-4 border-[#0047CC] border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      }>
+      <Suspense fallback={<FullPageSpinner />}>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/role/:slug" element={<RoleLanding />} />
@@ -113,6 +143,39 @@ const App = () => {
             <Route path="assessment/session-1/cognitive" element={<RoleAssessmentSessionCognitive />} />
             <Route path="assessment/session-1/reading" element={<RoleAssessmentSessionReading />} />
             <Route path="assessment/session-1/complete" element={<RoleAssessmentSessionComplete />} />
+            <Route path="assessment/session-2" element={<RoleAssessmentSessionTwoInfo />} />
+            <Route path="assessment/session-2/situational" element={<RoleAssessmentSessionTwoSituational />} />
+            <Route path="assessment/session-2/ranking" element={<RoleAssessmentSessionTwoRanking />} />
+            <Route path="assessment/session-2/best-worst" element={<RoleAssessmentSessionTwoBestWorst />} />
+            <Route path="assessment/session-2/combine" element={<RoleAssessmentSessionTwoCombine />} />
+            <Route path="assessment/session-2/tradeoff" element={<RoleAssessmentSessionTwoTradeoff />} />
+            <Route path="assessment/session-2/review" element={<RoleAssessmentSessionTwoReview />} />
+            <Route path="assessment/session-2/analyzing" element={<RoleAssessmentSessionTwoAnalyzing />} />
+            <Route path="assessment/session-2/results" element={<RoleAssessmentSessionTwoResults />} />
+            <Route path="assessment/session-2/outcome" element={<RoleAssessmentSessionTwoOutcome />} />
+            <Route path="assessment/stage-2" element={<RoleAssessmentStageTwoIntro />} />
+            <Route path="assessment/stage-2/part-1/interview-1" element={<RoleAssessmentStageTwoPharmacology />} />
+            <Route path="assessment/stage-2/part-1/interview-2" element={<RoleAssessmentStageTwoBiostatistics />} />
+            <Route path="assessment/stage-2/part-1/interview-3" element={<RoleAssessmentStageTwoCompliance />} />
+            <Route path="assessment/stage-2/part-1/complete" element={<RoleAssessmentStageTwoPartOneComplete />} />
+            <Route path="assessment/stage-2/part-2/intro" element={<RoleAssessmentStageTwoPartTwoIntro />} />
+            <Route path="assessment/stage-2/part-2/interview-1" element={<RoleAssessmentStageTwoReasoning />} />
+            <Route path="assessment/stage-2/part-2/interview-2" element={<RoleAssessmentStageTwoAppraisal />} />
+            <Route path="assessment/stage-2/part-2/interview-3" element={<RoleAssessmentStageTwoInterpretation />} />
+            <Route path="assessment/stage-2/part-2/complete" element={<RoleAssessmentStageTwoPartTwoComplete />} />
+            <Route path="assessment/stage-2/part-3/intro" element={<RoleAssessmentStageTwoPartThreeIntro />} />
+            <Route path="assessment/stage-2/part-3/simulation-1" element={<RoleAssessmentStageTwoPartThreeSimulationOne />} />
+            <Route path="assessment/stage-2/part-3/simulation-2" element={<RoleAssessmentStageTwoPartThreeSimulationTwo />} />
+            <Route path="assessment/stage-2/part-3/simulation-3" element={<RoleAssessmentStageTwoPartThreeSimulationThree />} />
+            <Route path="assessment/stage-2/part-3/simulation-4" element={<RoleAssessmentStageTwoPartThreeSimulationFour />} />
+            <Route path="assessment/stage-2/analyzing" element={<RoleAssessmentStageTwoAnalyzing />} />
+            <Route path="assessment/stage-2/results" element={<RoleAssessmentStageTwoResults />} />
+            <Route path="assessment/stage-3" element={<RoleAssessmentStageThreeIntro />} />
+            <Route path="assessment/stage-3/video" element={<RoleAssessmentStageThreeVideo />} />
+            <Route path="assessment/stage-3/complete" element={<RoleAssessmentStageThreeComplete />} />
+            <Route path="assessment/stage-4/review" element={<RoleAssessmentStageFourReview />} />
+            <Route path="assessment/stage-4/outcome" element={<RoleAssessmentStageFourOutcome />} />
+            <Route path="assessment/resume" element={<RoleAssessmentResumeGate />} />
             <Route path="match/blocked" element={<RoleProfileMatchBlocked />} />
             <Route path="match/roles" element={<RoleProfileRolesFound />} />
             <Route path="match/waitlist" element={<RoleProfileMatchWaitlist />} />

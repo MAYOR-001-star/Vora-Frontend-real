@@ -1,9 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import VoraLogo from '../../components/common/VoraLogo';
 import Button from '../../components/common/Button';
 import { ArrowRightIcon } from '../../components/common/Icons';
-
+// ... (rest of helper icons are untouched)
 const DocumentCheckIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
@@ -30,10 +30,11 @@ const BranchIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 const RoleAssessmentSessionComplete: React.FC = () => {
   const navigate = useNavigate();
+  const { roleSlug = '' } = useParams<{ roleSlug: string }>();
 
   const handleContinue = () => {
     // Navigate to session 2
-    navigate('/dashboard'); 
+    navigate(`/onboarding/talent/${roleSlug}/assessment/session-2`); 
   };
 
   const handleLater = () => {
@@ -148,8 +149,7 @@ const RoleAssessmentSessionComplete: React.FC = () => {
             onClick={handleContinue}
             className="w-full bg-[#0047CC] text-white border-none rounded-[10px] p-[14px_28px] text-[14px] font-[700] inline-flex items-center justify-center gap-[8px] transition-all duration-200 shadow-[0_4px_14px_rgba(0,71,204,0.28)] hover:bg-[#344DA1] hover:-translate-y-[1px] hover:shadow-[0_6px_18px_rgba(0,71,204,0.36)]"
           >
-            Continue to session two
-            <ArrowRightIcon className="w-[14px] h-[14px]" />
+            Session Two
           </Button>
           
           <button 

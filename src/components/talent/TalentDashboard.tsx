@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CircularProgress from './CircularProgress';
 import StatCard from '../dashboard/StatCard';
 import QuickActionCard from '../dashboard/QuickActionCard';
@@ -6,9 +7,34 @@ import JobCard from '../dashboard/JobCard';
 import { InfoIcon } from '../common/Icons';
 import { TALENT_SAMPLE_JOBS } from '../../constants/mockData';
 import { useAuth } from '../../context/AuthContext';
+import { useGetPublicRoleQuery } from '../../services/queries/talent';
+import { getRoleLandingForSlug, mapApiResponseToRoleData } from '../../utils/roleLanding';
 
 const TalentDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Read active assessment parameters from localStorage
+  const activeRoleSlug = localStorage.getItem('active_assessment_role_slug');
+  const isStage2Unlocked = localStorage.getItem('vora_stage2_unlocked') === 'true';
+  const isStage2Completed = localStorage.getItem('vora_stage2_completed') === 'true';
+  const isStage3Unlocked = localStorage.getItem('vora_stage3_unlocked') === 'true';
+  const isStage3Completed = localStorage.getItem('vora_stage3_completed') === 'true';
+  const isStage4Unlocked = localStorage.getItem('vora_stage4_unlocked') === 'true';
+  const isHired = localStorage.getItem('vora_hired') === 'true';
+
+  // Fetch active role details if available
+  const { data: response } = useGetPublicRoleQuery(activeRoleSlug || '');
+
+  const appliedRole = useMemo(() => {
+    if (!activeRoleSlug) return null;
+    const apiData = response?.data || response;
+    if (!apiData || Object.keys(apiData).length === 0) {
+      return getRoleLandingForSlug(activeRoleSlug);
+    }
+    return mapApiResponseToRoleData(activeRoleSlug, apiData);
+  }, [response, activeRoleSlug]);
+
   if (!user) return null;
   const firstName = user.firstName || 'Tobi';
 
@@ -19,6 +45,66 @@ const TalentDashboard: React.FC = () => {
         <h1 className="text-2xl lg:text-3xl font-medium text-gray-900 mb-1 ">Welcome, {firstName}.</h1>
         <p className="text-[13px] lg:text-sm text-gray-500 font-medium">Upload your CV to begin your career journey and unlock your score.</p>
       </section>
+
+      {/* Active Assessment Banner */}
+      {activeRoleSlug && appliedRole && (
+        <section className="animate-in fade-in slide-in-from-top-4 duration-500">
+          {isHired ? (
+            <div className="bg-gradient-to-r from-[#0F3D0F] to-[#2CA62C] text-white rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-[0_12px_36px_rgba(44,166,44,0.18)]">
+              <div className="w-[50px] h-[50px] rounded-xl bg-white/20 border border-white/30 flex items-center justify-center font-[900] text-[16px] shrink-0">
+                {appliedRole.companyInitials || 'RA'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-[10px] font-[800] uppercase tracking-wider text-white/70">
+                  Offer Received!
+                </span>
+                <h2 className="text-[18px] font-bold mt-1">
+                  Congratulations, you&apos;ve been hired!
+                </h2>
+                <p className="text-[13px] text-white/80 mt-1">
+                  As {appliedRole.roleTitle} at {appliedRole.companyName}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => navigate(`/onboarding/talent/${activeRoleSlug}/assessment/stage-4/outcome`)}
+                  className="bg-white text-[#1D871D] hover:bg-gray-100 rounded-xl px-5 py-2.5 text-[13px] font-bold transition-all shadow-md shrink-0 cursor-pointer"
+                >
+                  View Offer Details
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-[#0047CC] to-[#387DFF] text-white rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-[0_12px_36px_rgba(0,71,204,0.18)]">
+              <div className="w-[50px] h-[50px] rounded-xl bg-white/20 border border-white/30 flex items-center justify-center font-[900] text-[16px] shrink-0">
+                {appliedRole.companyInitials || 'RA'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-[10px] font-[800] uppercase tracking-wider text-white/70">
+                  Active Assessment Journey
+                </span>
+                <h2 className="text-[18px] font-bold mt-1">
+                  {appliedRole.roleTitle}
+                </h2>
+                <p className="text-[13px] text-white/80 mt-1">
+                  {appliedRole.companyName} · {appliedRole.companyLocation || 'Lagos'}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[12px] bg-white/10 border border-white/20 rounded-full px-3.5 py-1.5 font-bold uppercase tracking-wide">
+                  {isStage3Completed ? 'Stage 4 · Review' : isStage2Completed ? 'Stage 3 · Video interview' : isStage2Unlocked ? 'Stage 2 · Professional' : 'Stage 1 · Getting to know you'}
+                </span>
+                <button
+                  onClick={() => navigate(`/onboarding/talent/${activeRoleSlug}/assessment/journey`)}
+                  className="bg-white text-[#0047CC] hover:bg-gray-100 rounded-xl px-5 py-2.5 text-[13px] font-bold transition-all shadow-md shrink-0 cursor-pointer"
+                >
+                  Resume Journey
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

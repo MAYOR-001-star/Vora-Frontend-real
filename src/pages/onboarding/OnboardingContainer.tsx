@@ -8,17 +8,14 @@ import {
   getMentorOnboardingRoute,
   type MentorOnboardingUserFields,
 } from '../../utils/mentorOnboarding';
+import FullPageSpinner from '../../components/common/FullPageSpinner';
 
 const OnboardingContainer: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
   if (!user) {
-    return (
-      <div className="fixed inset-0 flex justify-center items-center bg-white z-[9999]">
-        <div className="w-10 h-10 border-4 border-[#0047CC] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <FullPageSpinner />;
   }
 
   const role = user.role?.toLowerCase();
