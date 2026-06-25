@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckIcon, UploadSimpleIcon } from '../../common/Icons';
+import { UploadSimpleIcon } from '../../common/Icons';
 import { CV_ACCEPT_MIME, isAcceptedCvFile } from '../../../utils/cvUpload';
+import { VORA_LOGO_SRC } from '../../../constants/brand';
 
 interface CvUploadZoneProps {
   file: File | null;
@@ -65,7 +66,7 @@ const CvUploadZone: React.FC<CvUploadZoneProps> = ({ file, onFileSelect, disable
       >
         <div className="mb-3.5 flex items-center justify-center">
           {hasFile ? (
-            <CheckIcon size={34} className="text-[#0047CC]" strokeWidth={2.5} />
+            <img src={VORA_LOGO_SRC} alt="Vora Logo" className="w-10 h-10 object-contain" />
           ) : (
             <UploadSimpleIcon size={34} stroke="#808080" aria-hidden />
           )}

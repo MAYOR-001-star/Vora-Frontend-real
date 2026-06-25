@@ -233,7 +233,8 @@ const RoleAssessmentSessionCognitive: React.FC = () => {
           </div>
           <Button 
             onClick={handleContinueNextPart}
-            className="rounded-[10px] px-[24px] py-[12px] bg-[#0047CC] text-white shadow-[0_4px_14px_rgba(0,71,204,0.28)] hover:bg-[#344DA1] transition-all font-sans inline-flex items-center justify-center gap-[8px] text-[14px] font-[700] border-none"
+            fullWidth={false}
+            className="rounded-[10px] px-[24px] py-[12px] bg-[#0047CC] text-white shadow-[0_4px_14px_rgba(0,71,204,0.28)] hover:bg-[#344DA1] transition-all font-sans inline-flex items-center justify-center gap-[8px] text-[14px] font-[700] border-none w-full sm:w-auto"
           >
             Continue to next part
             <ArrowRightIcon className="w-[14px] h-[14px]" />

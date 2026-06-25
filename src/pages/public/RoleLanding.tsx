@@ -9,8 +9,8 @@ import AlertBanner from '../../components/common/AlertBanner';
 import { SubsectionTitle } from '../../components/common/Typography';
 import { useGetPublicRoleQuery } from '../../services/queries/talent';
 import type { PublicRoleLandingData, PublicRoleResponse } from '../../types/roleLanding';
-
 import { mapApiResponseToRoleData } from '../../utils/roleLanding';
+import FullPageSpinner from '../../components/common/FullPageSpinner';
 
 const RoleLanding: React.FC = () => {
   const { slug = '' } = useParams<{ slug: string }>();
@@ -21,7 +21,7 @@ const RoleLanding: React.FC = () => {
       <div className="min-h-screen bg-[#F7F7F7]">
         <PublicRoleNav roleSlug={slug} />
         <div className="flex items-center justify-center pt-32">
-          <div className="w-10 h-10 border-4 border-[#0047CC] border-t-transparent rounded-full animate-spin"></div>
+          <FullPageSpinner isFullPage={false} />
         </div>
       </div>
     );
